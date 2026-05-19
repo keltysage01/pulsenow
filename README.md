@@ -17,3 +17,6 @@ Use Vercel's static site defaults:
 
 If connecting from GitHub, create a new GitHub repository, push this folder, then import that repository into Vercel.
 
+## Vercel Project
+
+The GitHub repository is connected to the `pulsenow-static` Vercel project.
