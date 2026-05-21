@@ -7470,6 +7470,154 @@
         display: none !important;
       }
 
+      /* Habit-loop IA pass: Duolingo clarity + Strava progress, without adding noise */
+      #home-screen > .profile {
+        order: 1;
+      }
+
+      #home-screen > .challenge {
+        order: 2;
+      }
+
+      #home-screen > section:nth-of-type(7) {
+        order: 3;
+      }
+
+      #home-screen > .goals-panel {
+        order: 4;
+      }
+
+      #home-screen > .vision-workspace {
+        order: 5;
+      }
+
+      #home-screen > section:nth-of-type(5) {
+        order: 6;
+      }
+
+      #home-screen > section:nth-of-type(4) {
+        order: 7;
+      }
+
+      .today-next-card {
+        border-color: rgba(0, 133, 119, 0.18) !important;
+        background:
+          linear-gradient(145deg, rgba(255,255,255,0.78), rgba(235,255,247,0.6)),
+          radial-gradient(circle at 92% 8%, rgba(154, 223, 137, 0.32), transparent 32%) !important;
+      }
+
+      .today-next-card h2 {
+        font-size: 25px !important;
+      }
+
+      .choice-row,
+      .people-shortcuts {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 9px !important;
+        margin-top: 14px !important;
+      }
+
+      .people-shortcuts {
+        margin-top: 6px !important;
+      }
+
+      #home-screen .quote {
+        font-size: 15px !important;
+        font-style: italic !important;
+        line-height: 1.45 !important;
+      }
+
+      .standings {
+        display: grid !important;
+        gap: 8px !important;
+      }
+
+      .standing-row {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) 44px 44px !important;
+        align-items: center !important;
+        min-height: 38px !important;
+        padding: 8px 10px !important;
+        border-radius: 14px !important;
+        background: rgba(255,255,255,0.48) !important;
+      }
+
+      .standing-row strong,
+      .standing-row span {
+        font-size: 13.5px !important;
+        font-weight: 550 !important;
+      }
+
+      .power-list {
+        display: grid !important;
+        gap: 11px !important;
+      }
+
+      .power-row {
+        padding: 14px !important;
+        border: 1px solid var(--pulse-card-line) !important;
+        border-radius: 22px !important;
+        background: rgba(255,255,255,0.58) !important;
+        box-shadow: 0 10px 22px rgba(31,65,85,0.08) !important;
+      }
+
+      .power-top {
+        display: grid !important;
+        grid-template-columns: 34px minmax(0, 1fr) !important;
+        gap: 11px !important;
+        align-items: start !important;
+      }
+
+      .rank {
+        width: 32px !important;
+        height: 32px !important;
+        display: grid !important;
+        place-items: center !important;
+        border-radius: 12px !important;
+        background: linear-gradient(135deg, #1f7b96, #62d2ca 58%, #9cdd86) !important;
+        color: white !important;
+        font-size: 14px !important;
+        font-weight: 650 !important;
+      }
+
+      .actions {
+        display: flex !important;
+        gap: 8px !important;
+        flex-wrap: wrap !important;
+        margin-top: 10px !important;
+      }
+
+      .questionnaire-panel {
+        border-color: rgba(0, 133, 119, 0.16) !important;
+      }
+
+      .field-section h3::after {
+        content: "Tap";
+        flex: 0 0 auto;
+        padding: 5px 8px;
+        border-radius: 999px;
+        background: rgba(0, 133, 119, 0.1);
+        color: var(--pulse-action-dark);
+        font-size: 11px;
+        font-weight: 600;
+      }
+
+      .field-section.open h3::after {
+        content: "Close";
+      }
+
+      .bottom-nav button[data-screen="contacts"] .nav-icon::before {
+        -webkit-mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='black' d='M9.5 11.4a3.7 3.7 0 1 1 0-7.4 3.7 3.7 0 0 1 0 7.4Zm0-5.7a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm7.1 5.9a3.1 3.1 0 1 1 0-6.2 3.1 3.1 0 0 1 0 6.2Zm0-4.5a1.4 1.4 0 1 0 0 2.8 1.4 1.4 0 0 0 0-2.8ZM3.5 20c.2-3.6 2.8-6.2 6-6.2s5.8 2.6 6 6.2H3.5Zm2-1.7h8c-.5-1.8-2-2.8-4-2.8s-3.5 1-4 2.8Zm9.7 1.7c-.1-.9-.3-1.7-.7-2.5.6-.5 1.3-.8 2.1-.8 1.5 0 2.6.7 3 2h-4.4V20Zm1.4-5c-1.1 0-2.1.3-2.9.9-.4-.5-.9-.9-1.4-1.2 1.1-1 2.6-1.5 4.3-1.5 2.7 0 4.9 1.9 5.1 4.9H21c-.6-1.9-2.2-3.1-4.4-3.1Z'/%3E%3C/svg%3E");
+        mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='black' d='M9.5 11.4a3.7 3.7 0 1 1 0-7.4 3.7 3.7 0 0 1 0 7.4Zm0-5.7a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm7.1 5.9a3.1 3.1 0 1 1 0-6.2 3.1 3.1 0 0 1 0 6.2Zm0-4.5a1.4 1.4 0 1 0 0 2.8 1.4 1.4 0 0 0 0-2.8ZM3.5 20c.2-3.6 2.8-6.2 6-6.2s5.8 2.6 6 6.2H3.5Zm2-1.7h8c-.5-1.8-2-2.8-4-2.8s-3.5 1-4 2.8Zm9.7 1.7c-.1-.9-.3-1.7-.7-2.5.6-.5 1.3-.8 2.1-.8 1.5 0 2.6.7 3 2h-4.4V20Zm1.4-5c-1.1 0-2.1.3-2.9.9-.4-.5-.9-.9-1.4-1.2 1.1-1 2.6-1.5 4.3-1.5 2.7 0 4.9 1.9 5.1 4.9H21c-.6-1.9-2.2-3.1-4.4-3.1Z'/%3E%3C/svg%3E");
+      }
+
+      html[data-theme="dark"] .today-next-card,
+      html[data-theme="dark"] .power-row,
+      html[data-theme="dark"] .standing-row {
+        background: rgba(255,255,255,0.08) !important;
+      }
+
       @media (max-width: 380px) {
         .shell {
           padding-left: 16px !important;
@@ -7541,7 +7689,8 @@
         <aside class="drawer-panel">
           <p class="eyebrow">Pulsenow</p>
           <h2 id="drawer-name">Agent</h2>
-          <button class="drawer-link" data-screen="contacts" type="button">Contacts</button>
+          <button class="drawer-link" data-screen="contacts" type="button">People</button>
+          <button class="drawer-link" data-screen="pipeline" type="button">Pipeline</button>
           <button class="drawer-link" data-screen="coach" type="button">AI Coach</button>
           <button class="drawer-link" data-screen="campaigns" type="button">Campaigns</button>
           <button class="drawer-link" data-screen="history" type="button">History</button>
@@ -7595,16 +7744,19 @@
           <p class="muted" style="margin-top: 12px; font-size: 13px;">Updates each time a teammate saves their log.</p>
         </section>
 
-        <section class="section card challenge">
-          <p class="eyebrow">Today's Challenge</p>
-          <h2>All-the-Timer is within reach.</h2>
-          <p class="muted" style="margin-top: 8px; line-height: 1.6;">Log 13 more points this week to reach the top tier.</p>
-          <button class="pill-btn" data-screen="log" type="button">Finish strong</button>
+        <section class="section card challenge today-next-card">
+          <p class="eyebrow">Next best move</p>
+          <h2>Call the first person on your Power List.</h2>
+          <p class="muted" style="margin-top: 8px; line-height: 1.6;">One real conversation beats checking every dashboard. Start with the highest-priority person, then log the outcome.</p>
+          <div class="choice-row">
+            <button class="pill-btn" data-screen="contacts" type="button">Open People</button>
+            <button class="ghost-btn" data-screen="log" type="button">Log activity</button>
+          </div>
         </section>
 
         <section class="section card">
           <div class="section-head">
-            <h2>Power List</h2>
+            <h2>People to call</h2>
             <button id="see-power-list-btn" class="text-btn" data-screen="powerlist" type="button">See all 10</button>
           </div>
           <div id="home-power-list" class="power-list"></div>
@@ -7698,8 +7850,8 @@
         <section class="card">
           <div class="section-head">
             <div>
-              <p class="eyebrow">CRM</p>
-              <h2>Contacts</h2>
+              <p class="eyebrow">People</p>
+              <h2>Who needs attention</h2>
             </div>
             <button id="toggle-add-contact-btn" class="pill-btn" style="margin-top: 0;" type="button">Add</button>
           </div>
@@ -7712,6 +7864,11 @@
               <button class="filter-btn" data-contact-filter="client" type="button">Clients</button>
               <button class="filter-btn" data-contact-filter="top100" type="button">Top 100</button>
               <button class="filter-btn" data-contact-filter="overdue" type="button">Overdue</button>
+            </div>
+            <div class="people-shortcuts">
+              <button class="ghost-btn" data-screen="powerlist" type="button">Power List</button>
+              <button class="ghost-btn" data-screen="pipeline" type="button">Pipeline</button>
+              <button class="ghost-btn" data-screen="coach" type="button">Ask Coach</button>
             </div>
           </div>
         </section>
@@ -7809,8 +7966,8 @@
         <section class="card">
           <div class="section-head">
             <div>
-              <p class="eyebrow">Pipeline</p>
-              <h2>Kanban Board</h2>
+              <p class="eyebrow">People Pipeline</p>
+              <h2>Move one person forward</h2>
             </div>
             <button id="pipeline-seed-btn" class="text-btn" type="button">Seed demo</button>
           </div>
@@ -7843,7 +8000,7 @@
         <section class="card">
           <div class="section-head">
             <div>
-              <p class="eyebrow">Board</p>
+              <p class="eyebrow">Progress</p>
               <h2>Leaderboard</h2>
             </div>
             <button id="refresh-board-btn" class="text-btn" type="button">Refresh</button>
@@ -7971,10 +8128,10 @@
 
       <nav class="bottom-nav">
         <div class="bottom-inner">
-          <button class="active" data-screen="home" type="button"><span class="nav-icon" aria-hidden="true"></span><span class="nav-label">Home</span></button>
+          <button class="active" data-screen="home" type="button"><span class="nav-icon" aria-hidden="true"></span><span class="nav-label">Today</span></button>
+          <button data-screen="contacts" type="button"><span class="nav-icon" aria-hidden="true"></span><span class="nav-label">People</span></button>
           <button data-screen="log" type="button"><span class="nav-icon" aria-hidden="true"></span><span class="nav-label">Log</span></button>
-          <button data-screen="board" type="button"><span class="nav-icon" aria-hidden="true"></span><span class="nav-label">Board</span></button>
-          <button data-screen="pipeline" type="button"><span class="nav-icon" aria-hidden="true"></span><span class="nav-label">Pipeline</span></button>
+          <button data-screen="board" type="button"><span class="nav-icon" aria-hidden="true"></span><span class="nav-label">Progress</span></button>
           <button data-screen="me" type="button"><span class="nav-icon" aria-hidden="true"></span><span class="nav-label">Me</span></button>
         </div>
       </nav>
@@ -9812,8 +9969,9 @@
 
       function setScreen(screen) {
         setPulseRouteBackground(screen);
+        const activeNavScreen = screen === "powerlist" || screen === "pipeline" || screen === "coach" ? "contacts" : screen;
         document.querySelectorAll("[data-screen]").forEach((button) => {
-          if (button.closest(".bottom-inner")) button.classList.toggle("active", button.dataset.screen === screen);
+          if (button.closest(".bottom-inner")) button.classList.toggle("active", button.dataset.screen === activeNavScreen);
         });
         drawer.classList.remove("open");
         window.scrollTo({ top: 0, behavior: "smooth" });
@@ -9931,10 +10089,10 @@
           return;
         }
         const labels = {
-          campaigns: ["Campaigns", "Resend campaign management lands here after core CRM screens."],
-          history: ["History", "Calendar history of past activity logs lands here next."],
-          settings: ["Settings", "App settings and white-label configuration entry points land here next."],
-          manager: ["Manager View", "Manager dashboard, levels, competitions, pipeline, shoutouts, and thresholds land here next."]
+          campaigns: ["Campaigns", "Email follow-up tools will live here when CRM depth is ready."],
+          history: ["History", "Past activity will become a simple calendar of streaks, saves, and wins."],
+          settings: ["Settings", "Profile, organization, notification, and white-label controls will live here."],
+          manager: ["Manager View", "Team coaching, levels, competitions, pipeline, shoutouts, and thresholds will live here."]
         };
         const content = labels[screen] || [screen, "Placeholder screen ready for the next build phase."];
         placeholderTitle.textContent = content[0];
