@@ -1,0 +1,125 @@
+import { getSessionFromRequest, getSupabaseAdmin, readBody, sendJson } from '../_lib/pulse-utils.js';
+
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
+
+export default async function handler(req, res) {
+  if (req.method !== 'POST') return sendJson(res, 405, { error: 'method_not_allowed' });
+
+  try {
+    const raw = await readBody(req);
+    const session = getSessionFromRequest(req, {});
+    const csvText = extractCsv(req, raw);
+    if (!csvText.trim()) return sendJson(res, 400, { error: 'empty_csv' });
+
+    const rows = parseCsv(csvText);
+    const contacts = rows
+      .map(mapCsvContact)
+      .filter((contact) => contact.first_name || contact.last_name || contact.name);
+
+    const supabase = getSupabaseAdmin();
+    let inserted = contacts.length;
+    const errors = [];
+
+    if (supabase && session.id && session.id !== 'demo-user' && contacts.length > 0) {
+      const rowsToInsert = contacts.map((contact) => ({
+        org_id: session.org_id,
+        owner_user_id: session.id,
+        first_name: contact.first_name,
+        last_name: contact.last_name,
+        phone: contact.phone,
+        email: contact.email,
+        city: contact.city,
+        state: contact.state,
+        contact_type: contact.contact_type,
+        imported_from: 'csv',
+        notes: contact.notes,
+      }));
+      const { error } = await supabase.from('contacts').insert(rowsToInsert);
+      if (error) {
+        inserted = 0;
+        errors.push({ reason: error.message });
+      }
+    }
+
+    return sendJson(res, 200, {
+      ok: true,
+      inserted,
+      parsed: contacts.length,
+      errors_count: errors.length,
+      errors,
+      preview: contacts.slice(0, 10),
+      mode: supabase ? 'supabase' : 'local-preview',
+    });
+  } catch (error) {
+    return sendJson(res, 500, { error: error.message || 'csv_upload_failed' });
+  }
+}
+
+function extractCsv(req, raw) {
+  const contentType = req.headers['content-type'] || '';
+  if (!contentType.includes('multipart/form-data')) return raw;
+  const boundary = contentType.split('boundary=')[1];
+  if (!boundary) return raw;
+  const parts = raw.split(`--${boundary}`);
+  const filePart = parts.find((part) => part.includes('name="file"')) || '';
+  const bodyStart = filePart.indexOf('\r\n\r\n');
+  if (bodyStart === -1) return '';
+  return filePart.slice(bodyStart + 4).replace(/\r\n--$/, '').trim();
+}
+
+function parseCsv(text) {
+  const lines = text.replace(/\r/g, '').split('\n').filter((line) => line.trim());
+  if (lines.length < 2) return [];
+  const headers = splitCsvLine(lines[0]).map((header) => header.toLowerCase().trim().replace(/\s+/g, '_'));
+  return lines.slice(1).map((line) => {
+    const values = splitCsvLine(line);
+    const row = {};
+    headers.forEach((header, index) => {
+      row[header] = values[index] || '';
+    });
+    return row;
+  });
+}
+
+function splitCsvLine(line) {
+  const values = [];
+  let current = '';
+  let quoted = false;
+  for (let i = 0; i < line.length; i += 1) {
+    const char = line[i];
+    if (char === '"' && line[i + 1] === '"') {
+      current += '"';
+      i += 1;
+    } else if (char === '"') {
+      quoted = !quoted;
+    } else if (char === ',' && !quoted) {
+      values.push(current.trim());
+      current = '';
+    } else {
+      current += char;
+    }
+  }
+  values.push(current.trim());
+  return values;
+}
+
+function mapCsvContact(row) {
+  const first = row.first_name || row.firstname || row.fname || '';
+  const last = row.last_name || row.lastname || row.lname || '';
+  const name = row.name || [first, last].filter(Boolean).join(' ');
+  return {
+    name,
+    first_name: first || name.split(' ')[0] || '',
+    last_name: last || name.split(' ').slice(1).join(' '),
+    phone: row.phone || row.mobile || '',
+    email: row.email || '',
+    city: row.city || '',
+    state: row.state || '',
+    contact_type: row.contact_type || row.type || 'prospect',
+    notes: row.notes || row.carrier || row.company || '',
+  };
+}

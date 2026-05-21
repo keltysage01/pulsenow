@@ -1,4 +1,13 @@
 {
+  "installCommand": "npm install --omit=dev --ignore-scripts",
+  "buildCommand": null,
+  "outputDirectory": ".",
+  "crons": [
+    {
+      "path": "/api/cron/power-list-daily",
+      "schedule": "0 13 * * *"
+    }
+  ],
   "rewrites": [
     {
       "source": "/(.*)",

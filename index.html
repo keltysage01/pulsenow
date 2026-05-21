@@ -4263,6 +4263,7 @@
       let boardRange = "week";
       let firedUp = {};
       let coachMessages = [];
+      let apiPowerPicks = null;
 
       const logStorageKey = "pulsenow_demo_log";
       const feedStorageKey = "pulsenow_demo_activity_feed";
@@ -4314,6 +4315,44 @@
         ["Became a Net License", "#38B249"],
         ["Suspect/No Response", "#ff5252"]
       ];
+
+      function getCurrentSession() {
+        const raw = sessionStorage.getItem(sessionKey);
+        if (!raw) return null;
+        try {
+          return JSON.parse(raw);
+        } catch {
+          return null;
+        }
+      }
+
+      function encodeSessionHeader() {
+        const session = getCurrentSession();
+        if (!session) return "";
+        try {
+          return btoa(JSON.stringify(session)).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
+        } catch {
+          return "";
+        }
+      }
+
+      async function apiRequest(path, options) {
+        const headers = Object.assign({ "content-type": "application/json" }, (options && options.headers) || {});
+        const encoded = encodeSessionHeader();
+        if (encoded) headers["x-pulsenow-session"] = encoded;
+        const response = await fetch(path, Object.assign({}, options || {}, { headers }));
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(data.error || "Request failed");
+        return data;
+      }
+
+      function fieldToApiAction(field) {
+        if (field === "calls_warm" || field === "calls_cold" || field === "msg_text") return "contact_block";
+        if (field === "appt1_set") return "appt_set";
+        if (field === "fna1") return "fna_complete";
+        if (field === "new_partners") return "partner_added";
+        return "";
+      }
       const recruitSubstepDefs = {
         "Pre-Passing the Test": [
           "Sign AMA",
@@ -4791,18 +4830,6 @@
           '%"></span></div></div>';
       }
 
-      function getCurrentSession() {
-        const raw = sessionStorage.getItem(sessionKey);
-        if (raw) {
-          try {
-            return JSON.parse(raw);
-          } catch {
-            return null;
-          }
-        }
-        return null;
-      }
-
       function getCurrentStats() {
         const calc = calculatePoints();
         const contactsTotal = contactIds.reduce((sum, id) => sum + numberValue(id), 0);
@@ -4955,13 +4982,29 @@
         return "Based on today: " + stats.pts + " points, " + stats.contacts + " contacts, " + stats.appts + " first appointments set. Your next best move is one logged contact block, then follow the Power List until one conversation turns into an appointment.";
       }
 
-      function sendCoachPrompt(text) {
+      async function sendCoachPrompt(text) {
         const prompt = text.trim();
         if (!prompt) return;
         coachMessages.push({ role: "user", text: prompt });
-        coachMessages.push({ role: "coach", text: buildCoachReply(prompt) });
+        coachMessages.push({ role: "coach", text: "Thinking through your numbers..." });
         saveCoach();
         coachInput.value = "";
+        renderCoach();
+        try {
+          const data = await apiRequest("/api/coach/chat", {
+            method: "POST",
+            body: JSON.stringify({
+              session_type: "tactical",
+              message: prompt,
+              currentLog,
+              contacts
+            })
+          });
+          coachMessages[coachMessages.length - 1] = { role: "coach", text: data.reply || buildCoachReply(prompt) };
+        } catch {
+          coachMessages[coachMessages.length - 1] = { role: "coach", text: buildCoachReply(prompt) };
+        }
+        saveCoach();
         renderCoach();
       }
 
@@ -5023,6 +5066,10 @@
       }
 
       function scoreContact(contact) {
+        if (contact.qualifier_score !== undefined && contact.qualifier_score !== null) {
+          const directScore = Number(contact.qualifier_score);
+          if (Number.isFinite(directScore)) return directScore;
+        }
         let score = 0;
         Object.keys(qualifierLabels).forEach((key) => {
           if (contact.qualifiers && contact.qualifiers[key]) score += 1;
@@ -5411,6 +5458,7 @@
       }
 
       function getPowerList(limit) {
+        if (apiPowerPicks && apiPowerPicks.length > 0) return apiPowerPicks.slice(0, limit);
         return contacts
           .filter((contact) => contact.phone && !contact.is_dnc)
           .map((contact) => ({
@@ -5421,6 +5469,30 @@
           }))
           .sort((a, b) => b.priority - a.priority)
           .slice(0, limit);
+      }
+
+      function normalizeApiPowerPick(pick) {
+        const apiContact = pick.contact || pick.contacts || {};
+        const name = apiContact.name || [apiContact.first_name, apiContact.last_name].filter(Boolean).join(" ") || "Recommended Contact";
+        const contact = {
+          id: apiContact.id || pick.contact_id || "api-" + pick.rank,
+          name,
+          phone: apiContact.phone || "",
+          email: apiContact.email || "",
+          type: apiContact.contact_type || "prospect",
+          stage: apiContact.stage || "Uncontacted Team Prospects",
+          last_contact_date: apiContact.last_contact_date || apiContact.last_contacted_at || "",
+          next_followup_date: apiContact.next_followup_date || "",
+          qualifiers: {},
+          qualifier_score: Number(apiContact.qualifier_score || 0)
+        };
+        return {
+          contact,
+          reason: pick.reason || "AI-ranked priority",
+          urgency: pick.urgency || "medium",
+          priority: 100 - Number(pick.rank || 0),
+          hook: pick.hook || ""
+        };
       }
 
       function renderPowerCard(item, index, full) {
@@ -5473,6 +5545,19 @@
         }
       }
 
+      async function refreshPowerListsFromApi(force) {
+        try {
+          const data = await apiRequest("/api/power-list/today" + (force ? "?refresh=1" : ""), { method: "GET" });
+          const picks = data.picks || data.contacts || [];
+          if (picks.length > 0) {
+            apiPowerPicks = picks.map(normalizeApiPowerPick);
+            renderPowerLists();
+          }
+        } catch {
+          apiPowerPicks = null;
+        }
+      }
+
       function markPowerContactDone(contactId) {
         const contact = contacts.find((item) => item.id === contactId);
         if (!contact) return;
@@ -5512,6 +5597,7 @@
         window.scrollTo({ top: 0, behavior: "smooth" });
         if (screen === "home") {
           renderPowerLists();
+          refreshPowerListsFromApi(false);
           homeScreen.classList.remove("hidden");
           logScreen.classList.add("hidden");
           contactsScreen.classList.add("hidden");
@@ -5567,6 +5653,7 @@
         if (screen === "powerlist") {
           hydrateContacts();
           renderPowerLists();
+          refreshPowerListsFromApi(false);
           homeScreen.classList.add("hidden");
           logScreen.classList.add("hidden");
           contactsScreen.classList.add("hidden");
@@ -5716,7 +5803,7 @@
         event.preventDefault();
         heading.closest(".field-section").classList.toggle("open");
       });
-      document.addEventListener("click", (event) => {
+      document.addEventListener("click", async (event) => {
         const task = event.target.closest(".ai-task[data-step], .question-chip[data-step]");
         if (!task) return;
         const field = task.dataset.field;
@@ -5725,6 +5812,20 @@
         updateLogUI();
         task.classList.add("done");
         setTimeout(() => task.classList.remove("done"), 900);
+        const action = fieldToApiAction(field);
+        if (!action) return;
+        try {
+          const data = await apiRequest("/api/activity/log", {
+            method: "POST",
+            body: JSON.stringify({ action, field, currentLog })
+          });
+          if (data.fields) {
+            currentLog = Object.assign({}, currentLog, data.fields);
+            updateLogUI();
+          }
+        } catch {
+          // Offline/local preview keeps the instant sessionStorage behavior.
+        }
       });
       fieldSections.addEventListener("input", (event) => {
         const input = event.target.closest("[data-field-input]");
@@ -5764,7 +5865,11 @@
         contactDetailPanel.classList.add("hidden");
       });
       document.getElementById("mark-contacted-btn").addEventListener("click", markSelectedContacted);
-      document.getElementById("refresh-power-list-btn").addEventListener("click", renderPowerLists);
+      document.getElementById("refresh-power-list-btn").addEventListener("click", () => {
+        apiPowerPicks = null;
+        renderPowerLists();
+        refreshPowerListsFromApi(true);
+      });
       document.getElementById("pipeline-seed-btn").addEventListener("click", () => {
         contacts = cloneDemoContacts();
         substepState = {};
