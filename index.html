@@ -5075,6 +5075,39 @@
         color: #77dcca !important;
       }
 
+      .avatar {
+        overflow: hidden !important;
+        background-size: cover !important;
+        background-position: center !important;
+      }
+
+      .avatar.has-photo {
+        color: transparent !important;
+        border-color: rgba(7, 138, 120, 0.34) !important;
+      }
+
+      .profile-photo-actions {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+        margin-top: 12px;
+      }
+
+      .profile-photo-actions small {
+        color: #697386;
+        font-size: 13px;
+        line-height: 1.25;
+      }
+
+      #profile-photo-input {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        opacity: 0;
+        pointer-events: none;
+      }
+
       /* Phone scale correction: make the app feel like an actual iPhone UI */
       .shell {
         max-width: 430px !important;
@@ -5668,6 +5701,11 @@
               <p class="eyebrow">Me</p>
               <h2 id="me-name">Demo Agent</h2>
               <p class="muted"><span id="me-level">TA</span> · Agent Code <span id="me-code">DEMO</span></p>
+              <div class="profile-photo-actions">
+                <label class="ghost-btn" for="profile-photo-input">Change photo</label>
+                <small>Camera roll or take a photo</small>
+                <input id="profile-photo-input" type="file" accept="image/*" />
+              </div>
             </div>
           </div>
           <p id="me-dream-text" class="muted" style="margin-top:16px; line-height:1.6; font-style:italic;">I make dreams possible.</p>
@@ -5808,6 +5846,7 @@
       const csvImportStatus = document.getElementById("csv-import-status");
       const researchSocialsBtn = document.getElementById("research-socials-btn");
       const exportContactsBtn = document.getElementById("export-contacts-btn");
+      const profilePhotoInput = document.getElementById("profile-photo-input");
 
       let mode = "login";
       let currentLog = {};
@@ -5882,6 +5921,68 @@
           return JSON.parse(raw);
         } catch {
           return null;
+        }
+      }
+
+      function setAvatarPhoto(element, session) {
+        if (!element) return;
+        const photo = session && session.avatar_url ? session.avatar_url : "";
+        const name = session && session.name ? session.name : "Agent";
+        if (photo) {
+          element.textContent = "";
+          element.style.backgroundImage = "url('" + photo + "')";
+          element.classList.add("has-photo");
+        } else {
+          element.style.backgroundImage = "";
+          element.classList.remove("has-photo");
+          element.textContent = name.slice(0, 1).toUpperCase();
+        }
+      }
+
+      function saveCurrentSession(session) {
+        if (!session) return;
+        sessionStorage.setItem(sessionKey, JSON.stringify(session));
+      }
+
+      function compressProfilePhoto(file) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onerror = () => reject(new Error("Could not read image."));
+          reader.onload = () => {
+            const img = new Image();
+            img.onerror = () => reject(new Error("Could not load image."));
+            img.onload = () => {
+              const max = 420;
+              const scale = Math.min(1, max / Math.max(img.width, img.height));
+              const size = Math.max(1, Math.round(Math.min(img.width, img.height) * scale));
+              const sx = Math.max(0, (img.width - Math.min(img.width, img.height)) / 2);
+              const sy = Math.max(0, (img.height - Math.min(img.width, img.height)) / 2);
+              const sourceSize = Math.min(img.width, img.height);
+              const canvas = document.createElement("canvas");
+              canvas.width = size;
+              canvas.height = size;
+              const ctx = canvas.getContext("2d");
+              ctx.drawImage(img, sx, sy, sourceSize, sourceSize, 0, 0, size, size);
+              resolve(canvas.toDataURL("image/jpeg", 0.82));
+            };
+            img.src = reader.result;
+          };
+          reader.readAsDataURL(file);
+        });
+      }
+
+      async function handleProfilePhoto(file) {
+        if (!file) return;
+        const session = getCurrentSession();
+        if (!session) return;
+        try {
+          const dataUrl = await compressProfilePhoto(file);
+          session.avatar_url = dataUrl;
+          saveCurrentSession(session);
+          setAvatarPhoto(avatar, session);
+          setAvatarPhoto(document.getElementById("me-avatar"), session);
+        } catch (error) {
+          alert(error.message || "Could not save profile photo.");
         }
       }
 
@@ -6107,7 +6208,7 @@
         app.classList.remove("hidden");
         profileName.textContent = session.name;
         drawerName.textContent = session.name;
-        avatar.textContent = session.name.slice(0, 1).toUpperCase();
+        setAvatarPhoto(avatar, session);
       }
 
       function showLogin() {
@@ -6422,7 +6523,7 @@
         const session = getCurrentSession() || { name: "Demo Agent", level: "TA", agent_code: "DEMO" };
         const stats = getCurrentStats();
         document.getElementById("me-name").textContent = session.name || "Demo Agent";
-        document.getElementById("me-avatar").textContent = (session.name || "D").slice(0, 1).toUpperCase();
+        setAvatarPhoto(document.getElementById("me-avatar"), session);
         document.getElementById("me-level").textContent = session.level || "TA";
         document.getElementById("me-code").textContent = session.agent_code || "DEMO";
         badgeGrid.innerHTML = "";
@@ -7697,6 +7798,11 @@
       });
       researchSocialsBtn.addEventListener("click", researchImportedSocials);
       exportContactsBtn.addEventListener("click", exportContactsCsv);
+      profilePhotoInput.addEventListener("change", (event) => {
+        const file = event.target.files && event.target.files[0];
+        handleProfilePhoto(file);
+        event.target.value = "";
+      });
       document.getElementById("seed-contacts-btn").addEventListener("click", () => {
         contacts = cloneDemoContacts();
         saveContacts();
