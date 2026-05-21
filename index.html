@@ -4768,6 +4768,125 @@
       html[data-theme="dark"] .bottom-nav button.active .nav-icon {
         background: rgba(119, 220, 202, 0.18);
       }
+
+      /* Contact detail cleanup: readable native rows and compact qualifier chips */
+      #contact-detail-panel {
+        overflow: hidden !important;
+      }
+
+      #contact-detail-panel .section-head {
+        align-items: flex-start !important;
+      }
+
+      #detail-name {
+        max-width: min(100%, 430px) !important;
+        font-size: clamp(30px, 8vw, 42px) !important;
+        line-height: 1.03 !important;
+        word-break: break-word !important;
+        overflow-wrap: anywhere !important;
+      }
+
+      #contact-detail-panel .detail-grid {
+        gap: 0 !important;
+        margin-top: 16px !important;
+        border-top: 1px solid rgba(17, 24, 39, 0.08) !important;
+      }
+
+      #contact-detail-panel .detail-line {
+        display: grid !important;
+        grid-template-columns: minmax(88px, 0.55fr) minmax(0, 1fr) !important;
+        align-items: center !important;
+        gap: 16px !important;
+        padding: 13px 0 !important;
+        border-bottom: 1px solid rgba(17, 24, 39, 0.08) !important;
+        font-size: 16px !important;
+      }
+
+      #contact-detail-panel .detail-line span {
+        font-size: 16px !important;
+        color: #697386 !important;
+      }
+
+      #contact-detail-panel .detail-line strong {
+        min-width: 0 !important;
+        text-align: right !important;
+        font-size: 15.5px !important;
+        font-weight: 600 !important;
+        line-height: 1.25 !important;
+        color: #172033 !important;
+        overflow-wrap: anywhere !important;
+      }
+
+      #detail-qualifiers.qualifier-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 10px !important;
+        margin-top: 18px !important;
+      }
+
+      #detail-qualifiers .toggle-btn {
+        min-width: 0 !important;
+        min-height: 48px !important;
+        height: auto !important;
+        padding: 12px 14px !important;
+        border-radius: 18px !important;
+        justify-content: flex-start !important;
+        place-items: initial !important;
+        text-align: left !important;
+        white-space: normal !important;
+        overflow-wrap: anywhere !important;
+        font-size: 14.5px !important;
+        font-weight: 560 !important;
+        line-height: 1.2 !important;
+        background: rgba(255, 255, 255, 0.64) !important;
+        box-shadow: 0 10px 24px rgba(31, 65, 85, 0.07) !important;
+      }
+
+      #detail-qualifiers .toggle-btn.active {
+        color: #078a78 !important;
+        border-color: rgba(7, 138, 120, 0.22) !important;
+        background: rgba(7, 138, 120, 0.11) !important;
+      }
+
+      .detail-social-link {
+        text-decoration: none !important;
+      }
+
+      #research-socials-btn {
+        width: 100% !important;
+        margin-top: 12px !important;
+        justify-content: center !important;
+      }
+
+      @media (max-width: 420px) {
+        #detail-qualifiers.qualifier-grid {
+          grid-template-columns: 1fr !important;
+        }
+
+        #contact-detail-panel .detail-line {
+          grid-template-columns: 1fr !important;
+          gap: 4px !important;
+        }
+
+        #contact-detail-panel .detail-line strong {
+          text-align: left !important;
+        }
+      }
+
+      html[data-theme="dark"] #contact-detail-panel .detail-line {
+        border-color: rgba(255, 255, 255, 0.1) !important;
+      }
+
+      html[data-theme="dark"] #contact-detail-panel .detail-line span {
+        color: rgba(235, 245, 255, 0.68) !important;
+      }
+
+      html[data-theme="dark"] #contact-detail-panel .detail-line strong {
+        color: #f8fbff !important;
+      }
+
+      html[data-theme="dark"] #detail-qualifiers .toggle-btn {
+        background: rgba(17, 34, 54, 0.76) !important;
+      }
     </style>
   </head>
   <body>
@@ -5003,6 +5122,7 @@
             <input id="csv-file-input" type="file" accept=".csv,text/csv" />
           </label>
           <div id="csv-import-status" class="session-item">No file selected yet.</div>
+          <button id="research-socials-btn" class="ghost-btn hidden" type="button">Research socials + LinkedIn</button>
         </section>
 
         <section id="add-contact-panel" class="section card hidden">
@@ -5304,6 +5424,7 @@
       const contactDetailPanel = document.getElementById("contact-detail-panel");
       const csvFileInput = document.getElementById("csv-file-input");
       const csvImportStatus = document.getElementById("csv-import-status");
+      const researchSocialsBtn = document.getElementById("research-socials-btn");
 
       let mode = "login";
       let currentLog = {};
@@ -5318,6 +5439,7 @@
       let firedUp = {};
       let coachMessages = [];
       let apiPowerPicks = null;
+      let lastImportedContacts = [];
 
       const logStorageKey = "pulsenow_demo_log";
       const feedStorageKey = "pulsenow_demo_activity_feed";
@@ -6508,6 +6630,13 @@
         const followup = rowValue(row, ["next_followup_date", "followup", "follow_up", "follow_up_date"]);
         const stage = rowValue(row, ["stage", "pipeline_stage"]) || "Uncontacted Team Prospects";
         const notes = rowValue(row, ["notes", "note", "company", "carrier"]);
+        const city = rowValue(row, ["city"]);
+        const state = rowValue(row, ["state", "province"]);
+        const company = rowValue(row, ["company", "business", "employer", "organization"]);
+        const linkedin = rowValue(row, ["linkedin", "linked_in", "linkedin_url", "linked_in_url"]);
+        const facebook = rowValue(row, ["facebook", "facebook_url", "fb"]);
+        const instagram = rowValue(row, ["instagram", "instagram_url", "ig"]);
+        const tiktok = rowValue(row, ["tiktok", "tiktok_url"]);
         const contactName = name || email || phone || "Imported Contact " + (index + 1);
         const qualifiers = {
           married: parseCsvBool(rowValue(row, ["married", "spouse"])),
@@ -6531,6 +6660,10 @@
           last_contact_outcome: "",
           is_top_100: score >= 5,
           is_business: looksLikeBusiness(contactName, phone),
+          city,
+          state,
+          company,
+          socials: { linkedin, facebook, instagram, tiktok },
           notes,
           qualifiers
         };
@@ -6558,9 +6691,11 @@
         const rows = parseCsvText(text);
         const imported = rows.map(csvRowToContact).filter((contact) => contact.name || contact.phone || contact.email);
         const added = mergeImportedContacts(imported);
+        lastImportedContacts = imported.slice(0, 50);
         const businessCount = imported.filter((contact) => contact.is_business).length;
         const topCount = imported.filter((contact) => contact.is_top_100).length;
         csvImportStatus.textContent = "Imported " + added + " contacts · " + topCount + " Top 100 candidates · " + businessCount + " possible business records flagged.";
+        researchSocialsBtn.classList.toggle("hidden", imported.length === 0);
 
         try {
           const body = new FormData();
@@ -6571,6 +6706,51 @@
           await fetch("/api/contacts/upload", { method: "POST", headers, body });
         } catch {
           // The mobile app keeps the on-device import even if backend sync is unavailable.
+        }
+      }
+
+      async function researchImportedSocials() {
+        const batch = lastImportedContacts.length ? lastImportedContacts : contacts.slice(0, 50);
+        if (!batch.length) {
+          csvImportStatus.textContent = "Import a CSV first, then Pulsenow can research socials for that list.";
+          return;
+        }
+        researchSocialsBtn.disabled = true;
+        researchSocialsBtn.textContent = "Researching...";
+        csvImportStatus.textContent = "Researching LinkedIn and social profiles for " + batch.length + " contacts...";
+        try {
+          const encoded = encodeSessionHeader();
+          const headers = { "content-type": "application/json" };
+          if (encoded) headers["x-pulsenow-session"] = encoded;
+          const response = await fetch("/api/contacts/research-socials", {
+            method: "POST",
+            headers,
+            body: JSON.stringify({ contacts: batch, depth: "standard" })
+          });
+          const data = await response.json();
+          if (!response.ok) throw new Error(data.error || "research_failed");
+          const results = Array.isArray(data.results) ? data.results : [];
+          const byName = {};
+          results.forEach((result) => {
+            if (result && result.name) byName[result.name.toLowerCase()] = result;
+          });
+          contacts = contacts.map((contact) => {
+            const research = byName[(contact.name || "").toLowerCase()];
+            if (!research) return contact;
+            return Object.assign({}, contact, {
+              socials: Object.assign({}, contact.socials || {}, research.socials || {}),
+              research: research
+            });
+          });
+          saveContacts();
+          renderContacts();
+          const linkedinMatches = results.filter((result) => result.socials && result.socials.linkedin).length;
+          csvImportStatus.textContent = "Social research ready · " + linkedinMatches + " LinkedIn matches or targets · " + results.length + " contacts organized.";
+        } catch (error) {
+          csvImportStatus.textContent = "Social research could not run yet. The API is ready; add a search key for live lookup. " + (error.message || "");
+        } finally {
+          researchSocialsBtn.disabled = false;
+          researchSocialsBtn.textContent = "Research socials + LinkedIn";
         }
       }
 
@@ -6597,6 +6777,19 @@
           item.textContent = qualifierLabels[key];
           detailQualifiers.appendChild(item);
         });
+        const research = contact.research;
+        if (research && research.socials) {
+          Object.keys(research.socials).forEach((key) => {
+            if (!research.socials[key]) return;
+            const item = document.createElement("a");
+            item.className = "toggle-btn active detail-social-link";
+            item.href = research.socials[key];
+            item.target = "_blank";
+            item.rel = "noreferrer";
+            item.textContent = key.charAt(0).toUpperCase() + key.slice(1);
+            detailQualifiers.appendChild(item);
+          });
+        }
         contactDetailPanel.classList.remove("hidden");
         contactDetailPanel.scrollIntoView({ behavior: "smooth", block: "start" });
       }
@@ -7048,6 +7241,7 @@
         handleCsvImport(file);
         event.target.value = "";
       });
+      researchSocialsBtn.addEventListener("click", researchImportedSocials);
       document.getElementById("seed-contacts-btn").addEventListener("click", () => {
         contacts = cloneDemoContacts();
         saveContacts();
