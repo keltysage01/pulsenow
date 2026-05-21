@@ -4988,6 +4988,37 @@
         background: rgba(255, 255, 255, 0.08);
         color: rgba(235, 245, 255, 0.68);
       }
+
+      /* Login tabs: remove heavy grey border and keep it clean */
+      .login-card .tabs {
+        gap: 8px !important;
+        padding: 4px !important;
+        background: rgba(255, 255, 255, 0.22) !important;
+        border: 0 !important;
+        box-shadow: none !important;
+      }
+
+      .login-card .tabs button {
+        border: 0 !important;
+        box-shadow: none !important;
+        background: transparent !important;
+        color: #697386 !important;
+        font-weight: 500 !important;
+      }
+
+      .login-card .tabs button.active {
+        background: linear-gradient(135deg, #1d6a8b, #57c8bd) !important;
+        color: #fff !important;
+        box-shadow: 0 10px 22px rgba(31, 106, 139, 0.18) !important;
+      }
+
+      html[data-theme="dark"] .login-card .tabs {
+        background: rgba(255, 255, 255, 0.05) !important;
+      }
+
+      html[data-theme="dark"] .login-card .tabs button {
+        color: rgba(235, 245, 255, 0.68) !important;
+      }
     </style>
   </head>
   <body>
