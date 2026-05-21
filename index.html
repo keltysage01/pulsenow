@@ -2819,6 +2819,139 @@
         font-weight: 680;
         letter-spacing: -0.03em;
       }
+
+      .section-subcopy {
+        margin-top: 5px;
+        max-width: 440px;
+        font-size: 15px;
+        line-height: 1.35;
+      }
+
+      #me-stats.stat-grid,
+      #me-stats {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+        margin-top: 14px;
+      }
+
+      .me-stat-tile {
+        position: relative;
+        display: grid;
+        min-height: auto;
+        gap: 12px;
+        padding: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.82);
+        border-radius: 24px;
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(247, 252, 253, 0.76)),
+          radial-gradient(circle at 18% 8%, rgba(83, 195, 211, 0.14), transparent 34%);
+        box-shadow:
+          0 14px 34px rgba(16, 41, 74, 0.09),
+          inset 0 1px 0 rgba(255, 255, 255, 0.92);
+        overflow: hidden;
+      }
+
+      .me-stat-tile.primary {
+        background:
+          linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(233, 249, 249, 0.78)),
+          radial-gradient(circle at 16% 0%, rgba(83, 195, 211, 0.2), transparent 38%),
+          radial-gradient(circle at 92% 8%, rgba(143, 209, 106, 0.22), transparent 34%);
+      }
+
+      .me-stat-tile::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background: linear-gradient(120deg, rgba(255, 255, 255, 0.62), transparent 34%);
+        opacity: 0.55;
+      }
+
+      .me-stat-tile > * {
+        position: relative;
+      }
+
+      .stat-top {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .stat-top span {
+        color: #667085;
+        font-size: 13px;
+        font-weight: 650;
+        letter-spacing: -0.01em;
+      }
+
+      .stat-top strong {
+        color: #111827;
+        font-size: 34px;
+        font-weight: 650;
+        letter-spacing: -0.05em;
+        line-height: 0.95;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .me-stat-tile p {
+        min-height: 36px;
+        margin: 0;
+        color: #667085;
+        font-size: 13px;
+        font-weight: 470;
+        line-height: 1.35;
+      }
+
+      .me-stat-tile .bar {
+        height: 7px;
+        background: rgba(17, 24, 39, 0.08);
+      }
+
+      .me-stat-tile .bar span {
+        min-width: 6px;
+      }
+
+      #me-screen .section:last-of-type {
+        padding-bottom: 92px;
+      }
+
+      .bottom-nav {
+        height: 58px;
+        max-width: 640px;
+        margin: 0 auto;
+        border-radius: 25px;
+        background: rgba(255, 255, 255, 0.9);
+        box-shadow:
+          0 10px 30px rgba(16, 41, 74, 0.14),
+          inset 0 1px 0 rgba(255, 255, 255, 0.96);
+      }
+
+      .bottom-inner {
+        padding: 5px;
+      }
+
+      .bottom-nav button {
+        min-height: 48px;
+        border-radius: 20px;
+        font-size: 10px;
+        font-weight: 560;
+      }
+
+      .bottom-nav button::before {
+        width: 24px;
+        height: 19px;
+        font-size: 13px;
+      }
+
+      .bottom-nav button.active {
+        color: #0f5f86;
+      }
+
+      .bottom-nav button.active::before {
+        background: linear-gradient(135deg, rgba(83, 195, 211, 0.24), rgba(143, 209, 106, 0.22));
+      }
       /* Grounding pass: make surfaces sit on the canvas */
       body {
         background:
@@ -3535,6 +3668,70 @@
           justify-self: start;
         }
       }
+
+      /* Final cleanup: compact iPhone-app rhythm where later rules cannot override it */
+      #me-stats.stat-grid,
+      #me-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 12px !important;
+      }
+
+      #me-stats .me-stat-tile {
+        min-height: 132px;
+      }
+
+      #me-stats .me-stat-tile,
+      #me-stats .stat {
+        padding: 16px !important;
+      }
+
+      #me-stats .stat-top strong {
+        font-size: clamp(30px, 6.2vw, 40px);
+      }
+
+      #me-screen .section {
+        margin-top: 30px;
+      }
+
+      #me-screen .section-head h2 {
+        font-size: clamp(32px, 5.8vw, 44px);
+      }
+
+      .bottom-nav {
+        left: 16px !important;
+        right: 16px !important;
+        bottom: 12px !important;
+        height: 58px !important;
+        border-radius: 26px !important;
+        background: rgba(255, 255, 255, 0.92) !important;
+      }
+
+      .bottom-inner {
+        padding: 5px !important;
+      }
+
+      .bottom-nav button {
+        min-height: 48px !important;
+        border-radius: 20px !important;
+        font-size: 10px !important;
+        font-weight: 560 !important;
+      }
+
+      @media (max-width: 520px) {
+        #me-stats.stat-grid,
+        #me-stats {
+          grid-template-columns: 1fr !important;
+        }
+
+        #me-stats .me-stat-tile {
+          min-height: 112px;
+        }
+
+        .bottom-nav {
+          left: 10px !important;
+          right: 10px !important;
+        }
+      }
     </style>
   </head>
   <body>
@@ -3947,6 +4144,7 @@
             <div>
               <p class="eyebrow">Stats</p>
               <h2>This week</h2>
+              <p class="muted section-subcopy">Clean read on what moved and what needs attention next.</p>
             </div>
           </div>
           <div id="me-stats" class="stat-grid"></div>
@@ -4670,16 +4868,42 @@
             '%"></span></div>';
           careerTrack.appendChild(row);
         });
+        const nextTierTarget = stats.pts >= 21 ? 21 : stats.pts >= 11 ? 21 : stats.pts >= 4 ? 11 : 4;
+        const nextTierLabel = stats.pts >= 21 ? "Maintain All-the-Timer" : stats.pts >= 11 ? "All-the-Timer" : stats.pts >= 4 ? "Full Timer" : "Part Timer";
+        const pointsPct = Math.min(100, Math.round((stats.pts / 21) * 100));
+        const contactPct = Math.min(100, Math.round(((stats.contacts % 10) / 10) * 100));
+        const apptPct = Math.min(100, Math.round((stats.appts / 12) * 100));
+        const recruitPct = Math.min(100, Math.round((stats.recruits / 3) * 100));
+        const pointsCopy = stats.pts >= 21 ? "Elite pace. Keep the streak alive." : Math.max(0, nextTierTarget - stats.pts) + " points to " + nextTierLabel + ".";
+        const contactsCopy = stats.contacts % 10 === 0 && stats.contacts > 0 ? "Contact point earned. Start the next block." : (10 - (stats.contacts % 10)) + " contacts to the next point.";
+        const apptCopy = stats.appts > 0 ? "Appointments are on the board." : "No appointments set yet.";
+        const recruitCopy = stats.recruits > 0 ? "Recruiting momentum started." : "No new partners logged yet.";
         meStats.innerHTML =
-          '<div class="stat"><strong>' +
+          '<article class="me-stat-tile primary"><div class="stat-top"><span>Points</span><strong>' +
           stats.pts +
-          '</strong><span>points</span></div><div class="stat"><strong>' +
+          '</strong></div><p>' +
+          pointsCopy +
+          '</p><div class="bar"><span style="width:' +
+          pointsPct +
+          '%"></span></div></article><article class="me-stat-tile"><div class="stat-top"><span>Contacts</span><strong>' +
           stats.contacts +
-          '</strong><span>contacts</span></div><div class="stat"><strong>' +
+          '</strong></div><p>' +
+          contactsCopy +
+          '</p><div class="bar"><span style="width:' +
+          contactPct +
+          '%"></span></div></article><article class="me-stat-tile"><div class="stat-top"><span>Appointments</span><strong>' +
           stats.appts +
-          '</strong><span>appts set</span></div><div class="stat"><strong>' +
+          '</strong></div><p>' +
+          apptCopy +
+          '</p><div class="bar"><span style="width:' +
+          apptPct +
+          '%"></span></div></article><article class="me-stat-tile"><div class="stat-top"><span>Recruits</span><strong>' +
           stats.recruits +
-          '</strong><span>recruits</span></div>';
+          '</strong></div><p>' +
+          recruitCopy +
+          '</p><div class="bar"><span style="width:' +
+          recruitPct +
+          '%"></span></div></article>';
       }
 
       function hydrateCoach() {
