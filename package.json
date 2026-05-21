@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "NODE_DISABLE_COMPILE_CACHE=1 vite --config vite.config.ts",
-    "build": "NODE_DISABLE_COMPILE_CACHE=1 vite build --config vite.config.ts && node scripts/sync-build-output.mjs",
+    "build": "node scripts/vercel-static-build.mjs",
     "typecheck": "tsc --noEmit",
     "preview": "vite preview --config vite.config.ts"
   },
