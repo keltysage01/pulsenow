@@ -5331,6 +5331,46 @@
       .shell {
         padding-top: calc(env(safe-area-inset-top, 0px) + 66px) !important;
       }
+
+      /* Form typography correction: stop labels/placeholders from feeling heavy */
+      label {
+        color: #172033 !important;
+        font-size: 15.5px !important;
+        font-weight: 450 !important;
+        letter-spacing: -0.012em !important;
+      }
+
+      input,
+      select,
+      textarea {
+        color: #172033 !important;
+        font-size: 16px !important;
+        font-weight: 400 !important;
+        letter-spacing: -0.012em !important;
+      }
+
+      input::placeholder,
+      textarea::placeholder {
+        color: rgba(17, 24, 39, 0.45) !important;
+        font-weight: 400 !important;
+      }
+
+      #pin-input {
+        font-weight: 400 !important;
+        letter-spacing: 0.06em !important;
+      }
+
+      html[data-theme="dark"] label,
+      html[data-theme="dark"] input,
+      html[data-theme="dark"] select,
+      html[data-theme="dark"] textarea {
+        color: #f8fbff !important;
+      }
+
+      html[data-theme="dark"] input::placeholder,
+      html[data-theme="dark"] textarea::placeholder {
+        color: rgba(235, 245, 255, 0.42) !important;
+      }
     </style>
   </head>
   <body>
