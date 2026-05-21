@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#38B249" />
     <title>Pulsenow</title>
+    <link rel="stylesheet" href="public/design-system/pulsenow.tokens.css" />
     <style>
       :root {
         --primary: #16466d;
@@ -5659,9 +5660,621 @@
         background: rgba(9, 20, 33, 0.52) !important;
         border-color: rgba(255, 255, 255, 0.14) !important;
       }
+
+      /* PulseNow design system pack integration: native iOS glass layer */
+      :root {
+        --pulse-ink: #101827;
+        --pulse-muted: #667085;
+        --pulse-blue: #357292;
+        --pulse-teal: #5ed5ce;
+        --pulse-mint: #bdf4d7;
+        --pulse-surface: rgba(255, 255, 255, 0.58);
+        --pulse-surface-strong: rgba(255, 255, 255, 0.78);
+        --pulse-border: rgba(255, 255, 255, 0.74);
+        --pulse-shadow: rgba(31, 65, 85, 0.12);
+        --pulse-radius-card: 26px;
+        --pulse-radius-panel: 30px;
+        --pulse-radius-pill: 999px;
+      }
+
+      html[data-theme="dark"] {
+        --pulse-ink: #f7fbff;
+        --pulse-muted: rgba(235, 245, 255, 0.72);
+        --pulse-surface: rgba(12, 22, 38, 0.58);
+        --pulse-surface-strong: rgba(16, 29, 49, 0.76);
+        --pulse-border: rgba(255, 255, 255, 0.16);
+        --pulse-shadow: rgba(0, 0, 0, 0.32);
+      }
+
+      html,
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", Inter, system-ui, sans-serif !important;
+        color: var(--pulse-ink);
+        -webkit-font-smoothing: antialiased;
+        text-rendering: geometricPrecision;
+      }
+
+      body {
+        background:
+          radial-gradient(circle at 18% 8%, rgba(189, 238, 255, 0.36), transparent 34%),
+          radial-gradient(circle at 86% 18%, rgba(189, 244, 215, 0.38), transparent 36%),
+          #f7fffd !important;
+        font-size: 15px;
+        font-weight: 400;
+        letter-spacing: -0.01em;
+      }
+
+      #pulse-route-background {
+        position: fixed;
+        inset: -3%;
+        z-index: -2;
+        background-image: url("public/backgrounds/dashboard/pulsenow_dashboard_01.svg");
+        background-size: cover;
+        background-position: center;
+        opacity: 0.88;
+        transform: scale(1.04);
+        transition: opacity 240ms ease, background-image 240ms ease;
+        animation: pulseBackgroundDrift 34s ease-in-out infinite alternate;
+        pointer-events: none;
+      }
+
+      #pulse-route-background::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+          linear-gradient(180deg, rgba(255,255,255,0.18), rgba(255,255,255,0.38)),
+          radial-gradient(circle at 22% 10%, rgba(255,255,255,0.22), transparent 32%),
+          radial-gradient(circle at 82% 24%, rgba(255,255,255,0.2), transparent 30%);
+      }
+
+      html[data-theme="dark"] #pulse-route-background {
+        opacity: 0.72;
+        filter: saturate(1.12) brightness(0.62);
+      }
+
+      html[data-theme="dark"] #pulse-route-background::after {
+        background:
+          linear-gradient(180deg, rgba(4, 10, 20, 0.28), rgba(4, 10, 20, 0.54)),
+          radial-gradient(circle at 24% 18%, rgba(94, 213, 206, 0.12), transparent 34%);
+      }
+
+      @keyframes pulseBackgroundDrift {
+        0% { transform: scale(1.04) translate3d(-1.2%, -0.8%, 0); }
+        100% { transform: scale(1.075) translate3d(1.2%, 0.8%, 0); }
+      }
+
+      .app {
+        background: transparent !important;
+      }
+
+      .shell {
+        width: min(100%, 430px);
+        max-width: 430px;
+        padding: calc(env(safe-area-inset-top, 0px) + 74px) 20px calc(env(safe-area-inset-bottom, 0px) + 102px) !important;
+      }
+
+      .topbar {
+        inset: 0 0 auto 0 !important;
+        width: 100%;
+        min-height: calc(env(safe-area-inset-top, 0px) + 58px);
+        padding-top: env(safe-area-inset-top, 0px);
+        background: rgba(255, 255, 255, 0.72) !important;
+        border-bottom: 1px solid rgba(16, 24, 39, 0.08);
+        box-shadow: 0 10px 26px rgba(31, 65, 85, 0.08);
+        backdrop-filter: blur(22px) saturate(150%);
+        -webkit-backdrop-filter: blur(22px) saturate(150%);
+      }
+
+      html[data-theme="dark"] .topbar {
+        background: rgba(7, 15, 28, 0.74) !important;
+        border-color: rgba(255, 255, 255, 0.12);
+      }
+
+      .topbar-inner {
+        width: min(100%, 430px);
+        height: 58px !important;
+        margin: 0 auto;
+        padding: 0 20px !important;
+        display: grid !important;
+        grid-template-columns: 1fr auto 1fr;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .brand {
+        width: auto !important;
+        min-width: 0 !important;
+        height: auto !important;
+        padding: 0 !important;
+        border: 0 !important;
+        border-radius: 0 !important;
+        background: transparent !important;
+        box-shadow: none !important;
+      }
+
+      .brand-logo {
+        width: 106px !important;
+        max-height: 34px !important;
+        object-fit: contain;
+      }
+
+      .icon-btn,
+      #menu-btn,
+      #theme-btn,
+      .text-btn {
+        min-height: 36px !important;
+        padding: 8px 2px !important;
+        border: 0 !important;
+        border-radius: var(--pulse-radius-pill) !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        color: #008577 !important;
+        font-size: 16px !important;
+        font-weight: 500 !important;
+        letter-spacing: -0.01em !important;
+      }
+
+      #theme-btn {
+        justify-self: end;
+      }
+
+      h1 {
+        font-size: clamp(28px, 7vw, 32px) !important;
+        line-height: 1.08 !important;
+        font-weight: 700 !important;
+        letter-spacing: -0.045em !important;
+      }
+
+      h2 {
+        font-size: 23px !important;
+        line-height: 1.14 !important;
+        font-weight: 650 !important;
+        letter-spacing: -0.035em !important;
+      }
+
+      h3 {
+        font-size: 17px !important;
+        line-height: 1.22 !important;
+        font-weight: 650 !important;
+        letter-spacing: -0.02em !important;
+      }
+
+      p,
+      .muted,
+      .chat-bubble,
+      .detail-line,
+      .field-note,
+      .contact-card p {
+        font-size: 15px !important;
+        line-height: 1.42 !important;
+        font-weight: 400 !important;
+      }
+
+      strong {
+        font-weight: 650;
+      }
+
+      .eyebrow {
+        margin-bottom: 8px !important;
+        color: var(--pulse-blue) !important;
+        font-size: 12px !important;
+        line-height: 1.1 !important;
+        font-weight: 650 !important;
+        letter-spacing: 0.16em !important;
+      }
+
+      .card,
+      .login-card,
+      .pulse-main-container,
+      .goals-panel,
+      .field-section,
+      .clarity-panel,
+      .questionnaire-panel,
+      .summary-tile,
+      .leader-row,
+      .competition-card,
+      .career-card,
+      .pipeline-column,
+      .pipeline-card,
+      .detail-panel,
+      .contact-card,
+      .save-row,
+      .session-item,
+      .chat-bubble {
+        border: 1px solid var(--pulse-border) !important;
+        border-radius: var(--pulse-radius-card) !important;
+        background: var(--pulse-surface) !important;
+        box-shadow: 0 18px 45px var(--pulse-shadow), inset 0 1px 0 rgba(255, 255, 255, 0.74) !important;
+        backdrop-filter: blur(22px) saturate(145%) !important;
+        -webkit-backdrop-filter: blur(22px) saturate(145%) !important;
+      }
+
+      .profile,
+      .section,
+      .card,
+      .field-section,
+      .clarity-panel,
+      .questionnaire-panel {
+        margin-top: 22px !important;
+        padding: 20px !important;
+      }
+
+      .profile {
+        display: grid !important;
+        grid-template-columns: 74px 1fr !important;
+        align-items: center !important;
+        gap: 16px !important;
+        min-height: 116px !important;
+      }
+
+      .profile h2,
+      #profile-name,
+      #me-name {
+        font-size: 25px !important;
+        line-height: 1.08 !important;
+        font-weight: 650 !important;
+        letter-spacing: -0.045em !important;
+      }
+
+      .avatar {
+        width: 74px !important;
+        height: 74px !important;
+        font-size: 31px !important;
+        font-weight: 650 !important;
+        border-width: 3px !important;
+        box-shadow: 0 10px 28px rgba(31, 65, 85, 0.11) !important;
+      }
+
+      .level,
+      .score-pill,
+      .stage-pill,
+      .overdue-pill,
+      .count-pill,
+      .urgency,
+      .social-chip,
+      .category-chip,
+      .research-chip {
+        min-height: 24px !important;
+        padding: 5px 10px !important;
+        border-radius: var(--pulse-radius-pill) !important;
+        font-size: 12px !important;
+        line-height: 1 !important;
+        font-weight: 650 !important;
+      }
+
+      .section-head {
+        align-items: center !important;
+        gap: 14px !important;
+        margin-bottom: 16px !important;
+      }
+
+      .section-head h2 {
+        font-size: 24px !important;
+        font-weight: 650 !important;
+      }
+
+      .vision-workspace {
+        overflow: hidden;
+      }
+
+      .vision-board-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        grid-auto-rows: 118px !important;
+        gap: 12px !important;
+      }
+
+      .vision-card {
+        border-radius: 20px !important;
+        box-shadow: 0 14px 32px rgba(31, 65, 85, 0.14) !important;
+      }
+
+      .vision-card.tall {
+        grid-row: span 2;
+      }
+
+      .vision-card.wide {
+        grid-column: span 2;
+      }
+
+      .vision-progress-badge {
+        top: 10px !important;
+        right: 10px !important;
+        padding: 5px 9px !important;
+        border-radius: 999px !important;
+        font-size: 12px !important;
+        font-weight: 650 !important;
+      }
+
+      .vision-card-title {
+        left: 12px !important;
+        right: 12px !important;
+        bottom: 12px !important;
+        font-size: 16px !important;
+        font-weight: 650 !important;
+      }
+
+      .weekly-goals-list {
+        gap: 16px !important;
+      }
+
+      .goal-row {
+        gap: 8px !important;
+      }
+
+      .goal-row strong,
+      .goal-row span {
+        font-size: 16px !important;
+        font-weight: 550 !important;
+      }
+
+      .goal-progress-track,
+      .progress {
+        height: 9px !important;
+        border-radius: 999px !important;
+        background: rgba(16, 24, 39, 0.08) !important;
+        box-shadow: inset 0 1px 3px rgba(16, 24, 39, 0.12) !important;
+      }
+
+      .goal-progress-bar-fill,
+      .progress > div {
+        border-radius: inherit !important;
+      }
+
+      .bottom-nav {
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        width: 100% !important;
+        min-height: calc(72px + env(safe-area-inset-bottom, 0px)) !important;
+        padding: 8px max(14px, env(safe-area-inset-left, 0px)) calc(8px + env(safe-area-inset-bottom, 0px)) max(14px, env(safe-area-inset-right, 0px)) !important;
+        border-radius: 0 !important;
+        border: 0 !important;
+        border-top: 1px solid rgba(16, 24, 39, 0.08) !important;
+        background: rgba(255, 255, 255, 0.82) !important;
+        box-shadow: 0 -12px 34px rgba(31, 65, 85, 0.1) !important;
+        backdrop-filter: blur(24px) saturate(150%) !important;
+        -webkit-backdrop-filter: blur(24px) saturate(150%) !important;
+      }
+
+      .bottom-inner {
+        width: min(100%, 430px) !important;
+        margin: 0 auto !important;
+        display: grid !important;
+        grid-template-columns: repeat(5, 1fr) !important;
+        gap: 4px !important;
+      }
+
+      .bottom-nav button {
+        min-height: 56px !important;
+        padding: 6px 4px !important;
+        border: 0 !important;
+        border-radius: 18px !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        color: #7b8491 !important;
+        font-size: 12px !important;
+        font-weight: 500 !important;
+        gap: 5px !important;
+      }
+
+      .bottom-nav button::before {
+        width: 30px !important;
+        height: 30px !important;
+      }
+
+      .bottom-nav button.active {
+        color: #008577 !important;
+        font-weight: 650 !important;
+        transform: none !important;
+      }
+
+      .bottom-nav button.active::before,
+      .bottom-nav button.active .nav-icon {
+        background: rgba(0, 133, 119, 0.12) !important;
+        box-shadow: none !important;
+      }
+
+      html[data-theme="dark"] .bottom-nav {
+        background: rgba(8, 16, 30, 0.82) !important;
+        border-top-color: rgba(255, 255, 255, 0.1) !important;
+      }
+
+      .nav-label {
+        font-size: 12px !important;
+        line-height: 1 !important;
+        font-weight: inherit !important;
+      }
+
+      .primary-btn,
+      .ghost-btn,
+      .pill-btn,
+      .filter-btn,
+      .drawer-link,
+      .question-chip,
+      .substep-btn,
+      .qualifier-btn,
+      .tabs button,
+      .contact-actions a,
+      .contact-actions button {
+        min-height: 40px !important;
+        border-radius: var(--pulse-radius-pill) !important;
+        font-size: 14px !important;
+        line-height: 1.1 !important;
+        font-weight: 600 !important;
+        letter-spacing: -0.01em !important;
+      }
+
+      .primary-btn,
+      .pill-btn,
+      .filter-btn.active,
+      .question-chip:active {
+        background: linear-gradient(135deg, #357292, #5ed5ce 56%, #9adf89) !important;
+        color: white !important;
+        box-shadow: 0 10px 24px rgba(53, 114, 146, 0.18) !important;
+      }
+
+      label {
+        gap: 7px !important;
+        margin-top: 14px !important;
+        font-size: 14px !important;
+        line-height: 1.2 !important;
+        font-weight: 550 !important;
+      }
+
+      input,
+      select {
+        min-height: 46px !important;
+        border-radius: 16px !important;
+        padding: 0 14px !important;
+        font-size: 15px !important;
+        font-weight: 400 !important;
+        background: rgba(255, 255, 255, 0.72) !important;
+      }
+
+      .tabs {
+        gap: 4px !important;
+        padding: 4px !important;
+        border-radius: 18px !important;
+        background: rgba(16, 24, 39, 0.06) !important;
+      }
+
+      .tabs button.active {
+        box-shadow: none !important;
+      }
+
+      .field-section {
+        display: grid;
+        gap: 12px !important;
+      }
+
+      .field-section h3 {
+        padding: 0 !important;
+        border: 0 !important;
+        background: transparent !important;
+      }
+
+      .field-row {
+        min-height: 72px !important;
+        padding: 14px 16px !important;
+        border-radius: 20px !important;
+        background: rgba(255, 255, 255, 0.62) !important;
+        border: 1px solid rgba(255, 255, 255, 0.7) !important;
+      }
+
+      .field-title,
+      .field-row strong {
+        font-size: 15px !important;
+        font-weight: 600 !important;
+      }
+
+      .counter-stepper {
+        grid-template-columns: 42px 48px 42px !important;
+        min-width: 132px !important;
+        border-radius: 999px !important;
+      }
+
+      .counter-stepper button {
+        width: 42px !important;
+        min-height: 42px !important;
+        font-size: 20px !important;
+        font-weight: 650 !important;
+      }
+
+      .counter-value {
+        font-size: 18px !important;
+        font-weight: 600 !important;
+      }
+
+      .toggle-grid {
+        gap: 12px !important;
+      }
+
+      .toggle-btn,
+      .toggle-grid button {
+        min-height: 46px !important;
+        border-radius: 18px !important;
+        font-size: 14px !important;
+        font-weight: 550 !important;
+      }
+
+      .leader-row,
+      .contact-card,
+      .pipeline-card,
+      .badge-item {
+        padding: 14px !important;
+      }
+
+      .leader-row h3,
+      .contact-card h3,
+      .pipeline-card h4 {
+        font-size: 16px !important;
+        font-weight: 650 !important;
+      }
+
+      .badge-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 12px !important;
+      }
+
+      .badge-item {
+        min-height: 92px !important;
+        font-size: 13px !important;
+        font-weight: 600 !important;
+      }
+
+      .drawer-panel {
+        width: min(86vw, 330px) !important;
+        padding: calc(env(safe-area-inset-top, 0px) + 22px) 18px 22px !important;
+        background: rgba(255, 255, 255, 0.82) !important;
+        backdrop-filter: blur(28px) saturate(150%) !important;
+        -webkit-backdrop-filter: blur(28px) saturate(150%) !important;
+      }
+
+      .drawer-link {
+        justify-content: flex-start !important;
+        padding: 0 16px !important;
+        background: rgba(255, 255, 255, 0.52) !important;
+        color: var(--pulse-ink) !important;
+      }
+
+      @supports not ((backdrop-filter: blur(20px)) or (-webkit-backdrop-filter: blur(20px))) {
+        .card,
+        .login-card,
+        .pulse-main-container,
+        .goals-panel,
+        .field-section,
+        .clarity-panel,
+        .questionnaire-panel,
+        .summary-tile,
+        .leader-row,
+        .competition-card,
+        .career-card,
+        .pipeline-column,
+        .pipeline-card,
+        .detail-panel,
+        .contact-card,
+        .save-row,
+        .session-item,
+        .chat-bubble {
+          background: rgba(255, 255, 255, 0.92) !important;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.001ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.001ms !important;
+          scroll-behavior: auto !important;
+        }
+      }
     </style>
   </head>
   <body>
+    <div id="pulse-route-background" aria-hidden="true"></div>
     <div id="login" class="login">
       <section class="login-card">
         <img class="login-logo" src="source/public/pulsenow-logo-transparent-cropped.png" alt="Pulsenow" />
@@ -6197,6 +6810,7 @@
       const researchSocialsBtn = document.getElementById("research-socials-btn");
       const exportContactsBtn = document.getElementById("export-contacts-btn");
       const profilePhotoInput = document.getElementById("profile-photo-input");
+      const pulseRouteBackground = document.getElementById("pulse-route-background");
 
       let mode = "login";
       let currentLog = {};
@@ -6224,6 +6838,22 @@
         { label: "Prospects", value: 1, target: 3 },
         { label: "Points", value: 8, target: 21 }
       ];
+
+      const pulseRouteBackgrounds = {
+        home: ["dashboard", "pulsenow_dashboard_01.svg"],
+        log: ["dashboard", "pulsenow_dashboard_07.svg"],
+        board: ["dashboard", "pulsenow_dashboard_12.svg"],
+        coach: ["coach", "pulsenow_coach_03.svg"],
+        contacts: ["crm", "pulsenow_crm_01.svg"],
+        powerlist: ["crm", "pulsenow_crm_08.svg"],
+        pipeline: ["crm", "pulsenow_crm_13.svg"],
+        me: ["ambient", "pulsenow_ambient_04.svg"],
+        badges: ["achievements", "pulsenow_achievements_02.svg"],
+        manager: ["achievements", "pulsenow_achievements_06.svg"],
+        campaigns: ["crm", "pulsenow_crm_17.svg"],
+        history: ["dashboard", "pulsenow_dashboard_16.svg"],
+        settings: ["ambient", "pulsenow_ambient_10.svg"]
+      };
 
       const logStorageKey = "pulsenow_demo_log";
       const feedStorageKey = "pulsenow_demo_activity_feed";
@@ -6606,6 +7236,16 @@
         ["tog_read_hour", "Read (1 hr)", "habits", "R", "Growth"]
       ];
 
+      function setPulseRouteBackground(screen) {
+        const match = pulseRouteBackgrounds[screen] || pulseRouteBackgrounds.home;
+        if (!pulseRouteBackground || !match) return;
+        const category = match[0];
+        const fileName = match[1];
+        pulseRouteBackground.style.backgroundImage = 'url("public/backgrounds/' + category + "/" + fileName + '")';
+        document.body.dataset.pulseRoute = screen;
+        document.body.dataset.pulseCategory = category;
+      }
+
       function setMode(nextMode) {
         mode = nextMode;
         loginTab.classList.toggle("active", mode === "login");
@@ -6617,6 +7257,7 @@
       function showApp(session) {
         login.classList.add("hidden");
         app.classList.remove("hidden");
+        setPulseRouteBackground("home");
         profileName.textContent = session.name;
         drawerName.textContent = session.name;
         setAvatarPhoto(avatar, session);
@@ -6627,6 +7268,7 @@
       function showLogin() {
         app.classList.add("hidden");
         login.classList.remove("hidden");
+        setPulseRouteBackground("me");
       }
 
       function todayKey() {
@@ -7938,6 +8580,7 @@
       }
 
       function setScreen(screen) {
+        setPulseRouteBackground(screen);
         document.querySelectorAll("[data-screen]").forEach((button) => {
           if (button.closest(".bottom-inner")) button.classList.toggle("active", button.dataset.screen === screen);
         });

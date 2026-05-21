@@ -1,0 +1,117 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="2600" viewBox="0 0 1200 2600" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="bg_achievements_01_8776" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FAFFFB"/>
+      <stop offset="48%" stop-color="#A7F3EF"/>
+      <stop offset="100%" stop-color="#C9FFF2"/>
+    </linearGradient>
+    <radialGradient id="orb_achievements_01_8776" cx="35%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.85"/>
+      <stop offset="42%" stop-color="#FFFFFF" stop-opacity="0.20"/>
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.02"/>
+    </radialGradient>
+    <filter id="blur_achievements_01_8776" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="72"/>
+    </filter>
+    <filter id="soft_achievements_01_8776" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="10"/>
+    </filter>
+    <filter id="grain_achievements_01_8776">
+      <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" stitchTiles="stitch"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feComponentTransfer>
+        <feFuncA type="table" tableValues="0 0.035"/>
+      </feComponentTransfer>
+    </filter>
+  </defs>
+  <rect width="1200" height="2600" fill="url(#bg_achievements_01_8776)"/>
+  <path d="M 827.3 1701.0 C 827.3 1902.6, 848.3 1882.5, 779.7 2036.9 C 711.2 2191.3, 717.1 2034.5, 612.1 2069.5 C 507.1 2104.5, 558.9 2213.1, 466.6 2112.3 C 374.2 2011.5, 347.6 2064.9, 311.1 1875.5 C 274.7 1686.0, 316.9 1735.3, 353.4 1545.9 C 389.9 1356.5, 349.7 1373.1, 442.1 1272.3 C 534.4 1171.5, 503.3 1189.2, 608.4 1224.2 C 713.4 1259.2, 671.6 1222.6, 740.2 1377.0 C 808.8 1531.4, 827.3 1499.4, 827.3 1701.0 Z" fill="#80B9FF" opacity="0.38" filter="url(#blur_achievements_01_8776)"/>
+  <path d="M 1197.0 194.0 C 1197.0 437.5, 1195.9 341.3, 1108.6 527.8 C 1021.2 714.3, 1048.2 596.0, 914.3 638.3 C 780.5 680.6, 861.8 735.2, 744.1 613.5 C 626.4 491.8, 653.4 584.1, 606.9 355.4 C 560.4 126.6, 583.0 225.3, 629.5 -3.5 C 676.0 -232.2, 583.9 -125.6, 701.6 -247.3 C 819.2 -369.0, 792.2 -402.5, 926.1 -360.3 C 1059.9 -318.0, 994.1 -387.4, 1081.5 -200.9 C 1168.8 -14.4, 1197.0 -49.5, 1197.0 194.0 Z" fill="#7EE56D" opacity="0.34" filter="url(#blur_achievements_01_8776)"/>
+  <path d="M 138.5 276.0 C 138.5 523.5, 93.8 496.3, 26.1 685.9 C -41.6 875.5, 12.9 680.4, -90.8 723.4 C -194.5 766.4, -177.8 897.5, -269.0 773.7 C -360.2 650.0, -319.0 689.8, -355.0 457.2 C -391.0 224.6, -358.7 334.2, -322.7 101.6 C -286.7 -131.0, -350.5 -97.8, -259.3 -221.5 C -168.1 -345.3, -194.8 -339.3, -91.1 -296.3 C 12.6 -253.3, -29.8 -290.0, 37.9 -100.4 C 105.6 89.2, 138.5 28.5, 138.5 276.0 Z" fill="#FAFFFB" opacity="0.21" filter="url(#blur_achievements_01_8776)"/>
+  <path d="M 866.5 2591.0 C 866.5 2770.6, 896.0 2738.9, 796.2 2876.4 C 696.4 3014.0, 723.4 2964.1, 570.5 2995.2 C 417.6 3026.4, 490.3 2968.2, 355.9 2878.4 C 221.4 2788.7, 276.1 2919.3, 223.0 2750.5 C 169.9 2581.8, 72.0 2621.5, 125.1 2452.7 C 178.2 2284.0, 164.2 2371.3, 298.6 2281.5 C 433.1 2191.8, 411.3 2187.8, 564.2 2219.0 C 717.0 2250.1, 675.2 2233.5, 775.0 2371.1 C 874.7 2508.6, 866.5 2411.4, 866.5 2591.0 Z" fill="#D8E8FF" opacity="0.24" filter="url(#blur_achievements_01_8776)"/>
+  <path d="M 1615.3 1738.0 C 1615.3 2011.6, 1653.7 1904.8, 1567.5 2114.4 C 1481.4 2324.0, 1522.8 2264.1, 1390.8 2311.6 C 1258.7 2359.1, 1333.1 2444.1, 1216.9 2307.3 C 1100.8 2170.5, 1077.2 2237.9, 1031.4 1980.8 C 985.5 1723.7, 1038.1 1781.9, 1084.0 1524.8 C 1129.8 1267.7, 1065.2 1286.8, 1181.3 1150.0 C 1297.4 1013.2, 1256.1 1178.2, 1388.2 1225.7 C 1520.2 1273.3, 1459.2 1164.6, 1545.4 1374.1 C 1631.6 1583.7, 1615.3 1464.4, 1615.3 1738.0 Z" fill="#7EE56D" opacity="0.30" filter="url(#blur_achievements_01_8776)"/>
+  <path d="M 1456.7 -102.0 C 1456.7 181.5, 1416.0 71.6, 1298.0 288.8 C 1180.0 506.0, 1243.6 421.5, 1062.8 470.7 C 882.0 520.0, 918.1 630.1, 759.1 488.4 C 600.1 346.6, 626.8 385.4, 564.0 119.0 C 501.2 -147.4, 496.4 -30.9, 559.2 -297.3 C 622.0 -563.7, 639.3 -435.4, 798.3 -577.2 C 957.3 -718.9, 875.7 -822.0, 1056.5 -772.7 C 1237.3 -723.5, 1231.0 -703.2, 1349.0 -486.0 C 1467.0 -268.9, 1456.7 -385.5, 1456.7 -102.0 Z" fill="#7EE56D" opacity="0.23" filter="url(#blur_achievements_01_8776)"/>
+  <path d="M 1370.4 1284.0 C 1370.4 1539.6, 1395.7 1506.0, 1319.9 1701.8 C 1244.1 1897.6, 1275.4 1862.4, 1159.3 1906.8 C 1043.2 1951.2, 1064.1 1826.0, 962.0 1698.2 C 859.9 1570.4, 891.1 1715.0, 850.7 1474.8 C 810.4 1234.7, 833.5 1317.8, 873.9 1077.6 C 914.2 837.4, 894.3 899.4, 996.4 771.6 C 1098.5 643.8, 1045.5 712.1, 1161.6 756.5 C 1277.7 800.9, 1226.2 714.1, 1302.0 909.9 C 1377.8 1105.7, 1370.4 1028.4, 1370.4 1284.0 Z" fill="#C9FFF2" opacity="0.34" filter="url(#blur_achievements_01_8776)"/>
+  <path d="M 1041.9 120.0 C 1041.9 255.5, 1112.5 210.6, 957.8 314.4 C 803.0 418.1, 847.4 369.5, 610.3 393.0 C 373.2 416.5, 497.0 403.4, 288.5 335.6 C 80.0 267.9, 146.2 356.4, 63.8 229.1 C -18.5 101.8, -96.8 130.3, -14.4 3.0 C 67.9 -124.2, 44.8 -45.8, 253.3 -113.5 C 461.8 -181.2, 390.6 -187.0, 627.6 -163.4 C 864.7 -139.9, 784.9 -177.3, 939.7 -73.6 C 1094.4 30.2, 1041.9 -15.5, 1041.9 120.0 Z" fill="#A7F3EF" opacity="0.19" filter="url(#blur_achievements_01_8776)"/>
+  <path d="M 740.4 91.0 C 740.4 314.2, 736.9 182.1, 653.9 353.0 C 570.8 524.0, 616.0 506.5, 488.8 545.2 C 361.6 584.0, 429.1 627.8, 317.3 516.2 C 205.4 404.6, 180.1 490.8, 136.0 281.1 C 91.8 71.3, 129.1 158.3, 173.2 -51.4 C 217.4 -261.2, 179.2 -187.6, 291.1 -299.2 C 402.9 -410.8, 365.0 -440.5, 492.2 -401.7 C 619.4 -363.0, 576.8 -378.5, 659.8 -207.5 C 742.8 -36.5, 740.4 -132.2, 740.4 91.0 Z" fill="#FAFFFB" opacity="0.25" filter="url(#blur_achievements_01_8776)"/>
+  <path d="M 1892.7 1463.0 C 1892.7 1742.5, 1990.4 1571.5, 1854.7 1797.6 C 1719.0 2023.7, 1765.4 1979.9, 1545.9 2066.2 C 1326.3 2152.6, 1464.0 2208.5, 1244.5 2122.2 C 1024.9 2035.8, 1130.9 2027.1, 995.3 1801.0 C 859.6 1574.9, 887.9 1742.5, 887.9 1463.0 C 887.9 1183.5, 891.8 1353.8, 1027.4 1127.7 C 1163.1 901.7, 1015.7 1012.9, 1235.2 926.6 C 1454.8 840.2, 1331.9 780.4, 1551.4 866.8 C 1771.0 953.1, 1691.6 852.1, 1827.2 1078.2 C 1962.9 1304.3, 1892.7 1183.5, 1892.7 1463.0 Z" fill="#DFFFD3" opacity="0.12" stroke="#DFFFD3" stroke-opacity="0.46" stroke-width="3" filter="url(#soft_achievements_01_8776)"/>
+  <path d="M 1892.7 1463.0 C 1892.7 1742.5, 1990.4 1571.5, 1854.7 1797.6 C 1719.0 2023.7, 1765.4 1979.9, 1545.9 2066.2 C 1326.3 2152.6, 1464.0 2208.5, 1244.5 2122.2 C 1024.9 2035.8, 1130.9 2027.1, 995.3 1801.0 C 859.6 1574.9, 887.9 1742.5, 887.9 1463.0 C 887.9 1183.5, 891.8 1353.8, 1027.4 1127.7 C 1163.1 901.7, 1015.7 1012.9, 1235.2 926.6 C 1454.8 840.2, 1331.9 780.4, 1551.4 866.8 C 1771.0 953.1, 1691.6 852.1, 1827.2 1078.2 C 1962.9 1304.3, 1892.7 1183.5, 1892.7 1463.0 Z" fill="none" stroke="#FFFFFF" stroke-opacity="0.22" stroke-width="1.2"/>
+  <path d="M 1465.9 492.0 C 1465.9 849.3, 1487.8 666.1, 1383.1 955.2 C 1278.4 1244.3, 1334.5 1159.9, 1165.0 1270.3 C 995.5 1380.7, 1097.6 1427.5, 928.1 1317.1 C 758.6 1206.7, 831.4 1290.9, 726.7 1001.8 C 621.9 712.8, 677.1 849.3, 677.1 492.0 C 677.1 134.7, 578.5 298.5, 683.3 9.5 C 788.0 -279.6, 749.6 -152.9, 919.0 -263.3 C 1088.5 -373.7, 980.8 -278.2, 1150.3 -167.8 C 1319.8 -57.4, 1208.5 -276.7, 1313.2 12.3 C 1418.0 301.4, 1465.9 134.7, 1465.9 492.0 Z" fill="#FAFFFB" opacity="0.12" stroke="#FFFFFF" stroke-opacity="0.46" stroke-width="3" filter="url(#soft_achievements_01_8776)"/>
+  <path d="M 1465.9 492.0 C 1465.9 849.3, 1487.8 666.1, 1383.1 955.2 C 1278.4 1244.3, 1334.5 1159.9, 1165.0 1270.3 C 995.5 1380.7, 1097.6 1427.5, 928.1 1317.1 C 758.6 1206.7, 831.4 1290.9, 726.7 1001.8 C 621.9 712.8, 677.1 849.3, 677.1 492.0 C 677.1 134.7, 578.5 298.5, 683.3 9.5 C 788.0 -279.6, 749.6 -152.9, 919.0 -263.3 C 1088.5 -373.7, 980.8 -278.2, 1150.3 -167.8 C 1319.8 -57.4, 1208.5 -276.7, 1313.2 12.3 C 1418.0 301.4, 1465.9 134.7, 1465.9 492.0 Z" fill="none" stroke="#FFFFFF" stroke-opacity="0.22" stroke-width="1.2"/>
+  <path d="M 2091.6 94.0 C 2091.6 415.8, 2038.5 297.8, 1878.2 558.1 C 1717.9 818.4, 1878.3 627.9, 1619.0 727.3 C 1359.6 826.7, 1478.0 793.7, 1218.7 694.3 C 959.3 594.9, 1084.0 830.0, 923.7 569.7 C 763.4 309.4, 785.4 415.8, 785.4 94.0 C 785.4 -227.7, 770.1 -75.4, 930.4 -335.7 C 1090.7 -596.0, 996.1 -575.6, 1255.4 -675.0 C 1514.8 -774.5, 1353.1 -703.1, 1612.4 -603.7 C 1871.8 -504.3, 1747.7 -645.2, 1908.0 -384.9 C 2068.2 -124.6, 2091.6 -227.8, 2091.6 94.0 Z" fill="#C9FFF2" opacity="0.12" stroke="#C9FFF2" stroke-opacity="0.46" stroke-width="3" filter="url(#soft_achievements_01_8776)"/>
+  <path d="M 2091.6 94.0 C 2091.6 415.8, 2038.5 297.8, 1878.2 558.1 C 1717.9 818.4, 1878.3 627.9, 1619.0 727.3 C 1359.6 826.7, 1478.0 793.7, 1218.7 694.3 C 959.3 594.9, 1084.0 830.0, 923.7 569.7 C 763.4 309.4, 785.4 415.8, 785.4 94.0 C 785.4 -227.7, 770.1 -75.4, 930.4 -335.7 C 1090.7 -596.0, 996.1 -575.6, 1255.4 -675.0 C 1514.8 -774.5, 1353.1 -703.1, 1612.4 -603.7 C 1871.8 -504.3, 1747.7 -645.2, 1908.0 -384.9 C 2068.2 -124.6, 2091.6 -227.8, 2091.6 94.0 Z" fill="none" stroke="#FFFFFF" stroke-opacity="0.22" stroke-width="1.2"/>
+  <path d="M 1724.3 2418.0 C 1724.3 2639.8, 1673.4 2539.2, 1530.8 2718.7 C 1388.2 2898.2, 1518.8 2796.8, 1288.1 2865.4 C 1057.4 2933.9, 1163.5 2971.8, 932.8 2903.2 C 702.1 2834.7, 822.3 2902.0, 679.8 2722.6 C 537.2 2543.1, 574.4 2639.8, 574.4 2418.0 C 574.4 2196.2, 479.7 2296.9, 622.2 2117.4 C 764.8 1937.9, 696.0 2028.9, 926.7 1960.4 C 1157.4 1891.8, 1029.1 1874.4, 1259.8 1943.0 C 1490.5 2011.5, 1390.4 1929.0, 1533.0 2108.5 C 1675.5 2288.0, 1724.3 2196.2, 1724.3 2418.0 Z" fill="#A7F3EF" opacity="0.12" stroke="#FFFFFF" stroke-opacity="0.46" stroke-width="3" filter="url(#soft_achievements_01_8776)"/>
+  <path d="M 1724.3 2418.0 C 1724.3 2639.8, 1673.4 2539.2, 1530.8 2718.7 C 1388.2 2898.2, 1518.8 2796.8, 1288.1 2865.4 C 1057.4 2933.9, 1163.5 2971.8, 932.8 2903.2 C 702.1 2834.7, 822.3 2902.0, 679.8 2722.6 C 537.2 2543.1, 574.4 2639.8, 574.4 2418.0 C 574.4 2196.2, 479.7 2296.9, 622.2 2117.4 C 764.8 1937.9, 696.0 2028.9, 926.7 1960.4 C 1157.4 1891.8, 1029.1 1874.4, 1259.8 1943.0 C 1490.5 2011.5, 1390.4 1929.0, 1533.0 2108.5 C 1675.5 2288.0, 1724.3 2196.2, 1724.3 2418.0 Z" fill="none" stroke="#FFFFFF" stroke-opacity="0.22" stroke-width="1.2"/>
+  <path d="M -100.0 220.7 Q 133.3 72.5, 366.7 203.9 Q 600.0 416.4, 833.3 494.1 Q 1066.7 632.2, 1300.0 582.1" fill="none" stroke="#FFFFFF" stroke-opacity="0.38" stroke-width="4" filter="url(#soft_achievements_01_8776)"/>
+  <path d="M -100.0 220.7 Q 133.3 72.5, 366.7 203.9 Q 600.0 416.4, 833.3 494.1 Q 1066.7 632.2, 1300.0 582.1" fill="none" stroke="#38D5C7" stroke-opacity="0.18" stroke-width="2"/>
+  <path d="M -100.0 1776.0 Q 133.3 1698.8, 366.7 2024.0 Q 600.0 2039.4, 833.3 1664.4 Q 1066.7 1777.8, 1300.0 1942.2" fill="none" stroke="#FFFFFF" stroke-opacity="0.38" stroke-width="4" filter="url(#soft_achievements_01_8776)"/>
+  <path d="M -100.0 1776.0 Q 133.3 1698.8, 366.7 2024.0 Q 600.0 2039.4, 833.3 1664.4 Q 1066.7 1777.8, 1300.0 1942.2" fill="none" stroke="#80B9FF" stroke-opacity="0.18" stroke-width="2"/>
+  <path d="M -100.0 1797.0 Q 133.3 1790.9, 366.7 1913.2 Q 600.0 2240.8, 833.3 2437.3 Q 1066.7 2440.6, 1300.0 2248.1" fill="none" stroke="#FFFFFF" stroke-opacity="0.38" stroke-width="4" filter="url(#soft_achievements_01_8776)"/>
+  <path d="M -100.0 1797.0 Q 133.3 1790.9, 366.7 1913.2 Q 600.0 2240.8, 833.3 2437.3 Q 1066.7 2440.6, 1300.0 2248.1" fill="none" stroke="#38D5C7" stroke-opacity="0.18" stroke-width="2"/>
+  <path d="M -100.0 1493.1 Q 133.3 1742.1, 366.7 1578.0 Q 600.0 1399.0, 833.3 1282.8 Q 1066.7 1213.7, 1300.0 1377.6" fill="none" stroke="#FFFFFF" stroke-opacity="0.38" stroke-width="4" filter="url(#soft_achievements_01_8776)"/>
+  <path d="M -100.0 1493.1 Q 133.3 1742.1, 366.7 1578.0 Q 600.0 1399.0, 833.3 1282.8 Q 1066.7 1213.7, 1300.0 1377.6" fill="none" stroke="#80B9FF" stroke-opacity="0.18" stroke-width="2"/>
+  <path d="M -100.0 2635.8 Q 133.3 2637.8, 366.7 2454.5 Q 600.0 2308.1, 833.3 2645.0 Q 1066.7 2516.9, 1300.0 2379.2" fill="none" stroke="#FFFFFF" stroke-opacity="0.38" stroke-width="4" filter="url(#soft_achievements_01_8776)"/>
+  <path d="M -100.0 2635.8 Q 133.3 2637.8, 366.7 2454.5 Q 600.0 2308.1, 833.3 2645.0 Q 1066.7 2516.9, 1300.0 2379.2" fill="none" stroke="#38D5C7" stroke-opacity="0.18" stroke-width="2"/>
+  <path d="M -100.0 2173.3 Q 133.3 2035.3, 366.7 2110.2 Q 600.0 2178.3, 833.3 2237.1 Q 1066.7 2255.7, 1300.0 2330.7" fill="none" stroke="#FFFFFF" stroke-opacity="0.38" stroke-width="4" filter="url(#soft_achievements_01_8776)"/>
+  <path d="M -100.0 2173.3 Q 133.3 2035.3, 366.7 2110.2 Q 600.0 2178.3, 833.3 2237.1 Q 1066.7 2255.7, 1300.0 2330.7" fill="none" stroke="#80B9FF" stroke-opacity="0.18" stroke-width="2"/>
+  <circle cx="161" cy="2282" r="288" fill="url(#orb_achievements_01_8776)" opacity="0.36"/>
+  <circle cx="161" cy="2282" r="288" fill="#FAFFFB" opacity="0.08"/>
+  <circle cx="161" cy="2282" r="288" fill="none" stroke="#FFFFFF" stroke-opacity="0.56" stroke-width="3"/>
+  <ellipse cx="80.4" cy="2178.3" rx="51.8" ry="23.0" fill="#FFFFFF" opacity="0.42" transform="rotate(-22 80.4 2178.3)"/>
+  <circle cx="1081" cy="1077" r="278" fill="url(#orb_achievements_01_8776)" opacity="0.36"/>
+  <circle cx="1081" cy="1077" r="278" fill="#80B9FF" opacity="0.08"/>
+  <circle cx="1081" cy="1077" r="278" fill="none" stroke="#FFFFFF" stroke-opacity="0.56" stroke-width="3"/>
+  <ellipse cx="1003.2" cy="976.9" rx="50.0" ry="22.2" fill="#FFFFFF" opacity="0.42" transform="rotate(-22 1003.2 976.9)"/>
+  <circle cx="690" cy="921" r="86" fill="url(#orb_achievements_01_8776)" opacity="0.36"/>
+  <circle cx="690" cy="921" r="86" fill="#38D5C7" opacity="0.08"/>
+  <circle cx="690" cy="921" r="86" fill="none" stroke="#FFFFFF" stroke-opacity="0.56" stroke-width="3"/>
+  <ellipse cx="665.9" cy="890.0" rx="15.5" ry="6.9" fill="#FFFFFF" opacity="0.42" transform="rotate(-22 665.9 890.0)"/>
+  <circle cx="304" cy="900" r="275" fill="url(#orb_achievements_01_8776)" opacity="0.17"/>
+  <circle cx="304" cy="900" r="275" fill="#7EE56D" opacity="0.08"/>
+  <circle cx="304" cy="900" r="275" fill="none" stroke="#FFFFFF" stroke-opacity="0.56" stroke-width="3"/>
+  <ellipse cx="227.0" cy="801.0" rx="49.5" ry="22.0" fill="#FFFFFF" opacity="0.42" transform="rotate(-22 227.0 801.0)"/>
+  <circle cx="1275" cy="2516" r="137" fill="url(#orb_achievements_01_8776)" opacity="0.16"/>
+  <circle cx="1275" cy="2516" r="137" fill="#7EE56D" opacity="0.08"/>
+  <circle cx="1275" cy="2516" r="137" fill="none" stroke="#FFFFFF" stroke-opacity="0.56" stroke-width="3"/>
+  <ellipse cx="1236.6" cy="2466.7" rx="24.7" ry="11.0" fill="#FFFFFF" opacity="0.42" transform="rotate(-22 1236.6 2466.7)"/>
+  <circle cx="1063" cy="1934" r="206" fill="url(#orb_achievements_01_8776)" opacity="0.21"/>
+  <circle cx="1063" cy="1934" r="206" fill="#FAFFFB" opacity="0.08"/>
+  <circle cx="1063" cy="1934" r="206" fill="none" stroke="#FFFFFF" stroke-opacity="0.56" stroke-width="3"/>
+  <ellipse cx="1005.3" cy="1859.8" rx="37.1" ry="16.5" fill="#FFFFFF" opacity="0.42" transform="rotate(-22 1005.3 1859.8)"/>
+  <circle cx="335" cy="363" r="80" fill="url(#orb_achievements_01_8776)" opacity="0.20"/>
+  <circle cx="335" cy="363" r="80" fill="#D8E8FF" opacity="0.08"/>
+  <circle cx="335" cy="363" r="80" fill="none" stroke="#FFFFFF" stroke-opacity="0.56" stroke-width="3"/>
+  <ellipse cx="312.6" cy="334.2" rx="14.4" ry="6.4" fill="#FFFFFF" opacity="0.42" transform="rotate(-22 312.6 334.2)"/>
+  <circle cx="214" cy="1810" r="225" fill="url(#orb_achievements_01_8776)" opacity="0.23"/>
+  <circle cx="214" cy="1810" r="225" fill="#DFFFD3" opacity="0.08"/>
+  <circle cx="214" cy="1810" r="225" fill="none" stroke="#FFFFFF" stroke-opacity="0.56" stroke-width="3"/>
+  <ellipse cx="151.0" cy="1729.0" rx="40.5" ry="18.0" fill="#FFFFFF" opacity="0.42" transform="rotate(-22 151.0 1729.0)"/>
+  <circle cx="1177" cy="1622" r="176" fill="url(#orb_achievements_01_8776)" opacity="0.18"/>
+  <circle cx="1177" cy="1622" r="176" fill="#7EE56D" opacity="0.08"/>
+  <circle cx="1177" cy="1622" r="176" fill="none" stroke="#FFFFFF" stroke-opacity="0.56" stroke-width="3"/>
+  <ellipse cx="1127.7" cy="1558.6" rx="31.7" ry="14.1" fill="#FFFFFF" opacity="0.42" transform="rotate(-22 1127.7 1558.6)"/>
+  <circle cx="828" cy="2143" r="252" fill="url(#orb_achievements_01_8776)" opacity="0.20"/>
+  <circle cx="828" cy="2143" r="252" fill="#7EE56D" opacity="0.08"/>
+  <circle cx="828" cy="2143" r="252" fill="none" stroke="#FFFFFF" stroke-opacity="0.56" stroke-width="3"/>
+  <ellipse cx="757.4" cy="2052.3" rx="45.4" ry="20.2" fill="#FFFFFF" opacity="0.42" transform="rotate(-22 757.4 2052.3)"/>
+  <circle cx="966" cy="2061" r="4" fill="#FFFFFF" opacity="0.55"/>
+  <circle cx="805" cy="31" r="7" fill="#FFFFFF" opacity="0.67"/>
+  <circle cx="425" cy="566" r="4" fill="#FFFFFF" opacity="0.54"/>
+  <circle cx="605" cy="2167" r="3" fill="#FFFFFF" opacity="0.37"/>
+  <circle cx="477" cy="1483" r="5" fill="#FFFFFF" opacity="0.30"/>
+  <circle cx="71" cy="66" r="4" fill="#FFFFFF" opacity="0.53"/>
+  <circle cx="1038" cy="1954" r="4" fill="#FFFFFF" opacity="0.54"/>
+  <circle cx="101" cy="598" r="4" fill="#FFFFFF" opacity="0.35"/>
+  <circle cx="182" cy="2036" r="4" fill="#FFFFFF" opacity="0.60"/>
+  <circle cx="399" cy="1954" r="4" fill="#FFFFFF" opacity="0.54"/>
+  <circle cx="992" cy="333" r="5" fill="#FFFFFF" opacity="0.37"/>
+  <circle cx="857" cy="2274" r="2" fill="#FFFFFF" opacity="0.42"/>
+  <circle cx="739" cy="1649" r="2" fill="#FFFFFF" opacity="0.38"/>
+  <circle cx="1066" cy="1495" r="4" fill="#FFFFFF" opacity="0.50"/>
+  <circle cx="851" cy="1043" r="7" fill="#FFFFFF" opacity="0.68"/>
+  <circle cx="639" cy="551" r="5" fill="#FFFFFF" opacity="0.31"/>
+  <circle cx="226" cy="1986" r="4" fill="#FFFFFF" opacity="0.65"/>
+  <circle cx="865" cy="788" r="7" fill="#FFFFFF" opacity="0.70"/>
+  <rect width="1200" height="2600" fill="#FFFFFF" opacity="0.08"/>
+  <rect width="1200" height="2600" filter="url(#grain_achievements_01_8776)" opacity="0.7"/>
+</svg>
