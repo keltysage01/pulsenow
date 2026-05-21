@@ -4283,6 +4283,55 @@
         flex: 0 0 auto !important;
       }
 
+      .csv-drop {
+        display: grid !important;
+        gap: 6px !important;
+        margin: 0 !important;
+        padding: 18px !important;
+        border: 1px dashed rgba(20, 95, 134, 0.26) !important;
+        border-radius: 24px !important;
+        background: rgba(255, 255, 255, 0.56) !important;
+        color: #172033 !important;
+        cursor: pointer !important;
+      }
+
+      .csv-drop span {
+        font-size: 18px !important;
+        font-weight: 700 !important;
+        letter-spacing: -0.02em !important;
+      }
+
+      .csv-drop small {
+        color: #667085 !important;
+        font-size: 14px !important;
+        font-weight: 400 !important;
+        line-height: 1.35 !important;
+      }
+
+      .csv-drop input {
+        position: absolute !important;
+        width: 1px !important;
+        height: 1px !important;
+        overflow: hidden !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+      }
+
+      #csv-import-status {
+        margin-top: 12px !important;
+        padding: 14px 16px !important;
+      }
+
+      html[data-theme="dark"] .csv-drop {
+        border-color: rgba(131, 216, 229, 0.28) !important;
+        background: rgba(18, 39, 58, 0.86) !important;
+        color: #f8fbff !important;
+      }
+
+      html[data-theme="dark"] .csv-drop small {
+        color: rgba(224, 237, 246, 0.72) !important;
+      }
+
       #coach-screen .card h2 {
         font-size: clamp(28px, 6.5vw, 32px) !important;
       }
@@ -4624,6 +4673,22 @@
           </div>
         </section>
 
+        <section id="csv-import-panel" class="section card">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Import</p>
+              <h2>Upload CSV</h2>
+              <p class="muted section-subcopy">Choose a spreadsheet export. Pulsenow will clean names, phones, emails, type, follow-up dates, and qualifier columns on-device.</p>
+            </div>
+          </div>
+          <label class="csv-drop" for="csv-file-input">
+            <span>Import contact CSV</span>
+            <small>Works with columns like name, first_name, last_name, phone, email, type, followup, married, homeowner.</small>
+            <input id="csv-file-input" type="file" accept=".csv,text/csv" />
+          </label>
+          <div id="csv-import-status" class="session-item">No file selected yet.</div>
+        </section>
+
         <section id="add-contact-panel" class="section card hidden">
           <div class="section-head">
             <h2>Add Contact</h2>
@@ -4921,6 +4986,8 @@
       const contactCountLabel = document.getElementById("contact-count-label");
       const addContactPanel = document.getElementById("add-contact-panel");
       const contactDetailPanel = document.getElementById("contact-detail-panel");
+      const csvFileInput = document.getElementById("csv-file-input");
+      const csvImportStatus = document.getElementById("csv-import-status");
 
       let mode = "login";
       let currentLog = {};
@@ -6058,6 +6125,139 @@
         renderContacts();
       }
 
+      function splitCsvLine(line) {
+        const values = [];
+        let current = "";
+        let quoted = false;
+        for (let i = 0; i < line.length; i += 1) {
+          const char = line[i];
+          if (char === '"' && line[i + 1] === '"') {
+            current += '"';
+            i += 1;
+          } else if (char === '"') {
+            quoted = !quoted;
+          } else if (char === "," && !quoted) {
+            values.push(current.trim());
+            current = "";
+          } else {
+            current += char;
+          }
+        }
+        values.push(current.trim());
+        return values;
+      }
+
+      function parseCsvText(text) {
+        const lines = text.replace(/\r/g, "").split("\n").filter((line) => line.trim().length > 0);
+        if (lines.length < 2) return [];
+        const headers = splitCsvLine(lines[0]).map((header) => header.toLowerCase().trim().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, ""));
+        return lines.slice(1).map((line) => {
+          const values = splitCsvLine(line);
+          const row = {};
+          headers.forEach((header, index) => {
+            row[header] = values[index] || "";
+          });
+          return row;
+        });
+      }
+
+      function rowValue(row, keys) {
+        for (const key of keys) {
+          if (row[key] && String(row[key]).trim()) return String(row[key]).trim();
+        }
+        return "";
+      }
+
+      function parseCsvBool(value) {
+        const normalized = String(value || "").trim().toLowerCase();
+        return normalized === "true" || normalized === "yes" || normalized === "y" || normalized === "1" || normalized === "x";
+      }
+
+      function looksLikeBusiness(name, phone) {
+        const terms = ["llc", "inc", "corp", "company", "insurance", "dental", "office", "services", "solutions", "group", "team", "center", "clinic", "agency", "firm", "co", "ltd", "church", "school", "shop", "store", "market", "salon", "gym", "spa"];
+        const lower = name.toLowerCase();
+        if (terms.some((term) => lower.indexOf(term) >= 0)) return true;
+        if (/^(800|888|877|866|855|844|833)/.test(phone.replace(/[^0-9]/g, ""))) return true;
+        return false;
+      }
+
+      function csvRowToContact(row, index) {
+        const first = rowValue(row, ["first_name", "firstname", "fname", "first"]);
+        const last = rowValue(row, ["last_name", "lastname", "lname", "last"]);
+        const fullName = rowValue(row, ["name", "full_name", "contact_name", "full"]);
+        const name = fullName || [first, last].filter(Boolean).join(" ");
+        const phone = rowValue(row, ["phone", "mobile", "cell", "phone_number", "telephone"]).replace(/[^0-9+]/g, "");
+        const email = rowValue(row, ["email", "email_address"]);
+        const type = rowValue(row, ["type", "contact_type", "category"]).toLowerCase() || "prospect";
+        const followup = rowValue(row, ["next_followup_date", "followup", "follow_up", "follow_up_date"]);
+        const stage = rowValue(row, ["stage", "pipeline_stage"]) || "Uncontacted Team Prospects";
+        const notes = rowValue(row, ["notes", "note", "company", "carrier"]);
+        const contactName = name || email || phone || "Imported Contact " + (index + 1);
+        const qualifiers = {
+          married: parseCsvBool(rowValue(row, ["married", "spouse"])),
+          age25: parseCsvBool(rowValue(row, ["age25", "age_25_plus", "25_plus", "over_25"])),
+          children: parseCsvBool(rowValue(row, ["children", "has_children", "kids"])),
+          homeowner: parseCsvBool(rowValue(row, ["homeowner", "home_owner", "owns_home"])),
+          income40: parseCsvBool(rowValue(row, ["income40", "income_40k", "40k", "income_40k_plus"])),
+          entrepreneurial: parseCsvBool(rowValue(row, ["entrepreneurial", "entrepreneur", "business_minded"])),
+          dissatisfied: parseCsvBool(rowValue(row, ["dissatisfied", "not_satisfied", "looking"])),
+        };
+        const score = Object.keys(qualifiers).reduce((sum, key) => sum + (qualifiers[key] ? 1 : 0), 0);
+        return {
+          id: "csv" + Date.now() + "_" + index,
+          name: contactName,
+          phone,
+          email,
+          type: type === "client" || type === "recruit" ? type : "prospect",
+          stage,
+          next_followup_date: followup,
+          last_contact_date: "",
+          last_contact_outcome: "",
+          is_top_100: score >= 5,
+          is_business: looksLikeBusiness(contactName, phone),
+          notes,
+          qualifiers
+        };
+      }
+
+      function mergeImportedContacts(imported) {
+        const existingKeys = new Set(contacts.map((contact) => ((contact.phone || "") + "::" + contact.name.toLowerCase()).trim()));
+        const clean = [];
+        imported.forEach((contact) => {
+          const key = ((contact.phone || "") + "::" + contact.name.toLowerCase()).trim();
+          if (existingKeys.has(key)) return;
+          existingKeys.add(key);
+          clean.push(contact);
+        });
+        contacts = clean.concat(contacts);
+        saveContacts();
+        renderContacts();
+        return clean.length;
+      }
+
+      async function handleCsvImport(file) {
+        if (!file) return;
+        csvImportStatus.textContent = "Reading " + file.name + "...";
+        const text = await file.text();
+        const rows = parseCsvText(text);
+        const imported = rows.map(csvRowToContact).filter((contact) => contact.name || contact.phone || contact.email);
+        const added = mergeImportedContacts(imported);
+        const businessCount = imported.filter((contact) => contact.is_business).length;
+        const topCount = imported.filter((contact) => contact.is_top_100).length;
+        csvImportStatus.textContent = "Imported " + added + " contacts · " + topCount + " Top 100 candidates · " + businessCount + " possible business records flagged.";
+
+        try {
+          const body = new FormData();
+          body.append("file", file);
+          const headers = {};
+          const encoded = encodeSessionHeader();
+          if (encoded) headers["x-pulsenow-session"] = encoded;
+          await fetch("/api/contacts/upload", { method: "POST", headers, body });
+        } catch {
+          // The mobile app keeps the on-device import even if backend sync is unavailable.
+        }
+      }
+
       function openContactDetail(contactId) {
         const contact = contacts.find((item) => item.id === contactId);
         if (!contact) return;
@@ -6527,6 +6727,11 @@
         resetAddContactForm();
       });
       document.getElementById("save-contact-btn").addEventListener("click", addContact);
+      csvFileInput.addEventListener("change", (event) => {
+        const file = event.target.files && event.target.files[0];
+        handleCsvImport(file);
+        event.target.value = "";
+      });
       document.getElementById("seed-contacts-btn").addEventListener("click", () => {
         contacts = cloneDemoContacts();
         saveContacts();
