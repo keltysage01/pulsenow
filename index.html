@@ -4887,6 +4887,107 @@
       html[data-theme="dark"] #detail-qualifiers .toggle-btn {
         background: rgba(17, 34, 54, 0.76) !important;
       }
+
+      /* Final typography weight pass: calmer SF-style hierarchy */
+      body,
+      p,
+      .muted,
+      .section-subcopy,
+      .field-note,
+      .contact-card p,
+      .detail-line,
+      .session-item {
+        font-weight: 400 !important;
+        letter-spacing: -0.012em !important;
+      }
+
+      h1,
+      h2,
+      h3,
+      h4,
+      #profile-name,
+      #me-name,
+      #detail-name,
+      .profile-name,
+      .contact-card h3,
+      .power-row strong,
+      .leader-row strong,
+      .goal-label,
+      .goal-row strong,
+      .field-label span,
+      .field-label strong {
+        font-weight: 560 !important;
+        letter-spacing: -0.038em !important;
+      }
+
+      .section-head h2,
+      .card h2,
+      #contact-count-label {
+        font-size: clamp(25px, 6vw, 31px) !important;
+        font-weight: 560 !important;
+      }
+
+      #detail-name {
+        font-size: clamp(28px, 7vw, 38px) !important;
+        font-weight: 560 !important;
+      }
+
+      .primary-btn,
+      .ghost-btn,
+      .text-btn,
+      .filter-btn,
+      .pill-btn,
+      .contact-actions a,
+      .contact-actions button,
+      .actions button,
+      .actions a,
+      .drawer-link,
+      .toggle-btn,
+      .qualifier-btn {
+        font-weight: 500 !important;
+        letter-spacing: -0.015em !important;
+      }
+
+      .score-pill,
+      .stage-pill,
+      .overdue-pill,
+      .count-pill {
+        font-weight: 500 !important;
+      }
+
+      .contact-category-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+        margin-top: 10px;
+      }
+
+      .category-pill {
+        min-height: 28px;
+        display: inline-flex;
+        align-items: center;
+        border-radius: 999px;
+        padding: 0 10px;
+        background: rgba(7, 138, 120, 0.1);
+        color: #087d70;
+        font-size: 12px;
+        font-weight: 500;
+      }
+
+      .category-pill.secondary {
+        background: rgba(17, 24, 39, 0.055);
+        color: #697386;
+      }
+
+      html[data-theme="dark"] .category-pill {
+        background: rgba(119, 220, 202, 0.15);
+        color: #77dcca;
+      }
+
+      html[data-theme="dark"] .category-pill.secondary {
+        background: rgba(255, 255, 255, 0.08);
+        color: rgba(235, 245, 255, 0.68);
+      }
     </style>
   </head>
   <body>
@@ -5119,10 +5220,11 @@
           <label class="csv-drop" for="csv-file-input">
             <span>Import contact CSV</span>
             <small>Works with columns like name, first_name, last_name, phone, email, type, followup, married, homeowner.</small>
-            <input id="csv-file-input" type="file" accept=".csv,text/csv" />
+            <input id="csv-file-input" type="file" accept=".csv,.tsv,.txt,text/csv,text/tab-separated-values,text/plain" />
           </label>
           <div id="csv-import-status" class="session-item">No file selected yet.</div>
           <button id="research-socials-btn" class="ghost-btn hidden" type="button">Research socials + LinkedIn</button>
+          <button id="export-contacts-btn" class="ghost-btn hidden" type="button">Download organized CSV</button>
         </section>
 
         <section id="add-contact-panel" class="section card hidden">
@@ -5425,6 +5527,7 @@
       const csvFileInput = document.getElementById("csv-file-input");
       const csvImportStatus = document.getElementById("csv-import-status");
       const researchSocialsBtn = document.getElementById("research-socials-btn");
+      const exportContactsBtn = document.getElementById("export-contacts-btn");
 
       let mode = "login";
       let currentLog = {};
@@ -6505,6 +6608,9 @@
           card.setAttribute("role", "button");
           card.setAttribute("tabindex", "0");
           card.dataset.contactId = contact.id;
+          const category = contactCategory(contact);
+          const status = researchStatus(contact);
+          const source = contact.id.indexOf("csv") === 0 ? "CSV import" : "Manual";
           card.innerHTML =
             '<div class="contact-main"><div><h3>' +
             contact.name +
@@ -6517,7 +6623,13 @@
             '</span>' +
             (isOverdue(contact) ? '<span class="overdue-pill">Overdue</span>' : "") +
             (contact.is_top_100 ? '<span class="stage-pill">Top 100</span>' : "") +
-            '</div><div class="contact-actions"><a href="tel:' +
+            '</div><div class="contact-category-row"><span class="category-pill">' +
+            category +
+            '</span><span class="category-pill secondary">' +
+            status +
+            '</span><span class="category-pill secondary">' +
+            source +
+            '</span></div><div class="contact-actions"><a href="tel:' +
             (contact.phone || "") +
             '">Call</a><a href="sms:' +
             (contact.phone || "") +
@@ -6563,7 +6675,7 @@
         renderContacts();
       }
 
-      function splitCsvLine(line) {
+      function splitCsvLine(line, delimiter = ",") {
         const values = [];
         let current = "";
         let quoted = false;
@@ -6574,7 +6686,7 @@
             i += 1;
           } else if (char === '"') {
             quoted = !quoted;
-          } else if (char === "," && !quoted) {
+          } else if (char === delimiter && !quoted) {
             values.push(current.trim());
             current = "";
           } else {
@@ -6588,9 +6700,10 @@
       function parseCsvText(text) {
         const lines = text.replace(/\r/g, "").split("\n").filter((line) => line.trim().length > 0);
         if (lines.length < 2) return [];
-        const headers = splitCsvLine(lines[0]).map((header) => header.toLowerCase().trim().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, ""));
+        const delimiter = (lines[0].match(/\t/g) || []).length > (lines[0].match(/,/g) || []).length ? "\t" : ",";
+        const headers = splitCsvLine(lines[0], delimiter).map((header) => header.toLowerCase().trim().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, ""));
         return lines.slice(1).map((line) => {
-          const values = splitCsvLine(line);
+          const values = splitCsvLine(line, delimiter);
           const row = {};
           headers.forEach((header, index) => {
             row[header] = values[index] || "";
@@ -6609,6 +6722,23 @@
       function parseCsvBool(value) {
         const normalized = String(value || "").trim().toLowerCase();
         return normalized === "true" || normalized === "yes" || normalized === "y" || normalized === "1" || normalized === "x";
+      }
+
+      function contactCategory(contact) {
+        if (contact.is_business) return "Business record";
+        if (contact.type === "client") return "Client";
+        if (contact.type === "recruit") return "Recruit";
+        if (contact.is_top_100) return "Top 100";
+        if (isOverdue(contact)) return "Overdue follow-up";
+        return "Prospect";
+      }
+
+      function researchStatus(contact) {
+        const socials = contact.socials || {};
+        const hasSocial = socials.linkedin || socials.facebook || socials.instagram || socials.tiktok;
+        if (hasSocial) return "Socials found";
+        if (contact.research) return "Research targets ready";
+        return "Needs research";
       }
 
       function looksLikeBusiness(name, phone) {
@@ -6696,6 +6826,7 @@
         const topCount = imported.filter((contact) => contact.is_top_100).length;
         csvImportStatus.textContent = "Imported " + added + " contacts · " + topCount + " Top 100 candidates · " + businessCount + " possible business records flagged.";
         researchSocialsBtn.classList.toggle("hidden", imported.length === 0);
+        exportContactsBtn.classList.toggle("hidden", contacts.length === 0);
 
         try {
           const body = new FormData();
@@ -6746,12 +6877,55 @@
           renderContacts();
           const linkedinMatches = results.filter((result) => result.socials && result.socials.linkedin).length;
           csvImportStatus.textContent = "Social research ready · " + linkedinMatches + " LinkedIn matches or targets · " + results.length + " contacts organized.";
+          exportContactsBtn.classList.remove("hidden");
         } catch (error) {
           csvImportStatus.textContent = "Social research could not run yet. The API is ready; add a search key for live lookup. " + (error.message || "");
         } finally {
           researchSocialsBtn.disabled = false;
           researchSocialsBtn.textContent = "Research socials + LinkedIn";
         }
+      }
+
+      function csvCell(value) {
+        const text = String(value || "");
+        return /[",\n]/.test(text) ? '"' + text.replace(/"/g, '""') + '"' : text;
+      }
+
+      function exportContactsCsv() {
+        const headers = ["name", "category", "research_status", "score", "phone", "email", "type", "stage", "followup", "linkedin", "facebook", "instagram", "tiktok", "company", "city", "state", "notes"];
+        const rows = contacts.map((contact) => {
+          const socials = contact.socials || {};
+          return [
+            contact.name,
+            contactCategory(contact),
+            researchStatus(contact),
+            scoreContact(contact) + "/7",
+            contact.phone,
+            contact.email,
+            contact.type,
+            contact.stage,
+            contact.next_followup_date,
+            socials.linkedin,
+            socials.facebook,
+            socials.instagram,
+            socials.tiktok,
+            contact.company,
+            contact.city,
+            contact.state,
+            contact.notes
+          ].map(csvCell).join(",");
+        });
+        const csv = headers.join(",") + "\n" + rows.join("\n");
+        const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "pulsenow-organized-contacts.csv";
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+        csvImportStatus.textContent = "Downloaded organized CSV with categories, research status, and socials.";
       }
 
       function openContactDetail(contactId) {
@@ -7242,6 +7416,7 @@
         event.target.value = "";
       });
       researchSocialsBtn.addEventListener("click", researchImportedSocials);
+      exportContactsBtn.addEventListener("click", exportContactsCsv);
       document.getElementById("seed-contacts-btn").addEventListener("click", () => {
         contacts = cloneDemoContacts();
         saveContacts();
