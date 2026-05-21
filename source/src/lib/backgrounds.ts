@@ -1,0 +1,814 @@
+export const pulseBackgrounds = [
+  {
+    "id": "dashboard_01",
+    "category": "dashboard",
+    "path": "/backgrounds/dashboard/pulsenow_dashboard_01.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "dashboard_02",
+    "category": "dashboard",
+    "path": "/backgrounds/dashboard/pulsenow_dashboard_02.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "dashboard_03",
+    "category": "dashboard",
+    "path": "/backgrounds/dashboard/pulsenow_dashboard_03.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "dashboard_04",
+    "category": "dashboard",
+    "path": "/backgrounds/dashboard/pulsenow_dashboard_04.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "dashboard_05",
+    "category": "dashboard",
+    "path": "/backgrounds/dashboard/pulsenow_dashboard_05.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "dashboard_06",
+    "category": "dashboard",
+    "path": "/backgrounds/dashboard/pulsenow_dashboard_06.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "dashboard_07",
+    "category": "dashboard",
+    "path": "/backgrounds/dashboard/pulsenow_dashboard_07.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "dashboard_08",
+    "category": "dashboard",
+    "path": "/backgrounds/dashboard/pulsenow_dashboard_08.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "dashboard_09",
+    "category": "dashboard",
+    "path": "/backgrounds/dashboard/pulsenow_dashboard_09.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "dashboard_10",
+    "category": "dashboard",
+    "path": "/backgrounds/dashboard/pulsenow_dashboard_10.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "dashboard_11",
+    "category": "dashboard",
+    "path": "/backgrounds/dashboard/pulsenow_dashboard_11.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "dashboard_12",
+    "category": "dashboard",
+    "path": "/backgrounds/dashboard/pulsenow_dashboard_12.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "dashboard_13",
+    "category": "dashboard",
+    "path": "/backgrounds/dashboard/pulsenow_dashboard_13.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "dashboard_14",
+    "category": "dashboard",
+    "path": "/backgrounds/dashboard/pulsenow_dashboard_14.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "dashboard_15",
+    "category": "dashboard",
+    "path": "/backgrounds/dashboard/pulsenow_dashboard_15.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "dashboard_16",
+    "category": "dashboard",
+    "path": "/backgrounds/dashboard/pulsenow_dashboard_16.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "dashboard_17",
+    "category": "dashboard",
+    "path": "/backgrounds/dashboard/pulsenow_dashboard_17.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "dashboard_18",
+    "category": "dashboard",
+    "path": "/backgrounds/dashboard/pulsenow_dashboard_18.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "dashboard_19",
+    "category": "dashboard",
+    "path": "/backgrounds/dashboard/pulsenow_dashboard_19.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "dashboard_20",
+    "category": "dashboard",
+    "path": "/backgrounds/dashboard/pulsenow_dashboard_20.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "coach_01",
+    "category": "coach",
+    "path": "/backgrounds/coach/pulsenow_coach_01.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "coach_02",
+    "category": "coach",
+    "path": "/backgrounds/coach/pulsenow_coach_02.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "coach_03",
+    "category": "coach",
+    "path": "/backgrounds/coach/pulsenow_coach_03.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "coach_04",
+    "category": "coach",
+    "path": "/backgrounds/coach/pulsenow_coach_04.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "coach_05",
+    "category": "coach",
+    "path": "/backgrounds/coach/pulsenow_coach_05.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "coach_06",
+    "category": "coach",
+    "path": "/backgrounds/coach/pulsenow_coach_06.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "coach_07",
+    "category": "coach",
+    "path": "/backgrounds/coach/pulsenow_coach_07.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "coach_08",
+    "category": "coach",
+    "path": "/backgrounds/coach/pulsenow_coach_08.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "coach_09",
+    "category": "coach",
+    "path": "/backgrounds/coach/pulsenow_coach_09.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "coach_10",
+    "category": "coach",
+    "path": "/backgrounds/coach/pulsenow_coach_10.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "coach_11",
+    "category": "coach",
+    "path": "/backgrounds/coach/pulsenow_coach_11.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "coach_12",
+    "category": "coach",
+    "path": "/backgrounds/coach/pulsenow_coach_12.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "coach_13",
+    "category": "coach",
+    "path": "/backgrounds/coach/pulsenow_coach_13.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "coach_14",
+    "category": "coach",
+    "path": "/backgrounds/coach/pulsenow_coach_14.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "coach_15",
+    "category": "coach",
+    "path": "/backgrounds/coach/pulsenow_coach_15.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "coach_16",
+    "category": "coach",
+    "path": "/backgrounds/coach/pulsenow_coach_16.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "coach_17",
+    "category": "coach",
+    "path": "/backgrounds/coach/pulsenow_coach_17.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "coach_18",
+    "category": "coach",
+    "path": "/backgrounds/coach/pulsenow_coach_18.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "coach_19",
+    "category": "coach",
+    "path": "/backgrounds/coach/pulsenow_coach_19.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "coach_20",
+    "category": "coach",
+    "path": "/backgrounds/coach/pulsenow_coach_20.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "crm_01",
+    "category": "crm",
+    "path": "/backgrounds/crm/pulsenow_crm_01.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "crm_02",
+    "category": "crm",
+    "path": "/backgrounds/crm/pulsenow_crm_02.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "crm_03",
+    "category": "crm",
+    "path": "/backgrounds/crm/pulsenow_crm_03.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "crm_04",
+    "category": "crm",
+    "path": "/backgrounds/crm/pulsenow_crm_04.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "crm_05",
+    "category": "crm",
+    "path": "/backgrounds/crm/pulsenow_crm_05.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "crm_06",
+    "category": "crm",
+    "path": "/backgrounds/crm/pulsenow_crm_06.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "crm_07",
+    "category": "crm",
+    "path": "/backgrounds/crm/pulsenow_crm_07.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "crm_08",
+    "category": "crm",
+    "path": "/backgrounds/crm/pulsenow_crm_08.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "crm_09",
+    "category": "crm",
+    "path": "/backgrounds/crm/pulsenow_crm_09.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "crm_10",
+    "category": "crm",
+    "path": "/backgrounds/crm/pulsenow_crm_10.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "crm_11",
+    "category": "crm",
+    "path": "/backgrounds/crm/pulsenow_crm_11.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "crm_12",
+    "category": "crm",
+    "path": "/backgrounds/crm/pulsenow_crm_12.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "crm_13",
+    "category": "crm",
+    "path": "/backgrounds/crm/pulsenow_crm_13.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "crm_14",
+    "category": "crm",
+    "path": "/backgrounds/crm/pulsenow_crm_14.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "crm_15",
+    "category": "crm",
+    "path": "/backgrounds/crm/pulsenow_crm_15.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "crm_16",
+    "category": "crm",
+    "path": "/backgrounds/crm/pulsenow_crm_16.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "crm_17",
+    "category": "crm",
+    "path": "/backgrounds/crm/pulsenow_crm_17.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "crm_18",
+    "category": "crm",
+    "path": "/backgrounds/crm/pulsenow_crm_18.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "crm_19",
+    "category": "crm",
+    "path": "/backgrounds/crm/pulsenow_crm_19.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "crm_20",
+    "category": "crm",
+    "path": "/backgrounds/crm/pulsenow_crm_20.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "achievements_01",
+    "category": "achievements",
+    "path": "/backgrounds/achievements/pulsenow_achievements_01.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "achievements_02",
+    "category": "achievements",
+    "path": "/backgrounds/achievements/pulsenow_achievements_02.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "achievements_03",
+    "category": "achievements",
+    "path": "/backgrounds/achievements/pulsenow_achievements_03.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "achievements_04",
+    "category": "achievements",
+    "path": "/backgrounds/achievements/pulsenow_achievements_04.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "achievements_05",
+    "category": "achievements",
+    "path": "/backgrounds/achievements/pulsenow_achievements_05.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "achievements_06",
+    "category": "achievements",
+    "path": "/backgrounds/achievements/pulsenow_achievements_06.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "achievements_07",
+    "category": "achievements",
+    "path": "/backgrounds/achievements/pulsenow_achievements_07.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "achievements_08",
+    "category": "achievements",
+    "path": "/backgrounds/achievements/pulsenow_achievements_08.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "achievements_09",
+    "category": "achievements",
+    "path": "/backgrounds/achievements/pulsenow_achievements_09.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "achievements_10",
+    "category": "achievements",
+    "path": "/backgrounds/achievements/pulsenow_achievements_10.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "achievements_11",
+    "category": "achievements",
+    "path": "/backgrounds/achievements/pulsenow_achievements_11.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "achievements_12",
+    "category": "achievements",
+    "path": "/backgrounds/achievements/pulsenow_achievements_12.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "achievements_13",
+    "category": "achievements",
+    "path": "/backgrounds/achievements/pulsenow_achievements_13.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "achievements_14",
+    "category": "achievements",
+    "path": "/backgrounds/achievements/pulsenow_achievements_14.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "achievements_15",
+    "category": "achievements",
+    "path": "/backgrounds/achievements/pulsenow_achievements_15.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "achievements_16",
+    "category": "achievements",
+    "path": "/backgrounds/achievements/pulsenow_achievements_16.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "achievements_17",
+    "category": "achievements",
+    "path": "/backgrounds/achievements/pulsenow_achievements_17.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "achievements_18",
+    "category": "achievements",
+    "path": "/backgrounds/achievements/pulsenow_achievements_18.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "achievements_19",
+    "category": "achievements",
+    "path": "/backgrounds/achievements/pulsenow_achievements_19.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "achievements_20",
+    "category": "achievements",
+    "path": "/backgrounds/achievements/pulsenow_achievements_20.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "ambient_01",
+    "category": "ambient",
+    "path": "/backgrounds/ambient/pulsenow_ambient_01.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "ambient_02",
+    "category": "ambient",
+    "path": "/backgrounds/ambient/pulsenow_ambient_02.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "ambient_03",
+    "category": "ambient",
+    "path": "/backgrounds/ambient/pulsenow_ambient_03.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "ambient_04",
+    "category": "ambient",
+    "path": "/backgrounds/ambient/pulsenow_ambient_04.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "ambient_05",
+    "category": "ambient",
+    "path": "/backgrounds/ambient/pulsenow_ambient_05.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "ambient_06",
+    "category": "ambient",
+    "path": "/backgrounds/ambient/pulsenow_ambient_06.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "ambient_07",
+    "category": "ambient",
+    "path": "/backgrounds/ambient/pulsenow_ambient_07.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "ambient_08",
+    "category": "ambient",
+    "path": "/backgrounds/ambient/pulsenow_ambient_08.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "ambient_09",
+    "category": "ambient",
+    "path": "/backgrounds/ambient/pulsenow_ambient_09.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "ambient_10",
+    "category": "ambient",
+    "path": "/backgrounds/ambient/pulsenow_ambient_10.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "ambient_11",
+    "category": "ambient",
+    "path": "/backgrounds/ambient/pulsenow_ambient_11.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "ambient_12",
+    "category": "ambient",
+    "path": "/backgrounds/ambient/pulsenow_ambient_12.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "ambient_13",
+    "category": "ambient",
+    "path": "/backgrounds/ambient/pulsenow_ambient_13.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "ambient_14",
+    "category": "ambient",
+    "path": "/backgrounds/ambient/pulsenow_ambient_14.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "ambient_15",
+    "category": "ambient",
+    "path": "/backgrounds/ambient/pulsenow_ambient_15.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "ambient_16",
+    "category": "ambient",
+    "path": "/backgrounds/ambient/pulsenow_ambient_16.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "ambient_17",
+    "category": "ambient",
+    "path": "/backgrounds/ambient/pulsenow_ambient_17.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "ambient_18",
+    "category": "ambient",
+    "path": "/backgrounds/ambient/pulsenow_ambient_18.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "ambient_19",
+    "category": "ambient",
+    "path": "/backgrounds/ambient/pulsenow_ambient_19.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  },
+  {
+    "id": "ambient_20",
+    "category": "ambient",
+    "path": "/backgrounds/ambient/pulsenow_ambient_20.svg",
+    "width": 1200,
+    "height": 2600,
+    "format": "svg"
+  }
+];
+
+export function getPulseBackground(category = "ambient", index = 0) {
+  const matches = pulseBackgrounds.filter((item) => item.category === category);
+  if (!matches.length) return pulseBackgrounds[0]?.path || "";
+  return matches[Math.abs(index) % matches.length].path;
+}
+
+export function getRandomPulseBackground(category = "ambient") {
+  const matches = pulseBackgrounds.filter((item) => item.category === category);
+  if (!matches.length) return pulseBackgrounds[0]?.path || "";
+  return matches[Math.floor(Math.random() * matches.length)].path;
+}

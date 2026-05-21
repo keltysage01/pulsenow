@@ -1,3 +1,5 @@
+@import "./styles/pulsenow.tokens.css";
+
 :root {
   --primary: #16466d;
   --secondary: #5f9fc3;

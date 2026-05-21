@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { PulseBackground } from "./components/ui/PulseBackground";
 
 type Screen = "home" | "log" | "board" | "pipeline" | "me" | "contacts" | "coach";
 type ContactType = "prospect" | "recruit" | "client";
@@ -190,27 +191,29 @@ function App() {
 
   if (!session) {
     return (
-      <main className="login-page">
-        <section className="login-card">
-          <img className="login-logo" src={logo} alt="Pulsenow" />
-          <p className="eyebrow">Know who to call. Right now.</p>
-          <h1>Welcome back</h1>
-          <label>
-            Name
-            <input value={name} onChange={(event) => setName(event.target.value)} placeholder="Sam Knickerbocker" />
-          </label>
-          <label>
-            4-digit PIN
-            <input value={pin} onChange={(event) => setPin(event.target.value.replace(/[^0-9]/g, "").slice(0, 4))} inputMode="numeric" placeholder="1234" />
-          </label>
-          <button className="primary" onClick={login}>Enter Pulsenow</button>
-        </section>
-      </main>
+      <PulseBackground route="ambient" className="app-shell">
+        <main className="login-page">
+          <section className="login-card pulse-glass-card">
+            <img className="login-logo" src={logo} alt="Pulsenow" />
+            <p className="eyebrow">Know who to call. Right now.</p>
+            <h1>Welcome back</h1>
+            <label>
+              Name
+              <input value={name} onChange={(event) => setName(event.target.value)} placeholder="Sam Knickerbocker" />
+            </label>
+            <label>
+              4-digit PIN
+              <input value={pin} onChange={(event) => setPin(event.target.value.replace(/[^0-9]/g, "").slice(0, 4))} inputMode="numeric" placeholder="1234" />
+            </label>
+            <button className="primary" onClick={login}>Enter Pulsenow</button>
+          </section>
+        </main>
+      </PulseBackground>
     );
   }
 
   return (
-    <div className="app-shell">
+    <PulseBackground route={screen} className="app-shell">
       <header className="topbar">
         <button onClick={() => setDrawer(true)}>Menu</button>
         <img src={logo} alt="Pulsenow" />
@@ -256,7 +259,7 @@ function App() {
           <button className={screen === item ? "active" : ""} key={item} onClick={() => setScreen(item)}>{item}</button>
         ))}
       </nav>
-    </div>
+    </PulseBackground>
   );
 }
 
