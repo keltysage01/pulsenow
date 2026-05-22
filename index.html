@@ -4858,6 +4858,20 @@
         justify-content: center !important;
       }
 
+      #csv-import-panel #research-socials-btn,
+      #csv-import-panel #export-contacts-btn {
+        width: 100% !important;
+        min-height: 46px !important;
+        margin-top: 12px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+      }
+
+      #csv-import-panel #research-socials-btn + #export-contacts-btn {
+        margin-top: 14px !important;
+      }
+
       @media (max-width: 420px) {
         #detail-qualifiers.qualifier-grid {
           grid-template-columns: 1fr !important;
@@ -7499,6 +7513,30 @@
         order: 7;
       }
 
+      #home-screen > #today-path-card {
+        order: 2 !important;
+      }
+
+      #home-screen > .today-next-card {
+        order: 3 !important;
+      }
+
+      #home-screen > .people-call-card {
+        order: 4 !important;
+      }
+
+      #home-screen > .goals-panel {
+        order: 5 !important;
+      }
+
+      #home-screen > .vision-workspace {
+        order: 6 !important;
+      }
+
+      #home-screen > .standings-card {
+        order: 7 !important;
+      }
+
       .today-next-card {
         border-color: rgba(0, 133, 119, 0.18) !important;
         background:
@@ -7516,6 +7554,34 @@
         flex-wrap: wrap !important;
         gap: 9px !important;
         margin-top: 14px !important;
+      }
+
+      .today-next-card .choice-row {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 10px !important;
+        align-items: stretch !important;
+      }
+
+      .today-next-card .choice-row .pill-btn,
+      .today-next-card .choice-row .ghost-btn {
+        width: 100% !important;
+        min-height: 48px !important;
+        margin: 0 !important;
+        padding: 0 14px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        font-size: 15px !important;
+        font-weight: 560 !important;
+        line-height: 1 !important;
+        white-space: nowrap !important;
+      }
+
+      @media (max-width: 360px) {
+        .today-next-card .choice-row {
+          grid-template-columns: 1fr !important;
+        }
       }
 
       .people-shortcuts {
@@ -10183,12 +10249,7 @@
           <div id="weekly-goals-list" class="weekly-goals-list"></div>
         </section>
 
-        <section class="section card">
-          <p class="quote">"The secret of getting ahead is getting started."</p>
-          <p class="muted" style="margin-top: 12px; text-align: right; font-weight: 800;">Mark Twain</p>
-        </section>
-
-        <section class="section card">
+        <section class="section card standings-card">
           <h2>Today's Standings</h2>
           <div class="standings">
             <div class="standing-row"><strong>Sam</strong><span style="text-align:right">28</span><span style="text-align:right">3</span></div>
@@ -10312,12 +10373,17 @@
           <div class="contact-toolbar">
             <input id="contact-search" placeholder="Search contacts" />
             <div class="filter-row" id="contact-filters">
-              <button class="filter-btn active" data-contact-filter="all" type="button">All</button>
+              <button class="filter-btn active" data-contact-filter="attention" type="button">Attention</button>
+              <button class="filter-btn" data-contact-filter="top100" type="button">Top 100</button>
+              <button class="filter-btn" data-contact-filter="all" type="button">All</button>
+              <button class="filter-btn" data-contact-filter="women" type="button">Women</button>
+              <button class="filter-btn" data-contact-filter="licensed" type="button">Licensed</button>
+              <button class="filter-btn" data-contact-filter="needs_research" type="button">Needs research</button>
+              <button class="filter-btn" data-contact-filter="overdue" type="button">Overdue</button>
               <button class="filter-btn" data-contact-filter="prospect" type="button">Prospects</button>
               <button class="filter-btn" data-contact-filter="recruit" type="button">Recruits</button>
               <button class="filter-btn" data-contact-filter="client" type="button">Clients</button>
-              <button class="filter-btn" data-contact-filter="top100" type="button">Top 100</button>
-              <button class="filter-btn" data-contact-filter="overdue" type="button">Overdue</button>
+              <button class="filter-btn" data-contact-filter="az" type="button">A-Z</button>
             </div>
             <div class="people-shortcuts">
               <button class="ghost-btn" data-screen="powerlist" type="button">Power List</button>
@@ -10389,7 +10455,7 @@
         <section class="section">
           <div class="section-head">
             <h2 id="contact-count-label">0 contacts</h2>
-            <button id="seed-contacts-btn" class="text-btn" type="button">Seed demo</button>
+            <button id="seed-contacts-btn" class="text-btn" type="button">Load sample contacts</button>
           </div>
           <div id="contact-list" class="contact-list"></div>
         </section>
@@ -10442,7 +10508,7 @@
               <p class="eyebrow">People Pipeline</p>
               <h2>Move one person forward</h2>
             </div>
-            <button id="pipeline-seed-btn" class="text-btn" type="button">Seed demo</button>
+            <button id="pipeline-seed-btn" class="text-btn" type="button">Load sample pipeline</button>
           </div>
           <p class="muted" style="line-height: 1.6;">Cards come from CRM contacts. Move stages here; Supabase journey history plugs in later.</p>
           <div class="pipeline-tabs">
@@ -10720,7 +10786,7 @@
       let currentLog = {};
       let saveFeed = [];
       let contacts = [];
-      let contactFilter = "all";
+      let contactFilter = "attention";
       let selectedQualifiers = {};
       let selectedContactId = "";
       let pipelineType = "sales";
@@ -12113,27 +12179,97 @@
         renderPipeline();
       }
 
+      function contactSearchText(contact) {
+        const socials = contact.socials || {};
+        const tags = Array.isArray(contact.tags) ? contact.tags.join(" ") : "";
+        return [
+          contact.name,
+          contact.phone,
+          contact.email,
+          contact.type,
+          contact.stage,
+          contact.company,
+          contact.city,
+          contact.state,
+          contact.notes,
+          contact.gender,
+          contact.sex,
+          contact.license_status,
+          tags,
+          socials.linkedin,
+          socials.facebook,
+          socials.instagram,
+          socials.tiktok
+        ].filter(Boolean).join(" ").toLowerCase();
+      }
+
+      function contactMatchesSearch(contact, query) {
+        if (!query) return true;
+        return contactSearchText(contact).includes(query);
+      }
+
+      function isLikelyWoman(contact) {
+        const text = contactSearchText(contact);
+        if (/\b(woman|women|female|mom|mother|wife|she\/her)\b/.test(text)) return true;
+        const firstName = (contact.name || "").trim().split(/\s+/)[0].toLowerCase();
+        const commonNames = new Set(["sarah", "jessica", "emily", "amanda", "ashley", "kelty", "kelsey", "taylor", "casey", "morgan", "samantha", "olivia", "emma", "ava", "sophia", "isabella", "mia", "charlotte", "amelia", "harper", "evelyn", "abigail", "ella", "scarlett", "grace", "chloe", "lily", "madison", "natalie", "hannah", "lauren", "megan", "rachel", "nicole", "brittany", "courtney", "kayla", "melissa", "tiffany", "danielle", "stephanie", "victoria", "alexis", "paige", "brooke", "hailey", "allison", "aubrey", "anna", "claire", "julia"]);
+        return commonNames.has(firstName);
+      }
+
+      function isAlreadyLicensed(contact) {
+        if (contact.licensed === true || contact.is_licensed === true || contact.licensed_agent === true) return true;
+        return /\b(licensed|life licensed|life-licensed|insurance agent|agent license|passed exam|nipr|license active)\b/.test(contactSearchText(contact));
+      }
+
+      function contactNeedsResearch(contact) {
+        return researchStatus(contact) === "Needs research";
+      }
+
+      function contactNeedsAttention(contact) {
+        return isOverdue(contact) || contact.is_top_100 === true || scoreContact(contact) >= 6;
+      }
+
       function contactMatchesFilter(contact) {
-        if (contactFilter === "all") return true;
-        if (contactFilter === "top100") return contact.is_top_100 === true;
+        if (contactFilter === "all" || contactFilter === "az") return true;
+        if (contactFilter === "attention") return contactNeedsAttention(contact);
+        if (contactFilter === "top100") return contact.is_top_100 === true || scoreContact(contact) >= 5;
         if (contactFilter === "overdue") return isOverdue(contact);
+        if (contactFilter === "needs_research") return contactNeedsResearch(contact);
+        if (contactFilter === "women") return isLikelyWoman(contact);
+        if (contactFilter === "licensed") return isAlreadyLicensed(contact);
         return contact.type === contactFilter;
+      }
+
+      function activeContactFilterLabel() {
+        const active = document.querySelector('[data-contact-filter="' + contactFilter + '"]');
+        return active ? active.textContent.trim() : "contacts";
       }
 
       function filteredContacts() {
         const q = contactSearch.value.trim().toLowerCase();
-        return contacts
+        const list = contacts
           .filter(contactMatchesFilter)
-          .filter((contact) => {
-            if (!q) return true;
-            return contact.name.toLowerCase().includes(q) || (contact.phone || "").includes(q) || (contact.email || "").toLowerCase().includes(q);
-          })
-          .sort((a, b) => scoreContact(b) - scoreContact(a));
+          .filter((contact) => contactMatchesSearch(contact, q));
+        return list.sort((a, b) => {
+          if (contactFilter === "az") return (a.name || "").localeCompare(b.name || "");
+          const overdueDelta = Number(isOverdue(b)) - Number(isOverdue(a));
+          if (overdueDelta) return overdueDelta;
+          return scoreContact(b) - scoreContact(a) || (a.name || "").localeCompare(b.name || "");
+        });
       }
 
       function renderContacts() {
         const list = filteredContacts();
-        contactCountLabel.textContent = list.length + (list.length === 1 ? " contact" : " contacts");
+        const label = activeContactFilterLabel().toLowerCase();
+        if (contactFilter === "all") {
+          contactCountLabel.textContent = list.length + " total " + (list.length === 1 ? "contact" : "contacts");
+        } else if (contactFilter === "az") {
+          contactCountLabel.textContent = list.length + " A-Z " + (list.length === 1 ? "contact" : "contacts");
+        } else if (contactFilter === "attention") {
+          contactCountLabel.textContent = list.length + " need attention";
+        } else {
+          contactCountLabel.textContent = list.length + " " + label;
+        }
         contactList.innerHTML = "";
 
         if (list.length === 0) {
@@ -12357,6 +12493,9 @@
         const facebook = rowValue(row, ["facebook", "facebook_url", "fb"]);
         const instagram = rowValue(row, ["instagram", "instagram_url", "ig"]);
         const tiktok = rowValue(row, ["tiktok", "tiktok_url"]);
+        const gender = rowValue(row, ["gender", "sex", "identity"]);
+        const licensed = parseCsvBool(rowValue(row, ["licensed", "is_licensed", "already_licensed", "life_licensed", "licensed_agent"]));
+        const licenseStatus = rowValue(row, ["license_status", "license", "licensing_status"]);
         const contactName = name || email || phone || "Imported Contact " + (index + 1);
         const qualifiers = {
           married: parseCsvBool(rowValue(row, ["married", "spouse"])),
@@ -12383,6 +12522,10 @@
           city,
           state,
           company,
+          gender,
+          licensed,
+          is_licensed: licensed,
+          license_status: licenseStatus,
           socials: { linkedin, facebook, instagram, tiktok },
           notes,
           qualifiers,
@@ -12493,7 +12636,7 @@
       }
 
       function exportContactsCsv() {
-        const headers = ["name", "category", "research_status", "score", "phone", "email", "type", "stage", "followup", "linkedin", "facebook", "instagram", "tiktok", "company", "city", "state", "notes"];
+        const headers = ["name", "category", "research_status", "score", "phone", "email", "type", "stage", "followup", "linkedin", "facebook", "instagram", "tiktok", "company", "city", "state", "gender", "licensed", "license_status", "notes"];
         const rows = contacts.map((contact) => {
           const socials = contact.socials || {};
           return [
@@ -12513,6 +12656,9 @@
             contact.company,
             contact.city,
             contact.state,
+            contact.gender,
+            contact.licensed || contact.is_licensed ? "yes" : "",
+            contact.license_status,
             contact.notes
           ].map(csvCell).join(",");
         });
