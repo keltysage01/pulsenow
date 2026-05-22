@@ -7799,6 +7799,320 @@
         border-color: rgba(255, 255, 255, 0.14) !important;
       }
 
+      /* Visual rhythm pass: stronger PulseNow color, clearer blocks, less same-card fatigue */
+      :root {
+        --pulse-gradient-main: linear-gradient(135deg, #07385c 0%, #148b9f 44%, #78d86d 100%);
+        --pulse-gradient-soft: linear-gradient(135deg, rgba(12, 121, 149, 0.16), rgba(112, 222, 148, 0.22));
+        --pulse-gradient-deep: linear-gradient(145deg, #0a1d35 0%, #155e73 48%, #6ec86a 140%);
+        --pulse-lime: #98df65;
+        --pulse-cyan: #4dc7d7;
+        --pulse-deep: #071a31;
+      }
+
+      body {
+        background:
+          radial-gradient(circle at 12% 8%, rgba(77, 199, 215, 0.32), transparent 34%),
+          radial-gradient(circle at 88% 12%, rgba(152, 223, 101, 0.28), transparent 32%),
+          linear-gradient(180deg, #f7fffd 0%, #eaf8f4 46%, #f3fbff 100%) !important;
+      }
+
+      .shell {
+        gap: 22px !important;
+      }
+
+      .profile.pulse-main-container {
+        position: relative !important;
+        overflow: hidden !important;
+        min-height: 118px !important;
+        border: 1px solid rgba(255, 255, 255, 0.84) !important;
+        background:
+          linear-gradient(135deg, rgba(255, 255, 255, 0.86), rgba(237, 252, 250, 0.68)),
+          radial-gradient(circle at 88% 18%, rgba(120, 216, 109, 0.28), transparent 34%) !important;
+      }
+
+      .profile.pulse-main-container::after {
+        content: "";
+        position: absolute;
+        right: 18px;
+        top: 18px;
+        width: 52px;
+        height: 6px;
+        border-radius: 999px;
+        background: linear-gradient(90deg, rgba(7, 56, 92, 0.25), rgba(77, 199, 215, 0.6), rgba(152, 223, 101, 0.62));
+        box-shadow: 0 8px 24px rgba(77, 199, 215, 0.22);
+      }
+
+      .avatar {
+        border-color: rgba(20, 139, 159, 0.86) !important;
+        background:
+          linear-gradient(#fff, #fff) padding-box,
+          var(--pulse-gradient-main) border-box !important;
+        box-shadow: 0 14px 30px rgba(7, 56, 92, 0.16) !important;
+      }
+
+      .level,
+      .quest-badge,
+      .score-pill,
+      .stage-pill,
+      .category-pill {
+        background: rgba(77, 199, 215, 0.16) !important;
+        color: #07385c !important;
+      }
+
+      .today-path-card {
+        position: relative !important;
+        overflow: hidden !important;
+        padding: 22px !important;
+        border: 0 !important;
+        background:
+          radial-gradient(circle at 86% 12%, rgba(152, 223, 101, 0.38), transparent 28%),
+          radial-gradient(circle at 8% 0%, rgba(77, 199, 215, 0.28), transparent 30%),
+          var(--pulse-gradient-deep) !important;
+        color: white !important;
+        box-shadow: 0 24px 50px rgba(7, 26, 49, 0.22) !important;
+      }
+
+      .today-path-card::before {
+        content: "";
+        position: absolute;
+        inset: auto 18px 18px auto;
+        width: 84px;
+        height: 84px;
+        border-radius: 28px;
+        border: 1px solid rgba(255, 255, 255, 0.22);
+        background: rgba(255, 255, 255, 0.08);
+        transform: rotate(10deg);
+      }
+
+      .today-path-card h2,
+      .today-path-card .muted,
+      .today-path-card strong,
+      .today-path-card span {
+        color: white !important;
+      }
+
+      .today-path-card .muted,
+      .quest-meter-top span {
+        color: rgba(255, 255, 255, 0.78) !important;
+      }
+
+      .today-path-card .quest-badge,
+      .today-path-card .quest-effort {
+        background: rgba(255, 255, 255, 0.16) !important;
+        border: 1px solid rgba(255, 255, 255, 0.18) !important;
+        color: rgba(255, 255, 255, 0.9) !important;
+      }
+
+      .today-path-card .quest-track {
+        background: rgba(255, 255, 255, 0.18) !important;
+        box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.16) !important;
+      }
+
+      .today-path-card .quest-track span {
+        background: linear-gradient(90deg, #b8f06f, #64ddc9, #ffffff) !important;
+      }
+
+      .today-path-card .quest-step {
+        background: rgba(255, 255, 255, 0.13) !important;
+        border-color: rgba(255, 255, 255, 0.2) !important;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 12px 24px rgba(0, 0, 0, 0.12) !important;
+      }
+
+      .today-path-card .quest-step small {
+        color: rgba(255, 255, 255, 0.68) !important;
+      }
+
+      .today-path-card .quest-dot {
+        background: rgba(255, 255, 255, 0.2) !important;
+        color: white !important;
+      }
+
+      .people-call-card,
+      .goals-panel,
+      .vision-workspace,
+      #contacts-screen > .card:first-child,
+      #coach-screen > .card:first-child,
+      #board-screen > .card:first-child,
+      #pipeline-screen > .card:first-child,
+      #me-screen > .card:first-child {
+        position: relative !important;
+        overflow: hidden !important;
+      }
+
+      .people-call-card::before,
+      .goals-panel::before,
+      .vision-workspace::before,
+      #contacts-screen > .card:first-child::before,
+      #coach-screen > .card:first-child::before,
+      #board-screen > .card:first-child::before,
+      #pipeline-screen > .card:first-child::before,
+      #me-screen > .card:first-child::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 7px;
+        border-radius: 999px;
+        background: var(--pulse-gradient-main);
+        box-shadow: 10px 0 28px rgba(77, 199, 215, 0.18);
+      }
+
+      .goals-panel {
+        background:
+          linear-gradient(135deg, rgba(255, 255, 255, 0.86), rgba(235, 255, 245, 0.72)),
+          radial-gradient(circle at 92% 12%, rgba(152, 223, 101, 0.28), transparent 26%) !important;
+      }
+
+      .vision-workspace {
+        background:
+          linear-gradient(135deg, rgba(238, 250, 255, 0.84), rgba(235, 255, 245, 0.64)),
+          radial-gradient(circle at 12% 18%, rgba(77, 199, 215, 0.22), transparent 28%) !important;
+      }
+
+      .people-call-card {
+        background:
+          linear-gradient(135deg, rgba(255,255,255,0.86), rgba(235,247,255,0.68)),
+          radial-gradient(circle at 95% 10%, rgba(77, 199, 215, 0.28), transparent 30%) !important;
+      }
+
+      .today-next-card {
+        border: 1px solid rgba(77, 199, 215, 0.24) !important;
+        background:
+          linear-gradient(135deg, rgba(225, 249, 255, 0.74), rgba(236, 255, 241, 0.64)) !important;
+      }
+
+      .power-row,
+      .leader-row,
+      .contact-card,
+      .pipeline-card,
+      .badge-item,
+      .me-stat-tile,
+      .question-chip,
+      .field-row {
+        border-color: rgba(255, 255, 255, 0.78) !important;
+        background:
+          linear-gradient(145deg, rgba(255,255,255,0.76), rgba(247,253,252,0.54)) !important;
+      }
+
+      .power-row:nth-child(1),
+      .leader-row:nth-child(1),
+      .contact-card:nth-child(1) {
+        background:
+          linear-gradient(145deg, rgba(255,255,255,0.86), rgba(232,255,245,0.68)),
+          radial-gradient(circle at 92% 12%, rgba(152, 223, 101, 0.22), transparent 28%) !important;
+      }
+
+      .rank,
+      .leader-rank {
+        background: var(--pulse-gradient-main) !important;
+        box-shadow: 0 10px 24px rgba(20, 139, 159, 0.22) !important;
+      }
+
+      .primary-btn,
+      .pill-btn,
+      .filter-btn.active,
+      .qualifier-btn.active,
+      .toggle-btn.active,
+      .substep-btn.done,
+      #save-log-btn {
+        background: var(--pulse-gradient-main) !important;
+        color: white !important;
+        box-shadow: 0 14px 30px rgba(20, 139, 159, 0.2) !important;
+      }
+
+      .ghost-btn,
+      .text-btn,
+      .filter-btn,
+      .contact-actions a,
+      .contact-actions button,
+      .section-head .text-btn {
+        color: #0b6f83 !important;
+      }
+
+      .bar span,
+      .progress > div,
+      .goal-progress-bar-fill {
+        background: linear-gradient(90deg, #07385c, #4dc7d7 50%, #98df65) !important;
+      }
+
+      .clarity-panel {
+        border: 0 !important;
+        background:
+          radial-gradient(circle at 90% 10%, rgba(152, 223, 101, 0.28), transparent 28%),
+          var(--pulse-gradient-deep) !important;
+        color: white !important;
+      }
+
+      .clarity-panel .eyebrow,
+      .clarity-panel h3,
+      .clarity-panel p,
+      .clarity-panel strong,
+      .clarity-panel span {
+        color: white !important;
+      }
+
+      .clarity-panel p,
+      .clarity-grid span {
+        color: rgba(255, 255, 255, 0.72) !important;
+      }
+
+      .clarity-grid > div {
+        background: rgba(255, 255, 255, 0.13) !important;
+        border-color: rgba(255, 255, 255, 0.18) !important;
+      }
+
+      .questionnaire-panel {
+        background:
+          linear-gradient(135deg, rgba(255, 255, 255, 0.84), rgba(229, 255, 247, 0.7)),
+          radial-gradient(circle at 0% 0%, rgba(77, 199, 215, 0.2), transparent 28%) !important;
+      }
+
+      #coach-screen > .card:first-child {
+        border: 0 !important;
+        background:
+          radial-gradient(circle at 88% 8%, rgba(152, 223, 101, 0.34), transparent 26%),
+          var(--pulse-gradient-deep) !important;
+      }
+
+      #coach-screen > .card:first-child h2,
+      #coach-screen > .card:first-child .eyebrow,
+      #coach-screen > .card:first-child .muted {
+        color: white !important;
+      }
+
+      #coach-screen > .card:first-child .filter-btn {
+        background: rgba(255, 255, 255, 0.14) !important;
+        border-color: rgba(255, 255, 255, 0.18) !important;
+        color: white !important;
+      }
+
+      .chat-bubble.user {
+        background: linear-gradient(135deg, rgba(7, 56, 92, 0.9), rgba(20, 139, 159, 0.82)) !important;
+        color: white !important;
+      }
+
+      .bottom-nav button.active .nav-icon,
+      .bottom-nav button.active::before {
+        background: linear-gradient(135deg, rgba(77, 199, 215, 0.18), rgba(152, 223, 101, 0.24)) !important;
+      }
+
+      html[data-theme="dark"] body {
+        background:
+          radial-gradient(circle at 12% 8%, rgba(77, 199, 215, 0.18), transparent 34%),
+          radial-gradient(circle at 88% 12%, rgba(152, 223, 101, 0.15), transparent 32%),
+          linear-gradient(180deg, #06101f 0%, #071a31 100%) !important;
+      }
+
+      html[data-theme="dark"] .profile.pulse-main-container,
+      html[data-theme="dark"] .goals-panel,
+      html[data-theme="dark"] .vision-workspace,
+      html[data-theme="dark"] .people-call-card,
+      html[data-theme="dark"] .today-next-card,
+      html[data-theme="dark"] .questionnaire-panel {
+        background: rgba(255, 255, 255, 0.08) !important;
+      }
+
       @media (max-width: 380px) {
         .shell {
           padding-left: 16px !important;
