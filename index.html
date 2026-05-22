@@ -8323,6 +8323,442 @@
         color: #f7fbff !important;
       }
 
+      /* Mobile polish pass: cleaner header, clearer priorities, richer contact scan */
+      #app .topbar {
+        background: rgba(248, 253, 252, 0.9) !important;
+        border-bottom: 1px solid rgba(13, 92, 120, 0.1) !important;
+        box-shadow: 0 10px 28px rgba(31, 65, 85, 0.06) !important;
+      }
+
+      #app .topbar-inner {
+        grid-template-columns: 72px minmax(0, 1fr) 72px !important;
+        height: 66px !important;
+        padding: 0 18px !important;
+        gap: 10px !important;
+      }
+
+      #app .brand {
+        height: 58px !important;
+        align-items: center !important;
+        justify-content: center !important;
+      }
+
+      #app .brand-logo {
+        width: min(250px, 52vw) !important;
+        max-width: none !important;
+        height: 56px !important;
+        transform: scale(1.12) !important;
+      }
+
+      #app #menu-btn,
+      #app #theme-btn {
+        width: 72px !important;
+        min-width: 72px !important;
+        height: 44px !important;
+        min-height: 44px !important;
+        padding: 0 !important;
+        border: 0 !important;
+        border-radius: 0 !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        color: #078875 !important;
+        font-size: 18px !important;
+        font-weight: 520 !important;
+        letter-spacing: -0.02em !important;
+      }
+
+      #app #menu-btn {
+        justify-content: flex-start !important;
+        text-align: left !important;
+      }
+
+      #app #theme-btn {
+        justify-content: flex-end !important;
+        text-align: right !important;
+      }
+
+      .profile.pulse-main-container {
+        margin-top: 4px !important;
+      }
+
+      .score-pill,
+      .stage-pill,
+      .category-pill,
+      .overdue-pill,
+      .count-pill {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        min-height: 34px !important;
+        padding: 8px 13px !important;
+        border-radius: 999px !important;
+        font-size: 12.5px !important;
+        font-weight: 650 !important;
+        line-height: 1 !important;
+      }
+
+      .contact-category-row .category-pill {
+        flex: 1 1 118px !important;
+        min-width: 0 !important;
+      }
+
+      #contacts-screen > .card:first-child::before,
+      .people-call-card::before,
+      .goals-panel::before,
+      .vision-workspace::before,
+      #coach-screen > .card:first-child::before,
+      #board-screen > .card:first-child::before,
+      #pipeline-screen > .card:first-child::before,
+      #me-screen > .card:first-child::before {
+        left: 22px !important;
+        right: 22px !important;
+        top: 0 !important;
+        bottom: auto !important;
+        width: auto !important;
+        height: 4px !important;
+        border-radius: 0 0 999px 999px !important;
+        opacity: 0.78 !important;
+        box-shadow: 0 12px 24px rgba(77, 199, 215, 0.18) !important;
+      }
+
+      #contacts-screen > .card:first-child {
+        background:
+          linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(235, 255, 245, 0.66)),
+          radial-gradient(circle at 94% 12%, rgba(152, 223, 101, 0.24), transparent 30%) !important;
+      }
+
+      .dream-builder-card {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 12px;
+        align-items: center;
+        margin: 12px 0 16px;
+        padding: 14px;
+        border-radius: 22px;
+        background:
+          radial-gradient(circle at 94% 8%, rgba(152, 223, 101, 0.22), transparent 30%),
+          linear-gradient(135deg, rgba(255, 255, 255, 0.78), rgba(230, 251, 255, 0.58));
+        border: 1px solid rgba(255, 255, 255, 0.78);
+        box-shadow: 0 14px 32px rgba(31, 65, 85, 0.08);
+      }
+
+      .dream-builder-card strong {
+        font-size: 15px;
+        font-weight: 680;
+        letter-spacing: -0.02em;
+      }
+
+      .dream-builder-card p {
+        margin-top: 3px;
+        font-size: 13px;
+        line-height: 1.34;
+      }
+
+      .dream-builder-card .ghost-btn {
+        min-height: 40px !important;
+        white-space: nowrap !important;
+      }
+
+      #today-path-card.card.today-path-card {
+        padding: 20px !important;
+      }
+
+      #today-path-card #today-quest-title {
+        font-size: clamp(26px, 7vw, 34px) !important;
+        line-height: 1.03 !important;
+        letter-spacing: -0.045em !important;
+      }
+
+      #today-path-card #today-quest-copy {
+        max-width: 96% !important;
+        color: rgba(255, 255, 255, 0.84) !important;
+        font-size: 15px !important;
+        line-height: 1.42 !important;
+      }
+
+      .quest-steps {
+        grid-template-columns: 1fr !important;
+        gap: 10px !important;
+      }
+
+      .quest-step {
+        display: grid !important;
+        grid-template-columns: 36px 1fr auto !important;
+        min-height: 58px !important;
+        padding: 10px 12px !important;
+        text-align: left !important;
+      }
+
+      .quest-step strong,
+      .quest-step small {
+        text-align: left !important;
+      }
+
+      .quest-step small {
+        color: rgba(255, 255, 255, 0.76) !important;
+        font-size: 12.5px !important;
+      }
+
+      .quest-step::after {
+        content: "›";
+        color: rgba(255, 255, 255, 0.74);
+        font-size: 24px;
+        font-weight: 400;
+      }
+
+      .power-list {
+        gap: 14px !important;
+      }
+
+      .power-row {
+        width: 100% !important;
+        padding: 16px !important;
+        border-radius: 26px !important;
+      }
+
+      #home-power-list .power-row:first-child {
+        background:
+          radial-gradient(circle at 95% 6%, rgba(152, 223, 101, 0.3), transparent 28%),
+          linear-gradient(135deg, rgba(255, 255, 255, 0.94), rgba(226, 250, 255, 0.78)) !important;
+        border: 1px solid rgba(77, 199, 215, 0.32) !important;
+        box-shadow: 0 18px 40px rgba(31, 65, 85, 0.13) !important;
+      }
+
+      .power-row .actions {
+        display: grid !important;
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+        gap: 9px !important;
+        width: 100% !important;
+        margin-top: 12px !important;
+      }
+
+      .power-row .actions a,
+      .power-row .actions button {
+        min-height: 42px !important;
+        padding: 0 10px !important;
+        border-radius: 15px !important;
+        font-size: 13.5px !important;
+        font-weight: 620 !important;
+      }
+
+      .power-row p.muted,
+      .today-next-card .muted,
+      .section-subcopy {
+        color: rgba(55, 65, 81, 0.76) !important;
+      }
+
+      .csv-drop {
+        position: relative !important;
+        border-style: solid !important;
+        background:
+          linear-gradient(135deg, rgba(255, 255, 255, 0.82), rgba(231, 253, 251, 0.64)) !important;
+        box-shadow: 0 14px 34px rgba(31, 65, 85, 0.08) !important;
+      }
+
+      .csv-scan-panel {
+        display: grid;
+        gap: 12px;
+        margin: 12px 0;
+        padding: 15px;
+        border-radius: 22px;
+        border: 1px solid rgba(77, 199, 215, 0.22);
+        background:
+          radial-gradient(circle at 94% 10%, rgba(152, 223, 101, 0.2), transparent 28%),
+          rgba(255, 255, 255, 0.66);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72), 0 12px 28px rgba(31, 65, 85, 0.08);
+      }
+
+      .csv-scan-panel.hidden {
+        display: none;
+      }
+
+      .csv-scan-head {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .csv-scan-head strong {
+        font-size: 15px;
+        font-weight: 680;
+        letter-spacing: -0.02em;
+      }
+
+      .scan-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        min-height: 28px;
+        padding: 0 10px;
+        border-radius: 999px;
+        color: #067b70;
+        background: rgba(77, 199, 215, 0.14);
+        font-size: 12px;
+        font-weight: 650;
+      }
+
+      .scan-pill::before {
+        content: "";
+        width: 7px;
+        height: 7px;
+        border-radius: 999px;
+        background: #0aa68f;
+        box-shadow: 0 0 0 5px rgba(10, 166, 143, 0.12);
+      }
+
+      .csv-scan-panel.scanning .scan-pill::before {
+        animation: scanPulse 900ms ease-in-out infinite;
+      }
+
+      .scan-lines {
+        display: grid;
+        gap: 8px;
+      }
+
+      .scan-line {
+        height: 9px;
+        border-radius: 999px;
+        overflow: hidden;
+        background: rgba(13, 92, 120, 0.08);
+      }
+
+      .scan-line span {
+        display: block;
+        height: 100%;
+        width: var(--w, 50%);
+        border-radius: inherit;
+        background: linear-gradient(90deg, #176c95, #4dc7d7, #98df65);
+        transform-origin: left;
+      }
+
+      .csv-scan-panel.scanning .scan-line span {
+        animation: scanSweep 1.15s ease-in-out infinite alternate;
+      }
+
+      .scan-profile {
+        display: grid;
+        grid-template-columns: 44px 1fr;
+        gap: 11px;
+        align-items: center;
+        padding: 12px;
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.58);
+        border: 1px solid rgba(255, 255, 255, 0.64);
+      }
+
+      .scan-avatar {
+        display: grid;
+        place-items: center;
+        width: 44px;
+        height: 44px;
+        border-radius: 16px;
+        color: #ffffff;
+        background: linear-gradient(135deg, #176c95, #4dc7d7, #98df65);
+        font-weight: 720;
+      }
+
+      .scan-profile strong {
+        font-size: 15px;
+        font-weight: 680;
+      }
+
+      .scan-profile p {
+        margin-top: 3px;
+        color: rgba(55, 65, 81, 0.76);
+        font-size: 13px;
+        line-height: 1.35;
+      }
+
+      @keyframes scanPulse {
+        50% { transform: scale(1.35); opacity: 0.6; }
+      }
+
+      @keyframes scanSweep {
+        from { transform: scaleX(0.32); }
+        to { transform: scaleX(1); }
+      }
+
+      .badge-grid {
+        grid-template-columns: 1fr !important;
+        gap: 14px !important;
+      }
+
+      #badge-grid .badge-item {
+        width: 100% !important;
+        min-height: 92px !important;
+        display: grid !important;
+        grid-template-columns: 46px 1fr auto !important;
+        align-items: center !important;
+        text-align: left !important;
+        padding: 16px !important;
+        border-radius: 24px !important;
+      }
+
+      #badge-grid .badge-item::before {
+        content: "✦";
+        display: grid;
+        place-items: center;
+        width: 46px;
+        height: 46px;
+        border-radius: 16px;
+        color: #ffffff;
+        background: linear-gradient(135deg, #176c95, #4dc7d7, #98df65);
+        box-shadow: 0 12px 24px rgba(77, 199, 215, 0.2);
+      }
+
+      #badge-grid .badge-item.locked::before {
+        content: "○";
+        color: #8b95a3;
+        background: rgba(148, 163, 184, 0.14);
+        box-shadow: none;
+      }
+
+      #badge-grid .badge-item::after {
+        position: static !important;
+        content: "Earned" !important;
+        min-width: 72px;
+        text-align: center;
+      }
+
+      #badge-grid .badge-item.locked::after {
+        content: "Locked" !important;
+      }
+
+      html[data-theme="dark"] #app .topbar {
+        background: rgba(5, 15, 28, 0.9) !important;
+        border-bottom-color: rgba(255, 255, 255, 0.09) !important;
+      }
+
+      html[data-theme="dark"] #app #menu-btn,
+      html[data-theme="dark"] #app #theme-btn {
+        color: #7ce3d6 !important;
+        background: transparent !important;
+        box-shadow: none !important;
+      }
+
+      html[data-theme="dark"] .power-row p.muted,
+      html[data-theme="dark"] .today-next-card .muted,
+      html[data-theme="dark"] .section-subcopy,
+      html[data-theme="dark"] .scan-profile p {
+        color: rgba(235, 245, 255, 0.74) !important;
+      }
+
+      html[data-theme="dark"] .csv-scan-panel,
+      html[data-theme="dark"] .scan-profile,
+      html[data-theme="dark"] .dream-builder-card {
+        background: rgba(255, 255, 255, 0.08) !important;
+        border-color: rgba(255, 255, 255, 0.12) !important;
+      }
+
+      html[data-theme="dark"] .score-pill,
+      html[data-theme="dark"] .stage-pill,
+      html[data-theme="dark"] .category-pill,
+      html[data-theme="dark"] .count-pill {
+        color: #dffcff !important;
+        background: rgba(77, 199, 215, 0.14) !important;
+      }
+
       /* Public marketing landing page */
       #landing {
         min-height: 100dvh;
@@ -8845,6 +9281,13 @@
             <h2>Vision Board</h2>
             <button class="text-btn" type="button">Edit</button>
           </div>
+          <div class="dream-builder-card">
+            <div>
+              <strong>Build my dream life with AI</strong>
+              <p class="muted">Describe the life you want. PulseNow can turn it into a visual board, milestones, and daily actions.</p>
+            </div>
+            <button class="ghost-btn" type="button">Dream Builder</button>
+          </div>
           <div id="vision-board-grid" class="vision-board-grid"></div>
           <p class="muted" style="margin-top: 10px; font-style: italic;">I make dreams possible by showing up every day.</p>
         </section>
@@ -9014,6 +9457,24 @@
             <small>Works with columns like name, first_name, last_name, phone, email, type, followup, married, homeowner.</small>
             <input id="csv-file-input" type="file" accept=".csv,.tsv,.txt,text/csv,text/tab-separated-values,text/plain" />
           </label>
+          <div id="csv-scan-panel" class="csv-scan-panel hidden" aria-live="polite">
+            <div class="csv-scan-head">
+              <strong id="csv-scan-title">Scanning contacts</strong>
+              <span id="csv-scan-pill" class="scan-pill">Ready</span>
+            </div>
+            <div class="scan-lines" aria-hidden="true">
+              <div class="scan-line" style="--w: 78%;"><span></span></div>
+              <div class="scan-line" style="--w: 54%;"><span></span></div>
+              <div class="scan-line" style="--w: 88%;"><span></span></div>
+            </div>
+            <div id="csv-scan-profile" class="scan-profile">
+              <span class="scan-avatar">P</span>
+              <div>
+                <strong>Waiting for file</strong>
+                <p>Upload a CSV and PulseNow will organize, score, and prepare social research.</p>
+              </div>
+            </div>
+          </div>
           <div id="csv-import-status" class="session-item">No file selected yet.</div>
           <button id="research-socials-btn" class="ghost-btn hidden" type="button">Research socials + LinkedIn</button>
           <button id="export-contacts-btn" class="ghost-btn hidden" type="button">Download organized CSV</button>
@@ -9065,6 +9526,7 @@
             <div class="detail-line"><span class="muted">Follow-up</span><strong id="detail-followup">None</strong></div>
             <div class="detail-line"><span class="muted">Stage</span><strong id="detail-stage">Uncontacted</strong></div>
           </div>
+          <div id="detail-ai-summary" class="scan-profile hidden"></div>
           <div id="detail-qualifiers" class="qualifier-grid"></div>
           <div class="contact-actions">
             <a id="detail-call-link" href="#">Call</a>
@@ -9327,6 +9789,10 @@
       const contactDetailPanel = document.getElementById("contact-detail-panel");
       const csvFileInput = document.getElementById("csv-file-input");
       const csvImportStatus = document.getElementById("csv-import-status");
+      const csvScanPanel = document.getElementById("csv-scan-panel");
+      const csvScanTitle = document.getElementById("csv-scan-title");
+      const csvScanPill = document.getElementById("csv-scan-pill");
+      const csvScanProfile = document.getElementById("csv-scan-profile");
       const researchSocialsBtn = document.getElementById("research-socials-btn");
       const exportContactsBtn = document.getElementById("export-contacts-btn");
       const profilePhotoInput = document.getElementById("profile-photo-input");
@@ -9654,7 +10120,7 @@
       const demoContacts = [
         {
           id: "c1",
-          name: "Jordan Miles",
+          name: "Jordan Blake",
           phone: "8015550144",
           email: "jordan@example.com",
           type: "prospect",
@@ -10428,6 +10894,11 @@
           contacts = cloneDemoContacts();
           saveContacts();
         }
+        contacts = contacts.map((contact) => {
+          if (contact.id === "c1" && contact.name === "Jordan Miles") return Object.assign({}, contact, { name: "Jordan Blake" });
+          return contact;
+        });
+        saveContacts();
         renderContacts();
         renderPowerLists();
         renderPipeline();
@@ -10784,6 +11255,43 @@
         return "Needs research";
       }
 
+      function inferContactProfile(contact) {
+        const socials = contact.socials || {};
+        const socialNames = Object.keys(socials).filter((key) => socials[key]).map((key) => key.charAt(0).toUpperCase() + key.slice(1));
+        const companyText = contact.company || contact.notes || "";
+        const lower = companyText.toLowerCase();
+        let role = "relationship prospect";
+        if (lower.includes("school") || lower.includes("teacher") || lower.includes("education")) role = "education contact";
+        else if (lower.includes("insurance") || lower.includes("farmers") || lower.includes("state farm") || lower.includes("allstate")) role = "possible captive insurance contact";
+        else if (lower.includes("real estate") || lower.includes("realtor")) role = "real estate contact";
+        else if (contact.company) role = contact.company;
+
+        const captive = lower.includes("state farm") || lower.includes("farmers") || lower.includes("allstate") || lower.includes("captive");
+        const socialText = socialNames.length ? "Found on " + socialNames.join(", ") + "." : "Social targets are queued for research.";
+        const captiveText = captive ? " May be in a captive company, but still worth a careful relationship-first reach out." : " No captive-company conflict detected from the current data.";
+        return "This is " + contact.name + ". " + (contact.company ? "Looks connected to " + role + ". " : "Looks like a " + role + ". ") + socialText + captiveText;
+      }
+
+      function renderCsvScan(contact, state, message) {
+        if (!csvScanPanel || !csvScanTitle || !csvScanPill || !csvScanProfile) return;
+        csvScanPanel.classList.remove("hidden");
+        csvScanPanel.classList.toggle("scanning", state === "scanning");
+        csvScanTitle.textContent = state === "done" ? "Contact scan complete" : state === "error" ? "Scan needs setup" : "Scanning contacts";
+        csvScanPill.textContent = state === "done" ? "Organized" : state === "error" ? "Paused" : "Scanning";
+
+        const displayContact = contact || { name: "Imported contacts" };
+        const initial = (displayContact.name || "P").trim().charAt(0).toUpperCase() || "P";
+        const summary = message || (contact ? inferContactProfile(contact) : "Upload a CSV and PulseNow will organize, score, and prepare social research.");
+        csvScanProfile.innerHTML =
+          '<span class="scan-avatar">' +
+          escapeHtml(initial) +
+          '</span><div><strong>' +
+          escapeHtml(displayContact.name || "Imported contacts") +
+          '</strong><p>' +
+          escapeHtml(summary) +
+          "</p></div>";
+      }
+
       function looksLikeBusiness(name, phone) {
         const terms = ["llc", "inc", "corp", "company", "insurance", "dental", "office", "services", "solutions", "group", "team", "center", "clinic", "agency", "firm", "co", "ltd", "church", "school", "shop", "store", "market", "salon", "gym", "spa"];
         const lower = name.toLowerCase();
@@ -10838,7 +11346,12 @@
           company,
           socials: { linkedin, facebook, instagram, tiktok },
           notes,
-          qualifiers
+          qualifiers,
+          research: company || linkedin || facebook || instagram || tiktok ? {
+            source: "csv_scan",
+            profile: company ? "Connected to " + company : "Social fields provided in CSV",
+            socials: { linkedin, facebook, instagram, tiktok }
+          } : null
         };
       }
 
@@ -10860,6 +11373,7 @@
       async function handleCsvImport(file) {
         if (!file) return;
         csvImportStatus.textContent = "Reading " + file.name + "...";
+        renderCsvScan(null, "scanning", "Reading columns, cleaning phones, detecting businesses, and scoring qualifiers.");
         const text = await file.text();
         const rows = parseCsvText(text);
         const imported = rows.map(csvRowToContact).filter((contact) => contact.name || contact.phone || contact.email);
@@ -10867,6 +11381,7 @@
         lastImportedContacts = imported.slice(0, 50);
         const businessCount = imported.filter((contact) => contact.is_business).length;
         const topCount = imported.filter((contact) => contact.is_top_100).length;
+        renderCsvScan(imported[0], "done", imported[0] ? inferContactProfile(imported[0]) : "Contacts are organized and ready for social research.");
         csvImportStatus.textContent = "Imported " + added + " contacts · " + topCount + " Top 100 candidates · " + businessCount + " possible business records flagged.";
         researchSocialsBtn.classList.toggle("hidden", imported.length === 0);
         exportContactsBtn.classList.toggle("hidden", contacts.length === 0);
@@ -10892,6 +11407,7 @@
         researchSocialsBtn.disabled = true;
         researchSocialsBtn.textContent = "Researching...";
         csvImportStatus.textContent = "Researching LinkedIn and social profiles for " + batch.length + " contacts...";
+        renderCsvScan(batch[0], "scanning", "Looking for LinkedIn, Facebook, role signals, company clues, and outreach angles.");
         try {
           const encoded = encodeSessionHeader();
           const headers = { "content-type": "application/json" };
@@ -10919,9 +11435,12 @@
           saveContacts();
           renderContacts();
           const linkedinMatches = results.filter((result) => result.socials && result.socials.linkedin).length;
+          const firstUpdated = contacts.find((contact) => contact.id === batch[0].id) || batch[0];
+          renderCsvScan(firstUpdated, "done", inferContactProfile(firstUpdated));
           csvImportStatus.textContent = "Social research ready · " + linkedinMatches + " LinkedIn matches or targets · " + results.length + " contacts organized.";
           exportContactsBtn.classList.remove("hidden");
         } catch (error) {
+          renderCsvScan(batch[0], "error", "The visual scan is ready, but live web research needs the API search key before it can run.");
           csvImportStatus.textContent = "Social research could not run yet. The API is ready; add a search key for live lookup. " + (error.message || "");
         } finally {
           researchSocialsBtn.disabled = false;
@@ -10983,6 +11502,17 @@
         document.getElementById("detail-stage").textContent = contact.stage || "Uncontacted";
         document.getElementById("detail-call-link").href = "tel:" + (contact.phone || "");
         document.getElementById("detail-text-link").href = "sms:" + (contact.phone || "");
+
+        const detailAiSummary = document.getElementById("detail-ai-summary");
+        if (detailAiSummary) {
+          detailAiSummary.classList.remove("hidden");
+          detailAiSummary.innerHTML =
+            '<span class="scan-avatar">' +
+            escapeHtml((contact.name || "P").charAt(0).toUpperCase()) +
+            '</span><div><strong>PulseNow scan</strong><p>' +
+            escapeHtml(inferContactProfile(contact)) +
+            "</p></div>";
+        }
 
         const detailQualifiers = document.getElementById("detail-qualifiers");
         detailQualifiers.innerHTML = "";
@@ -11046,6 +11576,7 @@
 
       function getPowerListScore(contact) {
         let score = scoreContact(contact) * 10;
+        if (contact.next_followup_date === todayKey()) score += 150;
         if (isOverdue(contact)) score += 100;
         if (!contact.last_contact_date && scoreContact(contact) >= 6) score += 80;
         if (scoreContact(contact) >= 6 && daysBetween(contact.last_contact_date, 0) >= 7) score += 55;
