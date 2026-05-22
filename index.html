@@ -7618,6 +7618,187 @@
         background: rgba(255,255,255,0.08) !important;
       }
 
+      /* Duolingo/Strava habit loop: guide first, metrics second */
+      #home-screen > .profile {
+        order: 1 !important;
+      }
+
+      #today-path-card {
+        order: 2 !important;
+      }
+
+      #home-screen > .people-call-card {
+        order: 3 !important;
+      }
+
+      #home-screen > .goals-panel {
+        order: 4 !important;
+      }
+
+      #home-screen > .vision-workspace {
+        order: 5 !important;
+      }
+
+      #home-screen > .today-next-card {
+        order: 6 !important;
+      }
+
+      .today-path-card {
+        display: grid !important;
+        gap: 15px !important;
+        border-color: rgba(0, 133, 119, 0.2) !important;
+        background:
+          linear-gradient(145deg, rgba(255, 255, 255, 0.82), rgba(233, 255, 248, 0.66)),
+          radial-gradient(circle at 94% 0%, rgba(154, 223, 137, 0.36), transparent 34%) !important;
+      }
+
+      .quest-head,
+      .quest-meter-top {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        gap: 12px !important;
+      }
+
+      .quest-badge,
+      .quest-effort {
+        display: inline-flex !important;
+        align-items: center !important;
+        min-height: 26px !important;
+        padding: 6px 10px !important;
+        border-radius: 999px !important;
+        font-size: 12px !important;
+        font-weight: 600 !important;
+        line-height: 1 !important;
+      }
+
+      .quest-badge {
+        background: rgba(0, 133, 119, 0.12) !important;
+        color: var(--pulse-action-dark) !important;
+      }
+
+      .quest-effort {
+        background: rgba(255, 255, 255, 0.62) !important;
+        color: var(--pulse-text-soft) !important;
+      }
+
+      .today-path-card h2 {
+        font-size: 23px !important;
+        line-height: 1.12 !important;
+        font-weight: 650 !important;
+        letter-spacing: -0.035em !important;
+      }
+
+      .quest-meter {
+        display: grid !important;
+        gap: 8px !important;
+      }
+
+      .quest-meter-top span,
+      .quest-meter-top strong {
+        font-size: 13px !important;
+        font-weight: 600 !important;
+      }
+
+      .quest-meter-top span {
+        color: var(--pulse-text-soft) !important;
+      }
+
+      .quest-track {
+        height: 10px !important;
+        overflow: hidden !important;
+        border-radius: 999px !important;
+        background: rgba(16, 24, 39, 0.08) !important;
+        box-shadow: inset 0 1px 3px rgba(16, 24, 39, 0.12) !important;
+      }
+
+      .quest-track span {
+        display: block !important;
+        width: 0;
+        height: 100% !important;
+        border-radius: inherit !important;
+        background: linear-gradient(90deg, #008577, #36c7b9 55%, #9adf89) !important;
+        box-shadow: 0 0 18px rgba(54, 199, 185, 0.28) !important;
+        transition: width 420ms ease !important;
+      }
+
+      .quest-steps {
+        display: grid !important;
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+        gap: 8px !important;
+      }
+
+      .quest-step {
+        min-width: 0 !important;
+        min-height: 78px !important;
+        padding: 10px 8px !important;
+        display: grid !important;
+        place-items: center !important;
+        gap: 5px !important;
+        border-radius: 20px !important;
+        border: 1px solid rgba(16, 24, 39, 0.08) !important;
+        background: rgba(255, 255, 255, 0.56) !important;
+        color: var(--pulse-text) !important;
+        box-shadow: 0 10px 22px rgba(31, 65, 85, 0.07) !important;
+      }
+
+      .quest-dot {
+        width: 25px !important;
+        height: 25px !important;
+        display: grid !important;
+        place-items: center !important;
+        border-radius: 999px !important;
+        background: rgba(0, 133, 119, 0.12) !important;
+        color: var(--pulse-action-dark) !important;
+        font-size: 12px !important;
+        font-weight: 650 !important;
+      }
+
+      .quest-step strong {
+        color: var(--pulse-text) !important;
+        font-size: 12.5px !important;
+        line-height: 1.1 !important;
+        font-weight: 600 !important;
+        text-align: center !important;
+      }
+
+      .quest-step small {
+        color: var(--pulse-text-soft) !important;
+        font-size: 11px !important;
+        line-height: 1.1 !important;
+        font-weight: 450 !important;
+        text-align: center !important;
+      }
+
+      .quest-step.done {
+        border-color: rgba(0, 133, 119, 0.16) !important;
+        background: rgba(0, 133, 119, 0.1) !important;
+      }
+
+      .quest-step.done .quest-dot {
+        background: linear-gradient(135deg, #008577, #66d7c9 58%, #a9e585) !important;
+        color: #fff !important;
+      }
+
+      .quest-step.done .quest-dot::before {
+        content: "✓";
+        font-size: 13px !important;
+      }
+
+      .quest-step.done .quest-dot {
+        font-size: 0 !important;
+      }
+
+      .today-next-card {
+        background: rgba(255, 255, 255, 0.52) !important;
+      }
+
+      html[data-theme="dark"] .today-path-card,
+      html[data-theme="dark"] .quest-step {
+        background: rgba(255, 255, 255, 0.08) !important;
+        border-color: rgba(255, 255, 255, 0.14) !important;
+      }
+
       @media (max-width: 380px) {
         .shell {
           padding-left: 16px !important;
@@ -7712,6 +7893,39 @@
           </div>
         </section>
 
+        <section id="today-path-card" class="section card today-path-card">
+          <div class="quest-head">
+            <span class="quest-badge">Today</span>
+            <span id="today-quest-effort" class="quest-effort">0 / 21 pts</span>
+          </div>
+          <h2 id="today-quest-title">Start with one real conversation.</h2>
+          <p id="today-quest-copy" class="muted">Pick one person, make the contact, then log the outcome. That is the whole loop.</p>
+          <div class="quest-meter" aria-label="Weekly points progress">
+            <div class="quest-meter-top">
+              <span>Weekly push</span>
+              <strong id="weekly-effort-label">0%</strong>
+            </div>
+            <div class="quest-track"><span id="weekly-effort-fill"></span></div>
+          </div>
+          <div class="quest-steps" aria-label="Daily action path">
+            <button class="quest-step" data-screen="contacts" data-quest-step="people" type="button">
+              <span class="quest-dot">1</span>
+              <strong>Pick person</strong>
+              <small>Power List</small>
+            </button>
+            <button class="quest-step" data-screen="contacts" data-quest-step="contact" type="button">
+              <span class="quest-dot">2</span>
+              <strong>Reach out</strong>
+              <small>Call or text</small>
+            </button>
+            <button class="quest-step" data-screen="log" data-quest-step="log" type="button">
+              <span class="quest-dot">3</span>
+              <strong>Log it</strong>
+              <small>Keep streak</small>
+            </button>
+          </div>
+        </section>
+
         <section class="section pulse-main-container vision-workspace">
           <div class="section-head">
             <h2>Vision Board</h2>
@@ -7754,7 +7968,7 @@
           </div>
         </section>
 
-        <section class="section card">
+        <section class="section card people-call-card">
           <div class="section-head">
             <h2>People to call</h2>
             <button id="see-power-list-btn" class="text-btn" data-screen="powerlist" type="button">See all 10</button>
@@ -8651,6 +8865,7 @@
         setAvatarPhoto(avatar, session);
         renderVisionWorkspace();
         renderImageRevealGoals();
+        updateTodayPath();
       }
 
       function showLogin() {
@@ -8830,6 +9045,45 @@
           const total = section.fields.reduce((sum, field) => sum + numberValue(field[0]), 0);
           const summary = document.querySelector('[data-section-summary="' + section.label + '"]');
           if (summary) summary.textContent = total > 0 ? total + " logged · tap to edit" : "No entries · tap to edit";
+        });
+        updateTodayPath();
+      }
+
+      function updateTodayPath() {
+        const title = document.getElementById("today-quest-title");
+        const copy = document.getElementById("today-quest-copy");
+        const effort = document.getElementById("today-quest-effort");
+        const effortLabel = document.getElementById("weekly-effort-label");
+        const effortFill = document.getElementById("weekly-effort-fill");
+        if (!title || !copy || !effort || !effortLabel || !effortFill) return;
+
+        const calc = calculatePoints();
+        const weeklyPct = Math.max(0, Math.min(100, Math.round((calc.pts / 21) * 100)));
+        const firstPick = getPowerList(1)[0];
+        const firstName = firstPick && firstPick.contact ? firstPick.contact.name : "";
+
+        effort.textContent = calc.pts + " / 21 pts";
+        effortLabel.textContent = weeklyPct + "%";
+        effortFill.style.width = weeklyPct + "%";
+
+        if (calc.pts >= 21) {
+          title.textContent = "All-the-Timer is locked. Help someone else move.";
+          copy.textContent = "You hit the weekly mark. Protect the streak and pull one teammate forward.";
+        } else if (firstName) {
+          title.textContent = "Call " + firstName + ".";
+          copy.textContent = "That is the next clean move. Make the contact, choose the outcome, and let the app update your progress.";
+        } else {
+          title.textContent = "Add your first 10 people.";
+          copy.textContent = "Once your People list has phone numbers, Pulsenow can rank who needs attention first.";
+        }
+
+        document.querySelectorAll("[data-quest-step]").forEach((step) => {
+          const key = step.dataset.questStep;
+          const done =
+            (key === "people" && contacts.length > 0) ||
+            (key === "contact" && calc.totalContacts > 0) ||
+            (key === "log" && calc.pts > 0);
+          step.classList.toggle("done", done);
         });
       }
 
@@ -9422,6 +9676,7 @@
           empty.className = "session-item";
           empty.textContent = "No contacts match this filter yet.";
           contactList.appendChild(empty);
+          updateTodayPath();
           return;
         }
 
@@ -9462,6 +9717,7 @@
             '">Details</button></div>';
           contactList.appendChild(card);
         });
+        updateTodayPath();
       }
 
       function resetAddContactForm() {
@@ -9921,6 +10177,7 @@
         } else {
           topTen.forEach((item, index) => fullPowerList.appendChild(renderPowerCard(item, index, true)));
         }
+        updateTodayPath();
       }
 
       async function refreshPowerListsFromApi(force) {
@@ -9976,6 +10233,8 @@
         drawer.classList.remove("open");
         window.scrollTo({ top: 0, behavior: "smooth" });
         if (screen === "home") {
+          hydrateContacts();
+          hydrateLog();
           renderPowerLists();
           refreshPowerListsFromApi(false);
           homeScreen.classList.remove("hidden");
