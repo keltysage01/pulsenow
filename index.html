@@ -8323,6 +8323,351 @@
         color: #f7fbff !important;
       }
 
+      /* Public marketing landing page */
+      #landing {
+        min-height: 100dvh;
+        color: #11192f;
+        background:
+          radial-gradient(circle at 84% 8%, rgba(152, 223, 101, 0.34), transparent 32%),
+          radial-gradient(circle at 10% 14%, rgba(77, 199, 215, 0.26), transparent 34%),
+          linear-gradient(180deg, rgba(248, 253, 253, 0.96), rgba(234, 249, 246, 0.9));
+        overflow: hidden;
+      }
+
+      .landing-shell {
+        width: min(1180px, 100%);
+        margin: 0 auto;
+        padding: 22px 22px 54px;
+      }
+
+      .landing-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+        padding: 12px 0 26px;
+      }
+
+      .landing-logo {
+        width: clamp(164px, 20vw, 240px);
+        height: auto;
+        display: block;
+      }
+
+      .landing-nav {
+        display: flex;
+        align-items: center;
+        gap: 22px;
+      }
+
+      .landing-nav a,
+      .landing-link {
+        border: 0;
+        background: transparent;
+        color: #0a766c;
+        text-decoration: none;
+        font: 600 15px/1.2 -apple-system, BlinkMacSystemFont, "SF Pro Text", Inter, sans-serif;
+      }
+
+      .landing-hero {
+        display: grid;
+        grid-template-columns: minmax(0, 0.92fr) minmax(420px, 1.08fr);
+        align-items: center;
+        gap: 36px;
+        min-height: calc(100dvh - 110px);
+      }
+
+      .landing-eyebrow {
+        display: inline-flex;
+        width: fit-content;
+        padding: 8px 13px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.72);
+        border: 1px solid rgba(43, 127, 164, 0.16);
+        color: #197d90;
+        box-shadow: 0 12px 24px rgba(31, 65, 85, 0.08);
+        font: 700 11px/1 -apple-system, BlinkMacSystemFont, "SF Pro Text", Inter, sans-serif;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      .landing-copy h1 {
+        margin: 24px 0 16px;
+        max-width: 680px;
+        color: #10182b;
+        font-size: clamp(42px, 5.2vw, 72px);
+        line-height: 0.98;
+        letter-spacing: -0.06em;
+        font-weight: 760;
+      }
+
+      .landing-copy p {
+        margin: 0;
+        max-width: 560px;
+        color: #526276;
+        font-size: clamp(17px, 1.7vw, 21px);
+        line-height: 1.5;
+        letter-spacing: -0.02em;
+      }
+
+      .landing-actions {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 14px;
+        margin-top: 30px;
+      }
+
+      .landing-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 50px;
+        padding: 0 24px;
+        border-radius: 999px;
+        border: 1px solid transparent;
+        font: 700 15px/1 -apple-system, BlinkMacSystemFont, "SF Pro Text", Inter, sans-serif;
+        text-decoration: none;
+        cursor: pointer;
+      }
+
+      .landing-btn.primary {
+        color: #ffffff;
+        background: linear-gradient(135deg, #207fa8 0%, #56c7c9 54%, #98dc78 100%);
+        box-shadow: 0 16px 30px rgba(41, 143, 168, 0.24);
+      }
+
+      .landing-btn.secondary {
+        color: #155d83;
+        background: rgba(255, 255, 255, 0.68);
+        border-color: rgba(160, 190, 200, 0.34);
+        box-shadow: 0 12px 28px rgba(31, 65, 85, 0.08);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+      }
+
+      .landing-stage {
+        position: relative;
+        min-height: 570px;
+        display: grid;
+        place-items: center;
+      }
+
+      .landing-stage::before {
+        content: "";
+        position: absolute;
+        width: min(92%, 560px);
+        height: 290px;
+        border-radius: 999px;
+        background: radial-gradient(circle, rgba(82, 198, 200, 0.28), transparent 68%);
+        filter: blur(26px);
+        transform: translateY(100px);
+      }
+
+      .landing-phone {
+        position: absolute;
+        width: 242px;
+        min-height: 494px;
+        border-radius: 38px;
+        padding: 10px;
+        background: linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(223, 235, 236, 0.78));
+        border: 1px solid rgba(255, 255, 255, 0.94);
+        box-shadow: 0 28px 74px rgba(23, 60, 78, 0.22), inset 0 0 0 1px rgba(255, 255, 255, 0.58);
+        overflow: hidden;
+      }
+
+      .landing-phone::before {
+        content: "";
+        position: absolute;
+        top: 16px;
+        left: 50%;
+        width: 78px;
+        height: 20px;
+        border-radius: 999px;
+        transform: translateX(-50%);
+        background: rgba(18, 31, 46, 0.88);
+        z-index: 2;
+      }
+
+      .landing-phone.one {
+        left: 2%;
+        top: 62px;
+        transform: rotate(-9deg);
+      }
+
+      .landing-phone.two {
+        z-index: 2;
+        transform: translateY(-4px) scale(1.08);
+      }
+
+      .landing-phone.three {
+        right: 1%;
+        top: 92px;
+        transform: rotate(9deg);
+      }
+
+      .landing-screen {
+        min-height: 474px;
+        border-radius: 30px;
+        padding: 52px 15px 18px;
+        background:
+          radial-gradient(circle at 88% 12%, rgba(152, 223, 101, 0.22), transparent 30%),
+          linear-gradient(180deg, #f8ffff, #ebfbf5);
+        overflow: hidden;
+      }
+
+      .landing-screen.dark {
+        color: #ffffff;
+        background:
+          radial-gradient(circle at 78% 4%, rgba(152, 223, 101, 0.22), transparent 30%),
+          linear-gradient(145deg, #071a31, #0e5873 62%, #55b46f);
+      }
+
+      .landing-app-title {
+        font-size: 23px;
+        line-height: 1.02;
+        font-weight: 760;
+        letter-spacing: -0.04em;
+        margin-bottom: 14px;
+      }
+
+      .landing-card {
+        border-radius: 22px;
+        padding: 14px;
+        margin-top: 10px;
+        background: rgba(255, 255, 255, 0.76);
+        border: 1px solid rgba(255, 255, 255, 0.84);
+        box-shadow: 0 14px 32px rgba(31, 65, 85, 0.12);
+      }
+
+      .landing-screen.dark .landing-card {
+        background: rgba(255, 255, 255, 0.12);
+        border-color: rgba(255, 255, 255, 0.2);
+      }
+
+      .landing-mini-row {
+        display: grid;
+        grid-template-columns: 24px 1fr auto;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 0;
+        font-size: 12px;
+        color: #536277;
+      }
+
+      .landing-screen.dark .landing-mini-row {
+        color: rgba(255, 255, 255, 0.8);
+      }
+
+      .landing-rank {
+        width: 24px;
+        height: 24px;
+        display: grid;
+        place-items: center;
+        border-radius: 999px;
+        color: #fff;
+        background: linear-gradient(135deg, #207fa8, #98dc78);
+        font-weight: 800;
+      }
+
+      .landing-progress {
+        height: 8px;
+        border-radius: 999px;
+        background: rgba(12, 40, 70, 0.08);
+        overflow: hidden;
+      }
+
+      .landing-progress span {
+        display: block;
+        width: var(--w, 64%);
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, #207fa8, #56c7c9, #98dc78);
+      }
+
+      .landing-features {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+        margin-top: 26px;
+      }
+
+      .landing-feature {
+        border-radius: 26px;
+        padding: 20px;
+        background: rgba(255, 255, 255, 0.62);
+        border: 1px solid rgba(255, 255, 255, 0.78);
+        box-shadow: 0 18px 42px rgba(31, 65, 85, 0.1);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+      }
+
+      .landing-feature strong {
+        display: block;
+        margin-bottom: 7px;
+        color: #11192f;
+        font-size: 16px;
+        letter-spacing: -0.02em;
+      }
+
+      .landing-feature span {
+        color: #5e6d81;
+        font-size: 14px;
+        line-height: 1.4;
+      }
+
+      @media (max-width: 900px) {
+        .landing-shell {
+          padding: 18px 18px 38px;
+        }
+
+        .landing-nav a {
+          display: none;
+        }
+
+        .landing-hero {
+          grid-template-columns: 1fr;
+          min-height: auto;
+          gap: 12px;
+        }
+
+        .landing-copy h1 {
+          font-size: clamp(38px, 12vw, 56px);
+        }
+
+        .landing-stage {
+          min-height: 500px;
+          margin-top: 14px;
+        }
+
+        .landing-phone {
+          width: 206px;
+          min-height: 424px;
+        }
+
+        .landing-screen {
+          min-height: 404px;
+        }
+
+        .landing-phone.one {
+          left: -28px;
+          opacity: 0.62;
+        }
+
+        .landing-phone.three {
+          right: -28px;
+          opacity: 0.62;
+        }
+
+        .landing-phone.two {
+          transform: translateY(0) scale(1);
+        }
+
+        .landing-features {
+          grid-template-columns: 1fr;
+        }
+      }
+
       @media (prefers-reduced-motion: reduce) {
         *,
         *::before,
@@ -8337,7 +8682,73 @@
   </head>
   <body>
     <div id="pulse-route-background" aria-hidden="true"></div>
-    <div id="login" class="login">
+    <main id="landing" class="landing-page">
+      <div class="landing-shell">
+        <header class="landing-header">
+          <img class="landing-logo" src="source/public/pulsenow-logo-transparent-cropped.png" alt="Pulsenow" />
+          <nav class="landing-nav" aria-label="Landing navigation">
+            <a href="#landing-features">Features</a>
+            <a href="#landing-proof">Teams</a>
+            <button id="landing-login-btn" class="landing-link" type="button">Log in</button>
+            <button id="landing-demo-btn" class="landing-btn primary" type="button">Book a Demo</button>
+          </nav>
+        </header>
+
+        <section class="landing-hero">
+          <div class="landing-copy">
+            <span class="landing-eyebrow">AI powered CRM for prospecting</span>
+            <h1>The CRM that tells your team who to call next.</h1>
+            <p>PulseNow researches, organizes, coaches, and prioritizes your outreach so agents stop guessing and start having better conversations.</p>
+            <div class="landing-actions">
+              <button id="landing-start-btn" class="landing-btn primary" type="button">Start free preview</button>
+              <a class="landing-btn secondary" href="#landing-features">See how it works</a>
+            </div>
+          </div>
+
+          <div class="landing-stage" aria-label="PulseNow app preview">
+            <div class="landing-phone one" aria-hidden="true">
+              <div class="landing-screen">
+                <div class="landing-app-title">People to call</div>
+                <div class="landing-card">
+                  <div class="landing-mini-row"><span class="landing-rank">1</span><strong>Jordan Miles</strong><span>High</span></div>
+                  <div class="landing-mini-row"><span class="landing-rank">2</span><strong>Alex Carter</strong><span>Due</span></div>
+                  <div class="landing-mini-row"><span class="landing-rank">3</span><strong>Taylor Reed</strong><span>New</span></div>
+                </div>
+              </div>
+            </div>
+            <div class="landing-phone two" aria-hidden="true">
+              <div class="landing-screen dark">
+                <div class="landing-app-title">Your Coach</div>
+                <div class="landing-card">Call Jordan first. He is overdue, qualified, and already responded once.</div>
+                <div class="landing-card">Ask for a script, follow-up angle, or pipeline review.</div>
+              </div>
+            </div>
+            <div class="landing-phone three" aria-hidden="true">
+              <div class="landing-screen">
+                <div class="landing-app-title">Momentum</div>
+                <div class="landing-card">
+                  <strong>Weekly push</strong>
+                  <div class="landing-progress" style="--w: 72%;"><span></span></div>
+                </div>
+                <div class="landing-card">
+                  <strong>Leaderboard</strong>
+                  <div class="landing-mini-row"><span class="landing-rank">1</span><strong>Sam</strong><span>28</span></div>
+                  <div class="landing-mini-row"><span class="landing-rank">2</span><strong>You</strong><span>21</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="landing-features" class="landing-features">
+          <article class="landing-feature"><strong>Upload CSV contacts</strong><span>Import, clean, organize, and categorize prospect lists directly in the app.</span></article>
+          <article class="landing-feature"><strong>AI Power List</strong><span>Prioritize the right people with a clear reason to call, text, or follow up.</span></article>
+          <article id="landing-proof" class="landing-feature"><strong>Team momentum</strong><span>Track activity, coaching, badges, goals, and leaderboard progress in one place.</span></article>
+        </section>
+      </div>
+    </main>
+
+    <div id="login" class="login hidden">
       <section class="login-card">
         <img class="login-logo" src="source/public/pulsenow-logo-transparent-cropped.png" alt="Pulsenow" />
         <p class="eyebrow">Pulsenow</p>
@@ -8856,8 +9267,12 @@
 
     <script>
       const sessionKey = "pulsenow_session";
+      const landing = document.getElementById("landing");
       const login = document.getElementById("login");
       const app = document.getElementById("app");
+      const landingLoginBtn = document.getElementById("landing-login-btn");
+      const landingDemoBtn = document.getElementById("landing-demo-btn");
+      const landingStartBtn = document.getElementById("landing-start-btn");
       const nameInput = document.getElementById("name-input");
       const pinInput = document.getElementById("pin-input");
       const loginTab = document.getElementById("login-tab");
@@ -9380,6 +9795,7 @@
       }
 
       function showApp(session) {
+        landing.classList.add("hidden");
         login.classList.add("hidden");
         app.classList.remove("hidden");
         setPulseRouteBackground("home");
@@ -9392,9 +9808,17 @@
       }
 
       function showLogin() {
+        landing.classList.add("hidden");
         app.classList.add("hidden");
         login.classList.remove("hidden");
         setPulseRouteBackground("me");
+      }
+
+      function showLanding() {
+        app.classList.add("hidden");
+        login.classList.add("hidden");
+        landing.classList.remove("hidden");
+        setPulseRouteBackground("home");
       }
 
       function todayKey() {
@@ -10915,6 +11339,18 @@
 
       loginTab.addEventListener("click", () => setMode("login"));
       registerTab.addEventListener("click", () => setMode("register"));
+      landingLoginBtn.addEventListener("click", () => {
+        setMode("login");
+        showLogin();
+      });
+      landingDemoBtn.addEventListener("click", () => {
+        setMode("register");
+        showLogin();
+      });
+      landingStartBtn.addEventListener("click", () => {
+        setMode("register");
+        showLogin();
+      });
       enterBtn.addEventListener("click", saveSession);
       pinInput.addEventListener("keydown", (event) => {
         if (event.key === "Enter") saveSession();
@@ -10923,7 +11359,7 @@
       document.getElementById("drawer-bg").addEventListener("click", () => drawer.classList.remove("open"));
       document.getElementById("signout-btn").addEventListener("click", () => {
         sessionStorage.removeItem(sessionKey);
-        showLogin();
+        showLanding();
       });
       document.getElementById("theme-btn").addEventListener("click", () => {
         const current = document.documentElement.dataset.theme || "light";
@@ -11153,8 +11589,10 @@
           showApp(JSON.parse(saved));
         } catch {
           sessionStorage.removeItem(sessionKey);
-          showLogin();
+          showLanding();
         }
+      } else {
+        showLanding();
       }
     </script>
   </body>
