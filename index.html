@@ -11583,8 +11583,12 @@
       hydrateSubsteps();
       hydrateContacts();
 
+      const urlParams = new URLSearchParams(window.location.search);
+      const forceLanding = urlParams.has("landing");
       const saved = sessionStorage.getItem(sessionKey);
-      if (saved) {
+      if (forceLanding) {
+        showLanding();
+      } else if (saved) {
         try {
           showApp(JSON.parse(saved));
         } catch {
