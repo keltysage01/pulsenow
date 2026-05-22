@@ -9272,6 +9272,248 @@
         background: rgba(77, 199, 215, 0.14) !important;
       }
 
+      /* Me profile polish: larger photo, editable bio, full-width badges */
+      #me-screen > .profile-card-hero {
+        width: 100% !important;
+        padding: 24px !important;
+      }
+
+      #me-screen .me-profile-layout {
+        display: grid !important;
+        grid-template-columns: 122px minmax(0, 1fr) !important;
+        align-items: center !important;
+        gap: 18px !important;
+        min-height: 132px !important;
+        padding: 0 !important;
+      }
+
+      #me-screen .profile-photo-column {
+        display: grid;
+        place-items: center;
+        align-self: stretch;
+      }
+
+      #me-screen .profile-photo-target {
+        position: relative;
+        display: grid;
+        place-items: center;
+        width: 116px;
+        height: 116px;
+        border-radius: 999px;
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      #me-screen #me-avatar.avatar {
+        width: 108px !important;
+        height: 108px !important;
+        border-radius: 999px !important;
+        border: 4px solid rgba(0, 135, 122, 0.92) !important;
+        background-color: rgba(255, 255, 255, 0.72) !important;
+        box-shadow:
+          0 18px 38px rgba(11, 79, 99, 0.16),
+          inset 0 1px 0 rgba(255, 255, 255, 0.92) !important;
+        color: #0d1830 !important;
+        font-size: 42px !important;
+        font-weight: 640 !important;
+      }
+
+      #me-screen #me-avatar.avatar.has-photo {
+        border-color: rgba(0, 135, 122, 0.72) !important;
+      }
+
+      #me-screen .photo-edit-chip {
+        position: absolute;
+        right: 2px;
+        bottom: 6px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 26px;
+        padding: 0 10px;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.84);
+        background: linear-gradient(135deg, #176c95, #4dc7d7 54%, #98df65);
+        color: #ffffff;
+        box-shadow: 0 10px 22px rgba(31, 65, 85, 0.16);
+        font-size: 11px;
+        font-weight: 660;
+      }
+
+      #me-screen .profile-copy {
+        min-width: 0;
+      }
+
+      #me-screen .profile-photo-actions {
+        gap: 8px !important;
+        margin-top: 12px !important;
+      }
+
+      #me-screen .profile-photo-actions .ghost-btn {
+        min-height: 38px !important;
+        padding: 0 14px !important;
+        border-radius: 999px !important;
+        font-size: 14px !important;
+        font-weight: 560 !important;
+      }
+
+      #me-screen .profile-photo-actions small {
+        flex-basis: 100%;
+        color: rgba(100, 116, 139, 0.92) !important;
+        font-size: 13px !important;
+        font-weight: 430 !important;
+      }
+
+      #me-screen .profile-bio-card {
+        margin-top: 18px;
+        padding: 16px;
+        border-radius: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.68);
+        background: rgba(255, 255, 255, 0.5);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+      }
+
+      #me-screen .profile-bio-display {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 12px;
+        align-items: center;
+      }
+
+      #me-screen #me-dream-text {
+        margin: 0 !important;
+        color: rgba(71, 85, 105, 0.94) !important;
+        font-size: 15px !important;
+        font-style: italic !important;
+        font-weight: 430 !important;
+        line-height: 1.45 !important;
+      }
+
+      #me-screen #edit-bio-btn {
+        min-height: 36px;
+        padding: 0 12px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.6);
+        font-size: 13px;
+        font-weight: 560;
+        white-space: nowrap;
+      }
+
+      #me-screen .profile-bio-editor {
+        display: grid;
+        gap: 10px;
+      }
+
+      #me-screen .profile-bio-editor:not(.hidden) {
+        margin-top: 12px;
+      }
+
+      #me-screen #me-bio-input {
+        width: 100%;
+        min-height: 96px;
+        padding: 13px 14px;
+        border-radius: 18px;
+        border: 1px solid rgba(15, 23, 42, 0.1);
+        background: rgba(255, 255, 255, 0.74);
+        color: #0d1830;
+        font: 430 15px/1.45 -apple-system, BlinkMacSystemFont, "SF Pro Text", Inter, sans-serif;
+        resize: vertical;
+      }
+
+      #me-screen .profile-bio-actions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      #me-screen .profile-bio-actions .pill-btn,
+      #me-screen .profile-bio-actions .ghost-btn {
+        min-height: 42px !important;
+        margin: 0 !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        font-size: 14px !important;
+        font-weight: 580 !important;
+      }
+
+      #me-screen .badges-section {
+        width: 100% !important;
+        padding: 0 !important;
+        border: 0 !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+      }
+
+      #me-screen .badges-section .section-head {
+        padding: 0 !important;
+        margin: 0 0 14px !important;
+      }
+
+      #me-screen #badge-grid {
+        width: 100% !important;
+        grid-template-columns: 1fr !important;
+        gap: 14px !important;
+      }
+
+      #me-screen #badge-grid .badge-item {
+        width: 100% !important;
+        max-width: none !important;
+        min-height: 118px !important;
+        border-radius: 28px !important;
+      }
+
+      html[data-theme="dark"] #me-screen .profile-bio-card {
+        border-color: rgba(255, 255, 255, 0.12);
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      html[data-theme="dark"] #me-screen #me-dream-text {
+        color: rgba(235, 245, 255, 0.82) !important;
+      }
+
+      html[data-theme="dark"] #me-screen #me-bio-input {
+        border-color: rgba(255, 255, 255, 0.12);
+        background: rgba(255, 255, 255, 0.08);
+        color: #f7fbff;
+      }
+
+      @media (max-width: 430px) {
+        #me-screen > .profile-card-hero {
+          padding: 20px !important;
+        }
+
+        #me-screen .me-profile-layout {
+          grid-template-columns: 104px minmax(0, 1fr) !important;
+          gap: 16px !important;
+        }
+
+        #me-screen .profile-photo-target {
+          width: 102px;
+          height: 102px;
+        }
+
+        #me-screen #me-avatar.avatar {
+          width: 96px !important;
+          height: 96px !important;
+          font-size: 38px !important;
+        }
+      }
+
+      @media (max-width: 360px) {
+        #me-screen .me-profile-layout {
+          grid-template-columns: 1fr !important;
+          text-align: center;
+        }
+
+        #me-screen .profile-bio-display,
+        #me-screen .profile-bio-actions {
+          grid-template-columns: 1fr;
+        }
+      }
+
       /* Public marketing landing page */
       #landing {
         min-height: 100dvh;
@@ -10584,10 +10826,15 @@
       </main>
 
       <main id="me-screen" class="shell hidden">
-        <section class="card">
-          <div class="profile" style="margin-bottom:0;">
-            <div id="me-avatar" class="avatar">D</div>
-            <div>
+        <section class="card profile-card-hero">
+          <div class="profile me-profile-layout" style="margin-bottom:0;">
+            <div class="profile-photo-column">
+              <label class="profile-photo-target" for="profile-photo-input" aria-label="Change profile photo">
+                <span id="me-avatar" class="avatar">D</span>
+                <span class="photo-edit-chip">Change</span>
+              </label>
+            </div>
+            <div class="profile-copy">
               <p class="eyebrow">Me</p>
               <h2 id="me-name">Demo Agent</h2>
               <p class="muted"><span id="me-level">TA</span> · Agent Code <span id="me-code">DEMO</span></p>
@@ -10598,10 +10845,22 @@
               </div>
             </div>
           </div>
-          <p id="me-dream-text" class="muted" style="margin-top:16px; line-height:1.6; font-style:italic;">I make dreams possible.</p>
+          <div class="profile-bio-card">
+            <div class="profile-bio-display">
+              <p id="me-dream-text" class="muted">I make dreams possible.</p>
+              <button id="edit-bio-btn" class="text-btn" type="button">Edit bio</button>
+            </div>
+            <div id="me-bio-editor" class="profile-bio-editor hidden">
+              <textarea id="me-bio-input" maxlength="180" rows="3" placeholder="Write what you are building toward..."></textarea>
+              <div class="profile-bio-actions">
+                <button id="save-bio-btn" class="pill-btn" type="button">Save bio</button>
+                <button id="cancel-bio-btn" class="ghost-btn" type="button">Cancel</button>
+              </div>
+            </div>
+          </div>
         </section>
 
-        <section class="section">
+        <section class="section badges-section">
           <div class="section-head">
             <div>
               <p class="eyebrow">Badges</p>
@@ -10780,6 +11039,12 @@
       const researchSocialsBtn = document.getElementById("research-socials-btn");
       const exportContactsBtn = document.getElementById("export-contacts-btn");
       const profilePhotoInput = document.getElementById("profile-photo-input");
+      const editBioBtn = document.getElementById("edit-bio-btn");
+      const saveBioBtn = document.getElementById("save-bio-btn");
+      const cancelBioBtn = document.getElementById("cancel-bio-btn");
+      const meBioEditor = document.getElementById("me-bio-editor");
+      const meBioInput = document.getElementById("me-bio-input");
+      const meDreamText = document.getElementById("me-dream-text");
       const pulseRouteBackground = document.getElementById("pulse-route-background");
 
       let mode = "login";
@@ -10833,6 +11098,7 @@
       const coachStorageKey = "pulsenow_demo_coach";
       const coachProfileStorageKey = "pulsenow_demo_coach_profile";
       const activeDreamStorageKey = "pulsenow_demo_active_dream";
+      const profileBioStoragePrefix = "pulsenow_demo_profile_bio_";
       let substepState = {};
       let activeDreamIndex = Number(localStorage.getItem(activeDreamStorageKey) || "0") || 0;
       const coachQuizDefs = [
@@ -10933,6 +11199,37 @@
       function saveCurrentSession(session) {
         if (!session) return;
         sessionStorage.setItem(sessionKey, JSON.stringify(session));
+      }
+
+      function getProfileBioKey(session) {
+        const id = session && (session.id || session.agent_code || session.name);
+        return profileBioStoragePrefix + String(id || "demo").toLowerCase().replace(/[^a-z0-9_-]/g, "_");
+      }
+
+      function getProfileBio(session) {
+        const saved = localStorage.getItem(getProfileBioKey(session));
+        return (session && session.bio) || saved || "I make dreams possible.";
+      }
+
+      function setBioEditMode(isEditing) {
+        if (!meBioEditor || !meBioInput || !editBioBtn) return;
+        const session = getCurrentSession() || { name: "Demo Agent", level: "TA", agent_code: "DEMO" };
+        meBioEditor.classList.toggle("hidden", !isEditing);
+        editBioBtn.classList.toggle("hidden", isEditing);
+        if (isEditing) {
+          meBioInput.value = getProfileBio(session);
+          window.setTimeout(() => meBioInput.focus(), 0);
+        }
+      }
+
+      function saveProfileBio() {
+        const session = getCurrentSession() || { name: "Demo Agent", level: "TA", agent_code: "DEMO" };
+        const value = (meBioInput && meBioInput.value.trim()) || "I make dreams possible.";
+        session.bio = value;
+        localStorage.setItem(getProfileBioKey(session), value);
+        saveCurrentSession(session);
+        if (meDreamText) meDreamText.textContent = value;
+        setBioEditMode(false);
       }
 
       function compressProfilePhoto(file) {
@@ -11677,6 +11974,8 @@
         setAvatarPhoto(document.getElementById("me-avatar"), session);
         document.getElementById("me-level").textContent = session.level || "TA";
         document.getElementById("me-code").textContent = session.agent_code || "DEMO";
+        if (meDreamText) meDreamText.textContent = getProfileBio(session);
+        setBioEditMode(false);
         badgeGrid.innerHTML = "";
         badgeDefs.forEach((badge) => {
           const earned = hasBadge(badge[0], stats);
@@ -13219,6 +13518,19 @@
         const file = event.target.files && event.target.files[0];
         handleProfilePhoto(file);
         event.target.value = "";
+      });
+      editBioBtn.addEventListener("click", () => setBioEditMode(true));
+      saveBioBtn.addEventListener("click", saveProfileBio);
+      cancelBioBtn.addEventListener("click", () => setBioEditMode(false));
+      meBioInput.addEventListener("keydown", (event) => {
+        if ((event.metaKey || event.ctrlKey) && event.key === "Enter") {
+          event.preventDefault();
+          saveProfileBio();
+        }
+        if (event.key === "Escape") {
+          event.preventDefault();
+          setBioEditMode(false);
+        }
       });
       document.getElementById("seed-contacts-btn").addEventListener("click", () => {
         contacts = cloneDemoContacts();
