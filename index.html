@@ -9010,12 +9010,12 @@
 
       .landing-copy p {
         margin: 0;
-        max-width: 580px;
+        max-width: 680px;
         color: #465875;
-        font-size: clamp(17px, 1.45vw, 20px);
-        line-height: 1.58;
-        letter-spacing: -0.018em;
-        font-weight: 410;
+        font-size: clamp(20px, 1.75vw, 25px);
+        line-height: 1.5;
+        letter-spacing: -0.026em;
+        font-weight: 420;
       }
 
       .landing-actions {
@@ -9027,46 +9027,29 @@
       }
 
       .landing-stage {
-        min-height: 610px;
+        min-height: 650px;
         display: grid;
         place-items: center;
       }
 
       .landing-phone-stack {
         position: relative;
-        width: min(720px, 100%);
-        height: 620px;
+        width: min(780px, 100%);
+        min-height: 640px;
+        display: grid;
+        place-items: center;
+        overflow: visible;
       }
 
-      .landing-phone-mockup {
-        position: absolute;
-        width: 38%;
+      .landing-hero-phones {
+        position: relative;
+        z-index: 2;
+        width: min(104%, 800px);
+        max-width: none;
         height: auto;
-        filter: drop-shadow(0 32px 34px rgba(19, 54, 74, 0.2));
-        transform-origin: 50% 80%;
+        filter: drop-shadow(0 34px 48px rgba(15, 45, 68, 0.2));
         user-select: none;
         -webkit-user-drag: none;
-      }
-
-      .landing-phone-mockup.contacts {
-        left: 0;
-        top: 90px;
-        z-index: 1;
-        transform: rotate(-7deg);
-      }
-
-      .landing-phone-mockup.coach {
-        left: 28%;
-        top: 12px;
-        width: 42%;
-        z-index: 3;
-      }
-
-      .landing-phone-mockup.badges {
-        right: 0;
-        top: 92px;
-        z-index: 2;
-        transform: rotate(7deg);
       }
 
       .landing-section {
@@ -9449,37 +9432,22 @@
         }
 
         .landing-copy p {
-          font-size: 17px;
+          font-size: 20px;
+          max-width: 720px;
         }
 
         .landing-stage {
-          min-height: 440px;
+          min-height: 520px;
         }
 
         .landing-phone-stack {
           width: min(100%, 560px);
-          height: 430px;
-          overflow: hidden;
+          min-height: 500px;
+          overflow: visible;
         }
 
-        .landing-phone-mockup {
-          width: 45%;
-        }
-
-        .landing-phone-mockup.contacts {
-          left: -6%;
-          top: 72px;
-        }
-
-        .landing-phone-mockup.coach {
-          left: 25%;
-          top: 10px;
-          width: 50%;
-        }
-
-        .landing-phone-mockup.badges {
-          right: -7%;
-          top: 78px;
+        .landing-hero-phones {
+          width: min(110%, 650px);
         }
 
         .landing-relationship,
@@ -9532,28 +9500,16 @@
         }
 
         .landing-stage {
-          min-height: 380px;
+          min-height: 360px;
         }
 
         .landing-phone-stack {
-          height: 374px;
+          min-height: 340px;
+          width: min(100%, 430px);
         }
 
-        .landing-phone-mockup.contacts {
-          left: -18%;
-          top: 72px;
-          opacity: 0.86;
-        }
-
-        .landing-phone-mockup.coach {
-          left: 18%;
-          width: 64%;
-        }
-
-        .landing-phone-mockup.badges {
-          right: -18%;
-          top: 78px;
-          opacity: 0.86;
+        .landing-hero-phones {
+          width: min(120%, 460px);
         }
 
         .landing-features-panel,
@@ -9657,9 +9613,7 @@
 
           <div class="landing-stage" aria-label="PulseNow app preview">
             <div class="landing-phone-stack">
-              <img class="landing-phone-mockup contacts" src="/pulsenow_landing_layers/mockups/phone_contacts.png" alt="PulseNow contacts screen preview" />
-              <img class="landing-phone-mockup coach" src="/pulsenow_landing_layers/mockups/phone_ai_coach.png" alt="PulseNow AI coach screen preview" />
-              <img class="landing-phone-mockup badges" src="/pulsenow_landing_layers/mockups/phone_badges.png" alt="PulseNow badges screen preview" />
+              <img class="landing-hero-phones" src="/pulsenow_landing_layers/mockups/phone_crm_coach_pair.webp" alt="PulseNow contacts and AI coach app previews" width="1800" height="1800" decoding="async" fetchpriority="high" />
             </div>
           </div>
         </section>
