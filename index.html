@@ -8138,6 +8138,80 @@
         border-color: rgba(255, 255, 255, 0.22) !important;
       }
 
+      #app button,
+      #app .primary-btn,
+      #app .pill-btn,
+      #app .ghost-btn,
+      #app .text-btn,
+      #app .filter-btn,
+      #app .qualifier-btn,
+      #app .drawer-link,
+      #app .contact-actions a,
+      #app .actions a,
+      #app .actions button,
+      #app .contact-actions button {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        text-align: center !important;
+        line-height: 1.15 !important;
+        white-space: normal !important;
+        overflow-wrap: anywhere !important;
+        min-width: 0 !important;
+      }
+
+      #app .bottom-nav button {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        text-align: center !important;
+      }
+
+      #app .question-chip,
+      #app .quest-step,
+      #app .toggle-btn,
+      #app .substep-btn {
+        align-items: center !important;
+        justify-items: center !important;
+        text-align: center !important;
+      }
+
+      #app .question-chip span,
+      #app .question-chip small,
+      #app .question-chip strong,
+      #app .quest-step span,
+      #app .quest-step strong,
+      #app .quest-step small,
+      #app .toggle-btn span,
+      #app .toggle-btn strong,
+      #app .toggle-btn small,
+      #app .substep-btn span {
+        max-width: 100% !important;
+        text-align: center !important;
+        overflow-wrap: anywhere !important;
+      }
+
+      #app .contact-main,
+      #app .power-top,
+      #app .pipeline-card,
+      #app .contact-card {
+        min-width: 0 !important;
+      }
+
+      #app .contact-main h3,
+      #app .contact-main h4,
+      #app .contact-main strong,
+      #app .contact-main p,
+      #app .power-row strong,
+      #app .power-row p,
+      #app .pipeline-card h4,
+      #app .pipeline-card p {
+        min-width: 0 !important;
+        overflow-wrap: anywhere !important;
+        word-break: normal !important;
+      }
+
       @media (max-width: 380px) {
         .shell {
           padding-left: 16px !important;
@@ -8857,6 +8931,26 @@
         }
       }
 
+      function escapeHtml(value) {
+        return String(value === undefined || value === null ? "" : value).replace(/[&<>"']/g, (char) => {
+          return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[char];
+        });
+      }
+
+      function safePhoneUri(prefix, value) {
+        const clean = String(value || "").replace(/[^0-9+]/g, "");
+        return prefix + clean;
+      }
+
+      function safeExternalUrl(value) {
+        try {
+          const url = new URL(String(value || ""), window.location.origin);
+          return url.protocol === "http:" || url.protocol === "https:" ? url.href : "";
+        } catch {
+          return "";
+        }
+      }
+
       function setAvatarPhoto(element, session) {
         if (!element) return;
         const photo = session && session.avatar_url ? session.avatar_url : "";
@@ -9480,18 +9574,22 @@
         const wrapper = document.createElement("div");
         wrapper.className = "leader-row" + (row.isMe ? " me" : "");
         const canFire = !row.isMe && !compact;
+        const rowId = escapeHtml(row.id);
+        const rowName = escapeHtml(row.name);
+        const rowLevel = escapeHtml(row.level);
+        const rowTier = escapeHtml(row.tier);
         const fireButton = canFire
-          ? '<button class="ghost-btn" type="button" data-fire-up-id="' + row.id + '">' + (firedUp[row.id] ? "Fired up" : "Fire up") + "</button>"
+          ? '<button class="ghost-btn" type="button" data-fire-up-id="' + rowId + '">' + (firedUp[row.id] ? "Fired up" : "Fire up") + "</button>"
           : '<div class="leader-points">' + row.pts + '<br><span class="muted" style="font-size:11px;">pts</span></div>';
         wrapper.innerHTML =
           '<div class="leader-rank">' +
           (index + 1) +
           '</div><div><strong>' +
-          row.name +
+          rowName +
           '</strong><p class="muted" style="margin-top:4px;">' +
-          row.level +
+          rowLevel +
           " · " +
-          row.tier +
+          rowTier +
           '</p></div><div style="display:grid; gap:6px; justify-items:end;"><div class="leader-points">' +
           row.pts +
           ' pts</div>' +
@@ -9875,14 +9973,18 @@
         stages.forEach((stage) => {
           const stageName = stage[0];
           const stageColor = stage[1];
+          const safeStageName = escapeHtml(stageName);
+          const safeStageColor = escapeHtml(stageColor);
           const stageContacts = pipelineContacts.filter((contact) => normalizeContactStage(contact, pipelineType) === stageName);
           const column = document.createElement("article");
           column.className = "pipeline-column";
           const cardsHtml = stageContacts
             .map((contact) => {
               const score = scoreContact(contact);
+              const contactId = escapeHtml(contact.id);
+              const contactName = escapeHtml(contact.name);
               const stageOptions = stages
-                .map((option) => '<option value="' + option[0] + '"' + (option[0] === stageName ? " selected" : "") + ">" + option[0] + "</option>")
+                .map((option) => '<option value="' + escapeHtml(option[0]) + '"' + (option[0] === stageName ? " selected" : "") + ">" + escapeHtml(option[0]) + "</option>")
                 .join("");
               const recruitSummary =
                 pipelineType === "recruit"
@@ -9896,11 +9998,11 @@
                     "</p>";
               const detailButton =
                 pipelineType === "recruit"
-                  ? '<button class="ghost-btn" type="button" data-recruit-detail-id="' + contact.id + '">Detail</button>'
-                  : '<button class="ghost-btn" type="button" data-pipeline-contact-detail-id="' + contact.id + '">Detail</button>';
+                  ? '<button class="ghost-btn" type="button" data-recruit-detail-id="' + contactId + '">Detail</button>'
+                  : '<button class="ghost-btn" type="button" data-pipeline-contact-detail-id="' + contactId + '">Detail</button>';
               return (
                 '<div class="pipeline-card"><div class="contact-main"><div><h4>' +
-                contact.name +
+                contactName +
                 '</h4><p class="muted" style="margin-top:5px;">' +
                 score +
                 '/7 qualifiers</p></div><span class="score-pill">' +
@@ -9908,7 +10010,7 @@
                 "/7</span></div>" +
                 recruitSummary +
                 '<div class="move-row"><select data-stage-select="' +
-                contact.id +
+                contactId +
                 '">' +
                 stageOptions +
                 "</select>" +
@@ -9919,9 +10021,9 @@
             .join("");
           column.innerHTML =
             '<div class="pipeline-column-head" style="border-top-color:' +
-            stageColor +
+            safeStageColor +
             '"><h3>' +
-            stageName +
+            safeStageName +
             '</h3><span class="count-pill">' +
             stageContacts.length +
             '</span></div><div class="pipeline-cards">' +
@@ -10029,30 +10131,38 @@
           const category = contactCategory(contact);
           const status = researchStatus(contact);
           const source = contact.id.indexOf("csv") === 0 ? "CSV import" : "Manual";
+          const contactId = escapeHtml(contact.id);
+          const contactName = escapeHtml(contact.name);
+          const contactStage = escapeHtml(contact.stage || "Uncontacted");
+          const safeCategory = escapeHtml(category);
+          const safeStatus = escapeHtml(status);
+          const safeSource = escapeHtml(source);
+          const phoneHref = safePhoneUri("tel:", contact.phone);
+          const smsHref = safePhoneUri("sms:", contact.phone);
           card.innerHTML =
             '<div class="contact-main"><div><h3>' +
-            contact.name +
+            contactName +
             '</h3><p class="muted" style="margin-top:5px;">' +
-            (contact.last_contact_date ? "Last contact: " + contact.last_contact_date : "Not contacted yet") +
+            (contact.last_contact_date ? "Last contact: " + escapeHtml(contact.last_contact_date) : "Not contacted yet") +
             '</p></div><span class="score-pill">' +
             score +
             '/7</span></div><div class="contact-meta"><span class="stage-pill">' +
-            contact.stage +
+            contactStage +
             '</span>' +
             (isOverdue(contact) ? '<span class="overdue-pill">Overdue</span>' : "") +
             (contact.is_top_100 ? '<span class="stage-pill">Top 100</span>' : "") +
             '</div><div class="contact-category-row"><span class="category-pill">' +
-            category +
+            safeCategory +
             '</span><span class="category-pill secondary">' +
-            status +
+            safeStatus +
             '</span><span class="category-pill secondary">' +
-            source +
+            safeSource +
             '</span></div><div class="contact-actions"><a href="tel:' +
-            (contact.phone || "") +
+            phoneHref.slice(4) +
             '">Call</a><a href="sms:' +
-            (contact.phone || "") +
+            smsHref.slice(4) +
             '">Text</a><button type="button" data-detail-id="' +
-            contact.id +
+            contactId +
             '">Details</button></div>';
           contactList.appendChild(card);
         });
@@ -10373,12 +10483,13 @@
         const research = contact.research;
         if (research && research.socials) {
           Object.keys(research.socials).forEach((key) => {
-            if (!research.socials[key]) return;
+            const href = safeExternalUrl(research.socials[key]);
+            if (!href) return;
             const item = document.createElement("a");
             item.className = "toggle-btn active detail-social-link";
-            item.href = research.socials[key];
+            item.href = href;
             item.target = "_blank";
-            item.rel = "noreferrer";
+            item.rel = "noopener noreferrer";
             item.textContent = key.charAt(0).toUpperCase() + key.slice(1);
             detailQualifiers.appendChild(item);
           });
@@ -10473,27 +10584,33 @@
         const score = scoreContact(contact);
         const div = document.createElement("div");
         div.className = "power-row";
+        const contactId = escapeHtml(contact.id);
+        const contactName = escapeHtml(contact.name);
+        const phoneHref = safePhoneUri("tel:", contact.phone);
+        const smsHref = safePhoneUri("sms:", contact.phone);
+        const reason = escapeHtml(item.reason);
+        const urgency = ["high", "medium", "low"].includes(item.urgency) ? item.urgency : "medium";
         div.innerHTML =
           '<div class="power-top"><span class="rank">' +
           (index + 1) +
           '</span><div style="min-width:0; flex:1;"><div class="contact-main"><div><strong>' +
-          contact.name +
+          contactName +
           '</strong><p class="muted" style="margin-top:4px;">' +
           score +
           '/7 qualifiers · ' +
-          item.reason +
+          reason +
           '</p></div><span class="urgency ' +
-          item.urgency +
+          urgency +
           '">' +
-          item.urgency +
+          urgency +
           '</span></div><div class="actions"><a class="ghost-btn" href="tel:' +
-          contact.phone +
+          phoneHref.slice(4) +
           '">Call</a><a class="ghost-btn" href="sms:' +
-          contact.phone +
+          smsHref.slice(4) +
           '">Text</a><button class="ghost-btn" type="button" data-power-detail-id="' +
-          contact.id +
+          contactId +
           '">Notes</button>' +
-          (full ? '<button class="ghost-btn" type="button" data-power-done-id="' + contact.id + '">Done</button>' : "") +
+          (full ? '<button class="ghost-btn" type="button" data-power-done-id="' + contactId + '">Done</button>' : "") +
           "</div></div></div>";
         return div;
       }
