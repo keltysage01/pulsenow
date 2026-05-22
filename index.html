@@ -8762,345 +8762,760 @@
       /* Public marketing landing page */
       #landing {
         min-height: 100dvh;
-        color: #11192f;
+        color: #0d1830;
         background:
-          radial-gradient(circle at 84% 8%, rgba(152, 223, 101, 0.34), transparent 32%),
-          radial-gradient(circle at 10% 14%, rgba(77, 199, 215, 0.26), transparent 34%),
-          linear-gradient(180deg, rgba(248, 253, 253, 0.96), rgba(234, 249, 246, 0.9));
+          linear-gradient(180deg, rgba(248, 253, 255, 0.9), rgba(236, 250, 251, 0.82) 44%, rgba(255, 255, 255, 0.96) 100%),
+          url("/pulsenow_landing_layers/backgrounds/water_glass_hero.png") center top / cover no-repeat;
         overflow: hidden;
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", Inter, sans-serif;
+      }
+
+      #landing button,
+      #landing a {
+        -webkit-tap-highlight-color: transparent;
       }
 
       .landing-shell {
-        width: min(1180px, 100%);
+        width: min(1240px, calc(100% - 48px));
         margin: 0 auto;
-        padding: 22px 22px 54px;
+        padding: 28px 0 42px;
       }
 
       .landing-header {
-        display: flex;
+        display: grid;
+        grid-template-columns: auto 1fr auto;
         align-items: center;
-        justify-content: space-between;
-        gap: 18px;
-        padding: 12px 0 26px;
+        gap: 28px;
+        min-height: 66px;
       }
 
       .landing-logo {
-        width: clamp(164px, 20vw, 240px);
+        width: clamp(178px, 20vw, 266px);
         height: auto;
         display: block;
       }
 
-      .landing-nav {
+      .landing-nav,
+      .landing-nav-actions {
         display: flex;
         align-items: center;
-        gap: 22px;
+      }
+
+      .landing-nav {
+        justify-content: center;
+        gap: 30px;
+      }
+
+      .landing-nav-actions {
+        justify-content: flex-end;
+        gap: 16px;
       }
 
       .landing-nav a,
       .landing-link {
         border: 0;
         background: transparent;
-        color: #0a766c;
+        color: #14213a;
         text-decoration: none;
-        font: 600 15px/1.2 -apple-system, BlinkMacSystemFont, "SF Pro Text", Inter, sans-serif;
+        font: 560 15px/1.2 -apple-system, BlinkMacSystemFont, "SF Pro Text", Inter, sans-serif;
+        cursor: pointer;
       }
 
-      .landing-hero {
-        display: grid;
-        grid-template-columns: minmax(0, 0.92fr) minmax(420px, 1.08fr);
-        align-items: center;
-        gap: 36px;
-        min-height: calc(100dvh - 110px);
-      }
-
-      .landing-eyebrow {
-        display: inline-flex;
-        width: fit-content;
-        padding: 8px 13px;
-        border-radius: 999px;
-        background: rgba(255, 255, 255, 0.72);
-        border: 1px solid rgba(43, 127, 164, 0.16);
-        color: #197d90;
-        box-shadow: 0 12px 24px rgba(31, 65, 85, 0.08);
-        font: 700 11px/1 -apple-system, BlinkMacSystemFont, "SF Pro Text", Inter, sans-serif;
-        letter-spacing: 0.14em;
-        text-transform: uppercase;
-      }
-
-      .landing-copy h1 {
-        margin: 24px 0 16px;
-        max-width: 680px;
-        color: #10182b;
-        font-size: clamp(42px, 5.2vw, 72px);
-        line-height: 0.98;
-        letter-spacing: -0.06em;
-        font-weight: 760;
-      }
-
-      .landing-copy p {
-        margin: 0;
-        max-width: 560px;
-        color: #526276;
-        font-size: clamp(17px, 1.7vw, 21px);
-        line-height: 1.5;
-        letter-spacing: -0.02em;
-      }
-
-      .landing-actions {
-        display: flex;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 14px;
-        margin-top: 30px;
+      .landing-nav a:hover,
+      .landing-link:hover {
+        color: #0b7d7a;
       }
 
       .landing-btn {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        min-height: 50px;
+        min-height: 48px;
         padding: 0 24px;
         border-radius: 999px;
         border: 1px solid transparent;
-        font: 700 15px/1 -apple-system, BlinkMacSystemFont, "SF Pro Text", Inter, sans-serif;
+        font: 680 15px/1 -apple-system, BlinkMacSystemFont, "SF Pro Text", Inter, sans-serif;
         text-decoration: none;
         cursor: pointer;
+        transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
+      }
+
+      .landing-btn:hover {
+        transform: translateY(-1px);
       }
 
       .landing-btn.primary {
         color: #ffffff;
-        background: linear-gradient(135deg, #207fa8 0%, #56c7c9 54%, #98dc78 100%);
-        box-shadow: 0 16px 30px rgba(41, 143, 168, 0.24);
+        background: linear-gradient(135deg, #147ba6 0%, #46c8d6 52%, #8bd36d 100%);
+        box-shadow: 0 16px 30px rgba(23, 126, 160, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.42);
       }
 
       .landing-btn.secondary {
-        color: #155d83;
-        background: rgba(255, 255, 255, 0.68);
-        border-color: rgba(160, 190, 200, 0.34);
-        box-shadow: 0 12px 28px rgba(31, 65, 85, 0.08);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
+        color: #125b7e;
+        background: rgba(255, 255, 255, 0.56);
+        border-color: rgba(116, 168, 184, 0.3);
+        box-shadow: 0 14px 32px rgba(31, 65, 85, 0.08);
+        backdrop-filter: blur(18px) saturate(150%);
+        -webkit-backdrop-filter: blur(18px) saturate(150%);
+      }
+
+      .landing-hero {
+        position: relative;
+        display: grid;
+        grid-template-columns: minmax(0, 0.9fr) minmax(540px, 1.1fr);
+        align-items: center;
+        gap: 42px;
+        min-height: 690px;
+        padding: 58px 0 24px;
+      }
+
+      .landing-hero::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        bottom: -30px;
+        width: 100vw;
+        height: 260px;
+        transform: translateX(-50%);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0), rgba(224, 247, 250, 0.72));
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      .landing-copy,
+      .landing-stage {
+        position: relative;
+        z-index: 1;
+      }
+
+      .landing-eyebrow {
+        display: inline-flex;
+        width: fit-content;
+        padding: 8px 14px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.66);
+        border: 1px solid rgba(43, 157, 176, 0.24);
+        color: #12889a;
+        box-shadow: 0 10px 24px rgba(31, 65, 85, 0.07);
+        font: 720 12px/1 -apple-system, BlinkMacSystemFont, "SF Pro Text", Inter, sans-serif;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+      }
+
+      .landing-copy h1 {
+        margin: 24px 0 18px;
+        max-width: 650px;
+        color: #0d1830;
+        font-size: clamp(46px, 5vw, 72px);
+        line-height: 0.98;
+        letter-spacing: -0.055em;
+        font-weight: 760;
+      }
+
+      .landing-copy p {
+        margin: 0;
+        max-width: 580px;
+        color: #465875;
+        font-size: clamp(17px, 1.45vw, 20px);
+        line-height: 1.58;
+        letter-spacing: -0.018em;
+        font-weight: 410;
+      }
+
+      .landing-actions {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 16px;
+        margin-top: 34px;
       }
 
       .landing-stage {
+        min-height: 610px;
+        display: grid;
+        place-items: center;
+      }
+
+      .landing-phone-stack {
         position: relative;
-        min-height: 570px;
-        display: grid;
-        place-items: center;
+        width: min(720px, 100%);
+        height: 620px;
       }
 
-      .landing-stage::before {
-        content: "";
+      .landing-phone-mockup {
         position: absolute;
-        width: min(92%, 560px);
-        height: 290px;
-        border-radius: 999px;
-        background: radial-gradient(circle, rgba(82, 198, 200, 0.28), transparent 68%);
-        filter: blur(26px);
-        transform: translateY(100px);
+        width: 38%;
+        height: auto;
+        filter: drop-shadow(0 32px 34px rgba(19, 54, 74, 0.2));
+        transform-origin: 50% 80%;
+        user-select: none;
+        -webkit-user-drag: none;
       }
 
-      .landing-phone {
-        position: absolute;
-        width: 242px;
-        min-height: 494px;
-        border-radius: 38px;
-        padding: 10px;
-        background: linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(223, 235, 236, 0.78));
-        border: 1px solid rgba(255, 255, 255, 0.94);
-        box-shadow: 0 28px 74px rgba(23, 60, 78, 0.22), inset 0 0 0 1px rgba(255, 255, 255, 0.58);
-        overflow: hidden;
+      .landing-phone-mockup.contacts {
+        left: 0;
+        top: 90px;
+        z-index: 1;
+        transform: rotate(-7deg);
       }
 
-      .landing-phone::before {
-        content: "";
-        position: absolute;
-        top: 16px;
-        left: 50%;
-        width: 78px;
-        height: 20px;
-        border-radius: 999px;
-        transform: translateX(-50%);
-        background: rgba(18, 31, 46, 0.88);
-        z-index: 2;
+      .landing-phone-mockup.coach {
+        left: 28%;
+        top: 12px;
+        width: 42%;
+        z-index: 3;
       }
 
-      .landing-phone.one {
-        left: 2%;
-        top: 62px;
-        transform: rotate(-9deg);
-      }
-
-      .landing-phone.two {
-        z-index: 2;
-        transform: translateY(-4px) scale(1.08);
-      }
-
-      .landing-phone.three {
-        right: 1%;
+      .landing-phone-mockup.badges {
+        right: 0;
         top: 92px;
-        transform: rotate(9deg);
+        z-index: 2;
+        transform: rotate(7deg);
       }
 
-      .landing-screen {
-        min-height: 474px;
+      .landing-section {
+        position: relative;
+        z-index: 1;
+        margin-top: 18px;
+      }
+
+      .landing-glass-panel {
         border-radius: 30px;
-        padding: 52px 15px 18px;
-        background:
-          radial-gradient(circle at 88% 12%, rgba(152, 223, 101, 0.22), transparent 30%),
-          linear-gradient(180deg, #f8ffff, #ebfbf5);
-        overflow: hidden;
+        background: rgba(255, 255, 255, 0.68);
+        border: 1px solid rgba(255, 255, 255, 0.78);
+        box-shadow: 0 22px 56px rgba(31, 65, 85, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(22px) saturate(150%);
+        -webkit-backdrop-filter: blur(22px) saturate(150%);
       }
 
-      .landing-screen.dark {
-        color: #ffffff;
-        background:
-          radial-gradient(circle at 78% 4%, rgba(152, 223, 101, 0.22), transparent 30%),
-          linear-gradient(145deg, #071a31, #0e5873 62%, #55b46f);
+      .landing-section-title {
+        margin: 0;
+        color: #0d1830;
+        font-size: clamp(28px, 3vw, 40px);
+        line-height: 1.08;
+        letter-spacing: -0.045em;
+        font-weight: 740;
       }
 
-      .landing-app-title {
-        font-size: 23px;
-        line-height: 1.02;
-        font-weight: 760;
-        letter-spacing: -0.04em;
-        margin-bottom: 14px;
+      .landing-section-copy {
+        margin: 16px 0 0;
+        color: #506179;
+        font-size: 17px;
+        line-height: 1.55;
+        letter-spacing: -0.015em;
+        font-weight: 410;
       }
 
-      .landing-card {
-        border-radius: 22px;
-        padding: 14px;
-        margin-top: 10px;
-        background: rgba(255, 255, 255, 0.76);
-        border: 1px solid rgba(255, 255, 255, 0.84);
-        box-shadow: 0 14px 32px rgba(31, 65, 85, 0.12);
+      .landing-features-panel {
+        padding: 28px;
       }
 
-      .landing-screen.dark .landing-card {
-        background: rgba(255, 255, 255, 0.12);
-        border-color: rgba(255, 255, 255, 0.2);
-      }
-
-      .landing-mini-row {
-        display: grid;
-        grid-template-columns: 24px 1fr auto;
-        align-items: center;
-        gap: 8px;
-        padding: 8px 0;
-        font-size: 12px;
-        color: #536277;
-      }
-
-      .landing-screen.dark .landing-mini-row {
-        color: rgba(255, 255, 255, 0.8);
-      }
-
-      .landing-rank {
-        width: 24px;
-        height: 24px;
-        display: grid;
-        place-items: center;
-        border-radius: 999px;
-        color: #fff;
-        background: linear-gradient(135deg, #207fa8, #98dc78);
-        font-weight: 800;
-      }
-
-      .landing-progress {
-        height: 8px;
-        border-radius: 999px;
-        background: rgba(12, 40, 70, 0.08);
-        overflow: hidden;
-      }
-
-      .landing-progress span {
-        display: block;
-        width: var(--w, 64%);
-        height: 100%;
-        border-radius: inherit;
-        background: linear-gradient(90deg, #207fa8, #56c7c9, #98dc78);
+      .landing-features-panel .landing-section-title {
+        text-align: center;
+        margin-bottom: 24px;
       }
 
       .landing-features {
         display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-columns: repeat(6, minmax(0, 1fr));
         gap: 16px;
-        margin-top: 26px;
       }
 
       .landing-feature {
-        border-radius: 26px;
-        padding: 20px;
-        background: rgba(255, 255, 255, 0.62);
-        border: 1px solid rgba(255, 255, 255, 0.78);
-        box-shadow: 0 18px 42px rgba(31, 65, 85, 0.1);
-        backdrop-filter: blur(18px);
-        -webkit-backdrop-filter: blur(18px);
+        min-height: 230px;
+        border-radius: 24px;
+        padding: 20px 16px;
+        text-align: center;
+        background: rgba(255, 255, 255, 0.7);
+        border: 1px solid rgba(205, 228, 235, 0.72);
+        box-shadow: 0 16px 32px rgba(31, 65, 85, 0.08);
       }
 
-      .landing-feature strong {
+      .landing-feature img {
+        width: 70px;
+        height: 70px;
+        object-fit: contain;
         display: block;
-        margin-bottom: 7px;
-        color: #11192f;
-        font-size: 16px;
-        letter-spacing: -0.02em;
+        margin: 0 auto 16px;
       }
 
-      .landing-feature span {
-        color: #5e6d81;
+      .landing-feature h3 {
+        margin: 0 0 10px;
+        color: #101a31;
+        font-size: 17px;
+        line-height: 1.15;
+        letter-spacing: -0.025em;
+        font-weight: 700;
+      }
+
+      .landing-feature p {
+        margin: 0;
+        color: #5a6a82;
         font-size: 14px;
-        line-height: 1.4;
+        line-height: 1.42;
+        font-weight: 410;
+      }
+
+      .landing-relationship {
+        display: grid;
+        grid-template-columns: 210px minmax(0, 1fr) minmax(320px, 0.8fr);
+        align-items: center;
+        gap: 34px;
+        padding: 32px 34px;
+      }
+
+      .landing-brand-orb {
+        width: 156px;
+        height: 156px;
+        display: grid;
+        place-items: center;
+        border-radius: 999px;
+        background: radial-gradient(circle at 32% 25%, rgba(255, 255, 255, 0.94), rgba(240, 253, 255, 0.64));
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.92), 0 18px 34px rgba(32, 119, 148, 0.12);
+      }
+
+      .landing-brand-orb img {
+        width: 108px;
+        height: auto;
+      }
+
+      .landing-gradient-text {
+        display: block;
+        color: #12899b;
+        background: linear-gradient(90deg, #1689aa, #54c5c7, #8acb65);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .landing-benefits {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+        grid-column: 2 / 4;
+      }
+
+      .landing-benefit {
+        display: grid;
+        grid-template-columns: 44px 1fr;
+        gap: 12px;
+        align-items: start;
+      }
+
+      .landing-benefit-icon {
+        width: 44px;
+        height: 44px;
+        display: grid;
+        place-items: center;
+        border-radius: 999px;
+        background: linear-gradient(135deg, rgba(28, 140, 174, 0.16), rgba(142, 214, 105, 0.22));
+        color: #0e8193;
+        font-weight: 760;
+      }
+
+      .landing-benefit strong {
+        display: block;
+        color: #162039;
+        font-size: 15px;
+        line-height: 1.18;
+        margin-bottom: 5px;
+      }
+
+      .landing-benefit span {
+        display: block;
+        color: #5c6c83;
+        font-size: 13px;
+        line-height: 1.38;
+      }
+
+      .landing-team {
+        display: grid;
+        grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+        gap: 34px;
+        padding: 34px;
+      }
+
+      .landing-metrics {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .landing-metric {
+        border-radius: 16px;
+        padding: 14px;
+        background: rgba(255, 255, 255, 0.72);
+        border: 1px solid rgba(202, 224, 230, 0.72);
+      }
+
+      .landing-metric span {
+        display: block;
+        color: #52647d;
+        font-size: 12px;
+        font-weight: 620;
+        margin-bottom: 8px;
+      }
+
+      .landing-metric strong {
+        color: #101a31;
+        font-size: 24px;
+        font-weight: 730;
+        letter-spacing: -0.04em;
+      }
+
+      .landing-metric em {
+        color: #2caa65;
+        font-size: 12px;
+        font-style: normal;
+        font-weight: 720;
+        margin-left: 6px;
+      }
+
+      .landing-results {
+        margin-top: 14px;
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 14px;
+      }
+
+      .landing-table,
+      .landing-chart {
+        border-radius: 20px;
+        padding: 16px;
+        background: rgba(255, 255, 255, 0.7);
+        border: 1px solid rgba(202, 224, 230, 0.72);
+      }
+
+      .landing-table h3,
+      .landing-chart h3 {
+        margin: 0 0 12px;
+        color: #40516a;
+        font-size: 12px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .landing-table-row {
+        display: grid;
+        grid-template-columns: 28px 1fr auto auto;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 0;
+        border-top: 1px solid rgba(130, 164, 174, 0.16);
+        color: #172238;
+        font-size: 13px;
+      }
+
+      .landing-table-row:first-of-type {
+        border-top: 0;
+      }
+
+      .landing-avatar {
+        width: 24px;
+        height: 24px;
+        border-radius: 999px;
+        background: linear-gradient(135deg, #1d82aa, #8ad270);
+      }
+
+      .landing-chart-line {
+        height: 86px;
+        border-radius: 16px;
+        background:
+          linear-gradient(180deg, rgba(81, 202, 200, 0.28), rgba(137, 211, 106, 0.06)),
+          url("data:image/svg+xml,%3Csvg viewBox='0 0 220 90' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M6 70 C32 30 50 55 75 40 S116 20 138 42 S178 66 214 14' fill='none' stroke='%231689aa' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E") center / 90% 76% no-repeat;
+      }
+
+      .landing-final {
+        margin-bottom: 0;
+      }
+
+      .landing-final-panel {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto minmax(180px, 0.28fr);
+        align-items: center;
+        gap: 24px;
+        padding: 30px 34px;
+        color: #ffffff;
+        background:
+          radial-gradient(circle at 92% 30%, rgba(139, 211, 109, 0.7), transparent 34%),
+          linear-gradient(135deg, #137ca7 0%, #43c6d6 50%, #8bd36d 100%);
+        border-radius: 28px;
+        box-shadow: 0 24px 48px rgba(23, 126, 160, 0.24);
+        overflow: hidden;
+      }
+
+      .landing-final-panel h2 {
+        margin: 0;
+        color: #ffffff;
+        font-size: clamp(28px, 3vw, 40px);
+        line-height: 1.04;
+        letter-spacing: -0.045em;
+      }
+
+      .landing-trust {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 18px;
+        margin-top: 14px;
+        color: rgba(255, 255, 255, 0.94);
+        font-size: 13px;
+        font-weight: 620;
+      }
+
+      .landing-final-panel .landing-btn {
+        min-width: 230px;
+        color: #11192f;
+        background: rgba(255, 255, 255, 0.92);
+        box-shadow: 0 16px 32px rgba(16, 48, 68, 0.18);
+      }
+
+      .landing-final-mark {
+        opacity: 0.2;
+        width: 190px;
+        justify-self: end;
+      }
+
+      .landing-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        padding: 28px 4px 0;
+        color: #5a6a82;
+        font-size: 13px;
+      }
+
+      .landing-footer img {
+        width: 142px;
+        height: auto;
+      }
+
+      @media (max-width: 1100px) {
+        .landing-nav {
+          gap: 18px;
+        }
+
+        .landing-features {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .landing-relationship {
+          grid-template-columns: 150px 1fr;
+        }
+
+        .landing-benefits,
+        .landing-relationship .landing-section-copy {
+          grid-column: 1 / -1;
+        }
       }
 
       @media (max-width: 900px) {
         .landing-shell {
-          padding: 18px 18px 38px;
+          width: min(100% - 32px, 720px);
+          padding-top: 18px;
         }
 
-        .landing-nav a {
+        .landing-header {
+          grid-template-columns: 1fr auto;
+        }
+
+        .landing-logo {
+          width: 166px;
+        }
+
+        .landing-nav {
           display: none;
+        }
+
+        .landing-nav-actions {
+          gap: 10px;
+        }
+
+        .landing-link {
+          font-size: 14px;
+        }
+
+        .landing-nav-actions .landing-btn {
+          min-height: 42px;
+          padding: 0 16px;
+          font-size: 14px;
         }
 
         .landing-hero {
           grid-template-columns: 1fr;
           min-height: auto;
-          gap: 12px;
+          gap: 10px;
+          padding: 42px 0 6px;
         }
 
         .landing-copy h1 {
-          font-size: clamp(38px, 12vw, 56px);
+          font-size: clamp(42px, 12vw, 56px);
+        }
+
+        .landing-copy p {
+          font-size: 17px;
         }
 
         .landing-stage {
-          min-height: 500px;
-          margin-top: 14px;
+          min-height: 440px;
         }
 
-        .landing-phone {
-          width: 206px;
-          min-height: 424px;
+        .landing-phone-stack {
+          width: min(100%, 560px);
+          height: 430px;
+          overflow: hidden;
         }
 
-        .landing-screen {
-          min-height: 404px;
+        .landing-phone-mockup {
+          width: 45%;
         }
 
-        .landing-phone.one {
-          left: -28px;
-          opacity: 0.62;
+        .landing-phone-mockup.contacts {
+          left: -6%;
+          top: 72px;
         }
 
-        .landing-phone.three {
-          right: -28px;
-          opacity: 0.62;
+        .landing-phone-mockup.coach {
+          left: 25%;
+          top: 10px;
+          width: 50%;
         }
 
-        .landing-phone.two {
-          transform: translateY(0) scale(1);
+        .landing-phone-mockup.badges {
+          right: -7%;
+          top: 78px;
+        }
+
+        .landing-relationship,
+        .landing-team,
+        .landing-results,
+        .landing-final-panel {
+          grid-template-columns: 1fr;
+        }
+
+        .landing-brand-orb,
+        .landing-final-mark {
+          display: none;
+        }
+
+        .landing-metrics,
+        .landing-benefits {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 620px) {
+        .landing-shell {
+          width: min(100% - 28px, 430px);
+          padding-bottom: 30px;
+        }
+
+        .landing-header {
+          gap: 10px;
+        }
+
+        .landing-logo {
+          width: 142px;
+        }
+
+        .landing-nav-actions .landing-btn {
+          display: none;
+        }
+
+        .landing-copy h1 {
+          font-size: clamp(39px, 12.4vw, 48px);
+          letter-spacing: -0.052em;
+        }
+
+        .landing-actions {
+          align-items: stretch;
+        }
+
+        .landing-actions .landing-btn {
+          width: 100%;
+        }
+
+        .landing-stage {
+          min-height: 380px;
+        }
+
+        .landing-phone-stack {
+          height: 374px;
+        }
+
+        .landing-phone-mockup.contacts {
+          left: -18%;
+          top: 72px;
+          opacity: 0.86;
+        }
+
+        .landing-phone-mockup.coach {
+          left: 18%;
+          width: 64%;
+        }
+
+        .landing-phone-mockup.badges {
+          right: -18%;
+          top: 78px;
+          opacity: 0.86;
+        }
+
+        .landing-features-panel,
+        .landing-relationship,
+        .landing-team,
+        .landing-final-panel {
+          padding: 22px;
+          border-radius: 26px;
         }
 
         .landing-features {
           grid-template-columns: 1fr;
+        }
+
+        .landing-feature {
+          display: grid;
+          grid-template-columns: 64px 1fr;
+          text-align: left;
+          gap: 14px;
+          align-items: center;
+          min-height: 0;
+          padding: 16px;
+        }
+
+        .landing-feature img {
+          width: 58px;
+          height: 58px;
+          margin: 0;
+          grid-row: span 2;
+        }
+
+        .landing-feature h3 {
+          margin-bottom: 4px;
+        }
+
+        .landing-metrics,
+        .landing-benefits {
+          grid-template-columns: 1fr;
+        }
+
+        .landing-table-row {
+          grid-template-columns: 24px 1fr auto;
+        }
+
+        .landing-table-row span:last-child {
+          display: none;
+        }
+
+        .landing-final-panel .landing-btn {
+          width: 100%;
+          min-width: 0;
+        }
+
+        .landing-footer {
+          flex-direction: column;
+          align-items: flex-start;
         }
       }
 
@@ -9121,66 +9536,133 @@
     <main id="landing" class="landing-page">
       <div class="landing-shell">
         <header class="landing-header">
-          <img class="landing-logo" src="source/public/pulsenow-logo-transparent-cropped.png" alt="Pulsenow" />
+          <img class="landing-logo" src="/pulsenow_landing_layers/logo/pulsenow_logo_transparent.png" alt="PulseNow" />
           <nav class="landing-nav" aria-label="Landing navigation">
-            <a href="#landing-features">Features</a>
-            <a href="#landing-proof">Teams</a>
+            <a href="#landing-product">Product</a>
+            <a href="#landing-solutions">Solutions</a>
+            <a href="#landing-pricing">Pricing</a>
+            <a href="#landing-resources">Resources</a>
+            <a href="#landing-about">About</a>
+          </nav>
+          <div class="landing-nav-actions">
             <button id="landing-login-btn" class="landing-link" type="button">Log in</button>
             <button id="landing-demo-btn" class="landing-btn primary" type="button">Book a Demo</button>
-          </nav>
+          </div>
         </header>
 
-        <section class="landing-hero">
+        <section id="landing-product" class="landing-hero">
           <div class="landing-copy">
             <span class="landing-eyebrow">AI powered CRM for prospecting</span>
-            <h1>The CRM that tells your team who to call next.</h1>
-            <p>PulseNow researches, organizes, coaches, and prioritizes your outreach so agents stop guessing and start having better conversations.</p>
+            <h1>The all in one CRM that does the hard work for you.</h1>
+            <p>PulseNow researches, qualifies, organizes, and coaches your outreach so you can focus on authentic human connection and help more people, faster.</p>
             <div class="landing-actions">
-              <button id="landing-start-btn" class="landing-btn primary" type="button">Start free preview</button>
-              <a class="landing-btn secondary" href="#landing-features">See how it works</a>
+              <button id="landing-start-btn" class="landing-btn primary" type="button">Book a Demo</button>
+              <a class="landing-btn secondary" href="#landing-features">See How It Works</a>
             </div>
           </div>
 
           <div class="landing-stage" aria-label="PulseNow app preview">
-            <div class="landing-phone one" aria-hidden="true">
-              <div class="landing-screen">
-                <div class="landing-app-title">People to call</div>
-                <div class="landing-card">
-                  <div class="landing-mini-row"><span class="landing-rank">1</span><strong>Jordan Miles</strong><span>High</span></div>
-                  <div class="landing-mini-row"><span class="landing-rank">2</span><strong>Alex Carter</strong><span>Due</span></div>
-                  <div class="landing-mini-row"><span class="landing-rank">3</span><strong>Taylor Reed</strong><span>New</span></div>
-                </div>
-              </div>
+            <div class="landing-phone-stack">
+              <img class="landing-phone-mockup contacts" src="/pulsenow_landing_layers/mockups/phone_contacts.png" alt="PulseNow contacts screen preview" />
+              <img class="landing-phone-mockup coach" src="/pulsenow_landing_layers/mockups/phone_ai_coach.png" alt="PulseNow AI coach screen preview" />
+              <img class="landing-phone-mockup badges" src="/pulsenow_landing_layers/mockups/phone_badges.png" alt="PulseNow badges screen preview" />
             </div>
-            <div class="landing-phone two" aria-hidden="true">
-              <div class="landing-screen dark">
-                <div class="landing-app-title">Your Coach</div>
-                <div class="landing-card">Call Jordan first. He is overdue, qualified, and already responded once.</div>
-                <div class="landing-card">Ask for a script, follow-up angle, or pipeline review.</div>
-              </div>
+          </div>
+        </section>
+
+        <section id="landing-features" class="landing-section landing-glass-panel landing-features-panel">
+          <h2 class="landing-section-title">Everything you need to prospect with purpose.</h2>
+          <div class="landing-features">
+            <article class="landing-feature">
+              <img src="/pulsenow_landing_layers/icons/icon_upload_csv.png" alt="" />
+              <h3>Upload CSV contacts</h3>
+              <p>Import your lists, clean your data, and organize prospects in seconds.</p>
+            </article>
+            <article class="landing-feature">
+              <img src="/pulsenow_landing_layers/icons/icon_web_research.png" alt="" />
+              <h3>Deep social and web research</h3>
+              <p>PulseNow searches public signals, profiles, and context so you know what matters.</p>
+            </article>
+            <article class="landing-feature">
+              <img src="/pulsenow_landing_layers/icons/icon_ai_qualification.png" alt="" />
+              <h3>AI qualification and outreach angles</h3>
+              <p>AI helps qualify leads, surface fit, and recommend the best next step.</p>
+            </article>
+            <article class="landing-feature">
+              <img src="/pulsenow_landing_layers/icons/icon_ai_coach.png" alt="" />
+              <h3>Personalized AI coaching</h3>
+              <p>Get tactical guidance, call direction, and real time feedback in your workflow.</p>
+            </article>
+            <article class="landing-feature">
+              <img src="/pulsenow_landing_layers/icons/icon_pipeline_tracking.png" alt="" />
+              <h3>Pipeline and team tracking</h3>
+              <p>Visualize activity, progress, momentum, and team results in one place.</p>
+            </article>
+            <article class="landing-feature">
+              <img src="/pulsenow_landing_layers/icons/icon_who_to_call.png" alt="" />
+              <h3>Know who to call next</h3>
+              <p>AI prioritizes your power list so you always know the next best move.</p>
+            </article>
+          </div>
+        </section>
+
+        <section id="landing-solutions" class="landing-section landing-glass-panel landing-relationship">
+          <div class="landing-brand-orb" aria-hidden="true">
+            <img src="/pulsenow_landing_layers/logo/pulsenow_logo_transparent.png" alt="" />
+          </div>
+          <div>
+            <h2 class="landing-section-title">AI does the heavy lifting. <span class="landing-gradient-text">Humans build the relationship.</span></h2>
+          </div>
+          <p class="landing-section-copy">PulseNow speeds up prospecting, clarifies your outreach, and removes the busywork that slows you down so you can focus on meaningful conversations that create impact.</p>
+          <div class="landing-benefits">
+            <div class="landing-benefit"><span class="landing-benefit-icon">⚡</span><div><strong>Faster prospecting</strong><span>Research and qualify in minutes, not hours.</span></div></div>
+            <div class="landing-benefit"><span class="landing-benefit-icon">💬</span><div><strong>Clearer outreach</strong><span>Smarter angles and talking points that resonate.</span></div></div>
+            <div class="landing-benefit"><span class="landing-benefit-icon">♥</span><div><strong>More impact</strong><span>Spend less time on busywork and help more people.</span></div></div>
+          </div>
+        </section>
+
+        <section id="landing-resources" class="landing-section landing-glass-panel landing-team">
+          <div>
+            <h2 class="landing-section-title">Real time visibility. Stronger teams. More wins.</h2>
+            <p class="landing-section-copy">Track teammate activity, momentum, and results in one beautiful view. Celebrate progress, spot opportunities, and keep everyone focused on what matters.</p>
+          </div>
+          <div>
+            <div class="landing-metrics">
+              <div class="landing-metric"><span>Calls Made</span><strong>1,245</strong><em>↑ 18%</em></div>
+              <div class="landing-metric"><span>Conversations</span><strong>436</strong><em>↑ 22%</em></div>
+              <div class="landing-metric"><span>Appts Booked</span><strong>128</strong><em>↑ 15%</em></div>
+              <div class="landing-metric"><span>New Recruits</span><strong>23</strong><em>↑ 27%</em></div>
             </div>
-            <div class="landing-phone three" aria-hidden="true">
-              <div class="landing-screen">
-                <div class="landing-app-title">Momentum</div>
-                <div class="landing-card">
-                  <strong>Weekly push</strong>
-                  <div class="landing-progress" style="--w: 72%;"><span></span></div>
-                </div>
-                <div class="landing-card">
-                  <strong>Leaderboard</strong>
-                  <div class="landing-mini-row"><span class="landing-rank">1</span><strong>Sam</strong><span>28</span></div>
-                  <div class="landing-mini-row"><span class="landing-rank">2</span><strong>You</strong><span>21</span></div>
-                </div>
+            <div class="landing-results">
+              <div class="landing-table">
+                <h3>Team leaderboard</h3>
+                <div class="landing-table-row"><span>1</span><span><span class="landing-avatar"></span> Jordan Miles</span><span>312 calls</span><span>1,250 pts</span></div>
+                <div class="landing-table-row"><span>2</span><span><span class="landing-avatar"></span> Taylor Reed</span><span>281 calls</span><span>1,080 pts</span></div>
+                <div class="landing-table-row"><span>3</span><span><span class="landing-avatar"></span> Alex Carter</span><span>226 calls</span><span>860 pts</span></div>
+              </div>
+              <div class="landing-chart">
+                <h3>Momentum</h3>
+                <div class="landing-chart-line" aria-hidden="true"></div>
               </div>
             </div>
           </div>
         </section>
 
-        <section id="landing-features" class="landing-features">
-          <article class="landing-feature"><strong>Upload CSV contacts</strong><span>Import, clean, organize, and categorize prospect lists directly in the app.</span></article>
-          <article class="landing-feature"><strong>AI Power List</strong><span>Prioritize the right people with a clear reason to call, text, or follow up.</span></article>
-          <article id="landing-proof" class="landing-feature"><strong>Team momentum</strong><span>Track activity, coaching, badges, goals, and leaderboard progress in one place.</span></article>
+        <section id="landing-pricing" class="landing-section landing-final">
+          <div class="landing-final-panel">
+            <div>
+              <h2>Prospect smarter. Connect faster. Close with confidence.</h2>
+              <div class="landing-trust"><span>✓ No credit card required</span><span>✓ Free trial</span><span>✓ Cancel anytime</span></div>
+            </div>
+            <button id="landing-final-start-btn" class="landing-btn" type="button">Get Started →</button>
+            <img class="landing-final-mark" src="/pulsenow_landing_layers/logo/pulsenow_logo_transparent.png" alt="" />
+          </div>
         </section>
+
+        <footer id="landing-about" class="landing-footer">
+          <img src="/pulsenow_landing_layers/logo/pulsenow_logo_transparent.png" alt="PulseNow" />
+          <span>AI powered CRM for teams that prospect with purpose.</span>
+        </footer>
       </div>
     </main>
 
@@ -9735,6 +10217,7 @@
       const landingLoginBtn = document.getElementById("landing-login-btn");
       const landingDemoBtn = document.getElementById("landing-demo-btn");
       const landingStartBtn = document.getElementById("landing-start-btn");
+      const landingFinalStartBtn = document.getElementById("landing-final-start-btn");
       const nameInput = document.getElementById("name-input");
       const pinInput = document.getElementById("pin-input");
       const loginTab = document.getElementById("login-tab");
@@ -11879,6 +12362,10 @@
         showLogin();
       });
       landingStartBtn.addEventListener("click", () => {
+        setMode("register");
+        showLogin();
+      });
+      landingFinalStartBtn.addEventListener("click", () => {
         setMode("register");
         showLogin();
       });
