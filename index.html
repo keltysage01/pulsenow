@@ -8725,6 +8725,100 @@
         content: "Locked" !important;
       }
 
+      #badge-grid .badge-item {
+        grid-template-columns: 72px minmax(0, 1fr) auto !important;
+        column-gap: 14px !important;
+        row-gap: 8px !important;
+        min-height: 112px !important;
+        contain: layout paint !important;
+        content-visibility: auto;
+        contain-intrinsic-size: 112px;
+      }
+
+      #badge-grid .badge-item::before,
+      #badge-grid .badge-item::after {
+        content: none !important;
+        display: none !important;
+      }
+
+      .badge-art-wrap {
+        width: 72px;
+        height: 72px;
+        display: grid;
+        place-items: center;
+        border-radius: 22px;
+        background:
+          radial-gradient(circle at 34% 18%, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.2) 58%),
+          linear-gradient(145deg, rgba(255, 255, 255, 0.52), rgba(207, 246, 239, 0.32));
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.86),
+          0 12px 24px rgba(25, 137, 162, 0.12);
+      }
+
+      .badge-art {
+        width: 66px;
+        height: 66px;
+        display: block;
+        object-fit: contain;
+      }
+
+      .badge-copy {
+        min-width: 0;
+        display: grid;
+        gap: 4px;
+      }
+
+      #badge-grid .badge-state {
+        align-self: center;
+        justify-self: end;
+        min-width: 76px;
+        border-radius: 999px;
+        background: rgba(17, 24, 39, 0.06);
+        color: rgba(17, 24, 39, 0.56);
+        padding: 6px 10px;
+        text-align: center;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+
+      #badge-grid .badge-item:not(.locked) .badge-state {
+        background: rgba(143, 209, 106, 0.18);
+        color: #326b21;
+      }
+
+      #badge-grid .badge-item.locked .badge-art {
+        opacity: 0.82;
+        filter: grayscale(0.16) saturate(0.92);
+      }
+
+      #badge-grid .badge-item.locked {
+        opacity: 0.92 !important;
+      }
+
+      @media (max-width: 520px) {
+        #badge-grid .badge-item {
+          grid-template-columns: 70px minmax(0, 1fr) !important;
+        }
+
+        #badge-grid .badge-state {
+          grid-column: 2;
+          justify-self: start;
+        }
+
+        .badge-art-wrap {
+          width: 64px;
+          height: 64px;
+          border-radius: 20px;
+        }
+
+        .badge-art {
+          width: 60px;
+          height: 60px;
+        }
+      }
+
       html[data-theme="dark"] #app .topbar {
         background: rgba(5, 15, 28, 0.9) !important;
         border-bottom-color: rgba(255, 255, 255, 0.09) !important;
@@ -10340,14 +10434,14 @@
         { id: "u7", name: "Riley Ford", level: "TA", pts: 2, tier: "Some Timer" }
       ];
       const badgeDefs = [
-        ["first_log", "First Step", "Log your first day"],
-        ["streak_3", "On Fire", "3-day streak"],
-        ["pts_21", "All-the-Timer", "21+ pts in a week"],
-        ["calls_100", "Dialer", "100 calls in a week"],
-        ["appts_10", "Appt Pro", "10 appts done in a week"],
-        ["recruits_3", "Team Builder", "3 recruits this month"],
-        ["fna_5", "FNA Machine", "5 FNAs in a week"],
-        ["level_a", "Associate", "Reached Associate"]
+        ["first_log", "First Step", "Log your first day", "badge-first-step.webp"],
+        ["streak_3", "On Fire", "3-day streak", "badge-on-fire.webp"],
+        ["pts_21", "All-the-Timer", "21+ pts in a week", "badge-all-the-timer.webp"],
+        ["calls_100", "Dialer", "100 calls in a week", "badge-dialer.webp"],
+        ["appts_10", "Appt Pro", "10 appts done in a week", "badge-appt-pro.webp"],
+        ["recruits_3", "Team Builder", "3 recruits this month", "badge-team-builder.webp"],
+        ["fna_5", "FNA Machine", "5 FNAs in a week", "badge-fna-machine.webp"],
+        ["level_a", "Associate", "Reached Associate", "badge-associate.webp"]
       ];
       const salesStages = [
         ["Uncontacted Team Prospects", "#8aa0bb"],
@@ -11128,7 +11222,15 @@
           const earned = hasBadge(badge[0], stats);
           const item = document.createElement("div");
           item.className = "badge-item" + (earned ? "" : " locked");
-          item.innerHTML = '<strong>' + badge[1] + '</strong><span class="muted" style="padding:0 6px;">' + badge[2] + "</span>";
+          item.innerHTML =
+            '<span class="badge-art-wrap" aria-hidden="true">' +
+              '<img class="badge-art" src="badge-icons/' + badge[3] + '?v=badgeart1" alt="" loading="lazy" decoding="async" width="64" height="64">' +
+            '</span>' +
+            '<span class="badge-copy">' +
+              '<strong>' + badge[1] + '</strong>' +
+              '<span class="muted">' + badge[2] + '</span>' +
+            '</span>' +
+            '<span class="badge-state">' + (earned ? "Unlocked" : "Locked") + "</span>";
           badgeGrid.appendChild(item);
         });
         const reqs = [
