@@ -9514,6 +9514,146 @@
         }
       }
 
+      /* Compact pipeline lanes: more context, less visual weight */
+      #pipeline-board.pipeline-board {
+        grid-auto-columns: minmax(224px, 66vw) !important;
+        gap: 10px !important;
+        margin-top: 12px !important;
+        padding: 0 6px 12px 0 !important;
+        scroll-snap-type: x proximity !important;
+      }
+
+      #pipeline-board .pipeline-column {
+        display: flex !important;
+        min-height: 0 !important;
+        max-height: min(62vh, 520px) !important;
+        flex-direction: column !important;
+        padding: 10px !important;
+        border-radius: 24px !important;
+        overflow: hidden !important;
+      }
+
+      #pipeline-board .pipeline-column-head {
+        align-items: center !important;
+        gap: 8px !important;
+        padding: 7px 7px 10px !important;
+        border-top-width: 3px !important;
+      }
+
+      #pipeline-board .pipeline-column-head h3 {
+        display: -webkit-box !important;
+        margin: 0 !important;
+        overflow: hidden !important;
+        -webkit-box-orient: vertical !important;
+        -webkit-line-clamp: 2 !important;
+        font-size: 14px !important;
+        font-weight: 650 !important;
+        letter-spacing: -0.01em !important;
+        line-height: 1.13 !important;
+      }
+
+      #pipeline-board .count-pill {
+        flex: 0 0 auto !important;
+        min-width: 32px !important;
+        min-height: 28px !important;
+        padding: 0 9px !important;
+        font-size: 12px !important;
+        font-weight: 650 !important;
+      }
+
+      #pipeline-board .pipeline-cards {
+        display: grid !important;
+        min-height: 0 !important;
+        gap: 8px !important;
+        margin-top: 0 !important;
+        padding: 8px 2px 2px !important;
+        overflow-y: auto !important;
+        overscroll-behavior: contain !important;
+      }
+
+      #pipeline-board .pipeline-card {
+        padding: 10px !important;
+        border-radius: 18px !important;
+        box-shadow:
+          0 10px 24px rgba(31, 65, 85, 0.08),
+          inset 0 1px 0 rgba(255, 255, 255, 0.7) !important;
+      }
+
+      #pipeline-board .pipeline-card .contact-main {
+        align-items: flex-start !important;
+        gap: 8px !important;
+      }
+
+      #pipeline-board .pipeline-card h4 {
+        margin: 0 !important;
+        font-size: 14px !important;
+        font-weight: 650 !important;
+        letter-spacing: -0.01em !important;
+        line-height: 1.14 !important;
+      }
+
+      #pipeline-board .pipeline-card .pipeline-meta {
+        margin-top: 4px !important;
+        font-size: 12.5px !important;
+        font-weight: 400 !important;
+        line-height: 1.25 !important;
+      }
+
+      #pipeline-board .score-pill {
+        flex: 0 0 auto !important;
+        min-height: 27px !important;
+        padding: 0 9px !important;
+        font-size: 11.5px !important;
+        font-weight: 600 !important;
+      }
+
+      #pipeline-board .move-row {
+        grid-template-columns: minmax(0, 1fr) auto !important;
+        gap: 6px !important;
+        margin-top: 8px !important;
+      }
+
+      #pipeline-board .move-row select,
+      #pipeline-board .move-row .ghost-btn {
+        min-height: 36px !important;
+        height: 36px !important;
+        border-radius: 16px !important;
+        font-size: 12.5px !important;
+        font-weight: 500 !important;
+      }
+
+      #pipeline-board .move-row select {
+        padding: 0 8px !important;
+      }
+
+      #pipeline-board .move-row .ghost-btn {
+        padding: 0 12px !important;
+      }
+
+      #pipeline-board .session-item {
+        min-height: 104px !important;
+        padding: 14px !important;
+        border-radius: 18px !important;
+        font-size: 13px !important;
+        line-height: 1.35 !important;
+      }
+
+      @media (max-width: 430px) {
+        #pipeline-board.pipeline-board {
+          grid-auto-columns: minmax(214px, 62vw) !important;
+        }
+
+        #pipeline-board .pipeline-column {
+          max-height: min(58vh, 470px) !important;
+        }
+      }
+
+      @media (max-width: 360px) {
+        #pipeline-board.pipeline-board {
+          grid-auto-columns: minmax(202px, 66vw) !important;
+        }
+      }
+
       /* Public marketing landing page */
       #landing {
         min-height: 100dvh;
@@ -12375,16 +12515,10 @@
               const stageOptions = stages
                 .map((option) => '<option value="' + escapeHtml(option[0]) + '"' + (option[0] === stageName ? " selected" : "") + ">" + escapeHtml(option[0]) + "</option>")
                 .join("");
-              const recruitSummary =
+              const compactMeta =
                 pipelineType === "recruit"
-                  ? '<p class="muted" style="margin-top:5px;">' +
-                    getCompletedSubstepCount(contact) +
-                    "/" +
-                    getRecruitSubsteps(contact).length +
-                    " substeps complete</p>"
-                  : '<p class="muted" style="margin-top:5px;">Last contact: ' +
-                    (contact.last_contact_date || "Not contacted yet") +
-                    "</p>";
+                  ? getCompletedSubstepCount(contact) + "/" + getRecruitSubsteps(contact).length + " substeps"
+                  : score + "/7 qualifiers" + (contact.last_contact_date ? " · Last: " + contact.last_contact_date : " · No contact yet");
               const detailButton =
                 pipelineType === "recruit"
                   ? '<button class="ghost-btn" type="button" data-recruit-detail-id="' + contactId + '">Detail</button>'
@@ -12392,12 +12526,11 @@
               return (
                 '<div class="pipeline-card"><div class="contact-main"><div><h4>' +
                 contactName +
-                '</h4><p class="muted" style="margin-top:5px;">' +
-                score +
-                '/7 qualifiers</p></div><span class="score-pill">' +
+                '</h4><p class="muted pipeline-meta">' +
+                escapeHtml(compactMeta) +
+                '</p></div><span class="score-pill">' +
                 score +
                 "/7</span></div>" +
-                recruitSummary +
                 '<div class="move-row"><select data-stage-select="' +
                 contactId +
                 '">' +
