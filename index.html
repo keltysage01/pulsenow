@@ -10380,6 +10380,310 @@
           scroll-behavior: auto !important;
         }
       }
+      /* Final PulseNow cleanup pass: native spacing, readable dark mode, and calmer components. */
+      .landing-benefit-icon img {
+        width: 30px;
+        height: 30px;
+        display: block;
+        object-fit: contain;
+      }
+
+      #home-screen.shell { gap: 18px !important; }
+      #home-screen .profile.pulse-main-container { margin-bottom: 0 !important; }
+      #today-path-card { margin-top: -2px !important; }
+
+      #today-path-card .quest-step {
+        grid-template-columns: 40px minmax(84px, auto) minmax(0, 1fr) 18px !important;
+        gap: 12px !important;
+        align-items: center !important;
+        min-height: 70px !important;
+      }
+
+      #today-path-card .quest-step .quest-dot {
+        width: 34px !important;
+        height: 34px !important;
+        display: grid !important;
+        place-items: center !important;
+        justify-self: center !important;
+        align-self: center !important;
+        line-height: 1 !important;
+        padding: 0 !important;
+        font-variant-numeric: tabular-nums;
+      }
+
+      #today-path-card .quest-step strong,
+      #today-path-card .quest-step small {
+        color: rgba(255, 255, 255, 0.94) !important;
+        line-height: 1.15 !important;
+      }
+
+      .coach-quiz-grid { grid-template-columns: 1fr !important; gap: 12px !important; }
+
+      .coach-quiz-card {
+        grid-template-columns: auto minmax(0, 1fr) !important;
+        align-items: start !important;
+        text-align: left !important;
+        min-height: 0 !important;
+        padding: 15px !important;
+        gap: 12px !important;
+      }
+
+      .coach-quiz-card span {
+        writing-mode: horizontal-tb !important;
+        text-orientation: mixed !important;
+        min-width: 0 !important;
+        width: auto !important;
+        height: auto !important;
+        padding: 6px 9px !important;
+        border-radius: 999px !important;
+        font-size: 10px !important;
+        line-height: 1 !important;
+        letter-spacing: 0.12em !important;
+      }
+
+      .coach-quiz-card strong { font-size: 16px !important; line-height: 1.18 !important; }
+      .coach-quiz-card small { font-size: 13px !important; line-height: 1.35 !important; overflow-wrap: break-word !important; }
+
+      @media (min-width: 720px) {
+        .coach-quiz-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+      }
+
+      #me-screen .profile-photo-actions { display: none !important; }
+
+      .profile-photo-input,
+      #profile-photo-input {
+        position: absolute !important;
+        width: 1px !important;
+        height: 1px !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+      }
+
+      #me-screen #edit-bio-btn {
+        background: transparent !important;
+        border: 0 !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        min-height: 0 !important;
+        color: var(--pulse-teal, #007c7d) !important;
+        font-size: 15px !important;
+        font-weight: 600 !important;
+      }
+
+      .vision-board-grid.dream-map-grid { display: block !important; }
+      .dream-map-panel { display: grid; gap: 14px; }
+
+      .dream-map-core {
+        width: 100%;
+        border: 0;
+        border-radius: 30px;
+        padding: 22px;
+        min-height: 220px;
+        color: white;
+        text-align: left;
+        position: relative;
+        overflow: hidden;
+        background-image:
+          linear-gradient(135deg, rgba(2, 69, 106, 0.82), rgba(31, 163, 183, 0.7), rgba(115, 207, 123, 0.74)),
+          var(--dream-image, none);
+        background-position: center, center;
+        background-size: cover, cover;
+        background-repeat: no-repeat;
+        box-shadow: 0 24px 55px rgba(18, 92, 108, 0.22);
+      }
+
+      .dream-map-core::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+          linear-gradient(180deg, rgba(5, 24, 46, 0.12), rgba(5, 24, 46, 0.58)),
+          radial-gradient(circle at 80% 18%, rgba(255,255,255,0.32), transparent 34%);
+        pointer-events: none;
+      }
+
+      .dream-map-core > * { position: relative; z-index: 1; }
+
+      .dream-map-label {
+        display: inline-flex;
+        align-items: center;
+        padding: 7px 11px;
+        border-radius: 999px;
+        background: rgba(255,255,255,0.18);
+        border: 1px solid rgba(255,255,255,0.32);
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        font-size: 11px;
+        font-weight: 700;
+      }
+
+      .dream-map-core strong {
+        display: block;
+        margin-top: 42px;
+        font-size: clamp(28px, 7vw, 44px);
+        line-height: 0.98;
+        letter-spacing: -0.04em;
+      }
+
+      .dream-map-core p {
+        max-width: 26rem;
+        margin: 12px 0 0;
+        color: rgba(255,255,255,0.84);
+        font-size: 16px;
+        line-height: 1.4;
+      }
+
+      .dream-map-node-list { display: grid; gap: 10px; }
+
+      .dream-map-node {
+        border: 1px solid rgba(255,255,255,0.78);
+        border-radius: 24px;
+        background: rgba(255,255,255,0.62);
+        display: grid;
+        grid-template-columns: 62px 1fr auto;
+        align-items: center;
+        gap: 12px;
+        padding: 12px;
+        color: var(--text);
+        text-align: left;
+        box-shadow: 0 14px 32px rgba(31, 65, 85, 0.1);
+      }
+
+      .dream-map-node.active {
+        background: linear-gradient(135deg, rgba(218, 255, 245, 0.82), rgba(255, 255, 255, 0.72));
+        border-color: rgba(42, 181, 183, 0.45);
+      }
+
+      .dream-map-node img {
+        width: 62px;
+        height: 62px;
+        border-radius: 18px;
+        object-fit: cover;
+      }
+
+      .dream-map-node strong { display: block; font-size: 16px; line-height: 1.15; }
+      .dream-map-node span { display: block; margin-top: 3px; font-size: 13px; line-height: 1.25; color: var(--muted); }
+      .dream-map-node em { font-style: normal; font-size: 13px; color: var(--pulse-teal, #007c7d); font-weight: 700; }
+      .dream-map-actions { display: grid; grid-template-columns: 1fr; gap: 10px; }
+      .dream-map-actions .ghost-btn { width: 100%; }
+
+      #home-screen .choice-row {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 12px !important;
+      }
+
+      #home-screen .choice-row .pill-btn,
+      #home-screen .choice-row .ghost-btn {
+        width: 100% !important;
+        min-height: 50px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        margin: 0 !important;
+        padding: 0 14px !important;
+        font-size: 15px !important;
+        line-height: 1 !important;
+        white-space: nowrap !important;
+      }
+
+      #research-socials-btn,
+      #export-contacts-btn {
+        width: 100% !important;
+        margin-top: 12px !important;
+      }
+
+      html[data-theme="dark"] .brand-logo {
+        filter: brightness(1.7) saturate(1.25) drop-shadow(0 0 14px rgba(104, 216, 199, 0.42)) !important;
+        opacity: 1 !important;
+      }
+
+      html[data-theme="dark"] #contacts-screen > .card:first-child,
+      html[data-theme="dark"] .goals-panel,
+      html[data-theme="dark"] .career-card,
+      html[data-theme="dark"] #career-track,
+      html[data-theme="dark"] #home-power-list .power-row,
+      html[data-theme="dark"] .profile-bio-card,
+      html[data-theme="dark"] .dream-map-node {
+        background: rgba(10, 25, 39, 0.94) !important;
+        border-color: rgba(255,255,255,0.18) !important;
+        color: #f7fbff !important;
+      }
+
+      html[data-theme="dark"] #contacts-screen > .card:first-child {
+        background:
+          radial-gradient(circle at 88% 4%, rgba(97, 220, 190, 0.18), transparent 34%),
+          rgba(9, 24, 38, 0.96) !important;
+      }
+
+      html[data-theme="dark"] #contacts-screen > .card:first-child *,
+      html[data-theme="dark"] #career-track .goal-row,
+      html[data-theme="dark"] #career-track .goal-row span,
+      html[data-theme="dark"] #career-track *,
+      html[data-theme="dark"] #weekly-goals-list .goal-row,
+      html[data-theme="dark"] #weekly-goals-list .goal-row span,
+      html[data-theme="dark"] #weekly-goals-list *,
+      html[data-theme="dark"] .goals-panel h2,
+      html[data-theme="dark"] .goals-panel *,
+      html[data-theme="dark"] .power-row h3,
+      html[data-theme="dark"] .power-row .muted,
+      html[data-theme="dark"] .dream-map-node strong {
+        color: #f7fbff !important;
+        opacity: 1 !important;
+      }
+
+      html[data-theme="dark"] .dream-map-node span,
+      html[data-theme="dark"] .section-subcopy,
+      html[data-theme="dark"] .muted,
+      html[data-theme="dark"] #career-track .goal-row span:last-child,
+      html[data-theme="dark"] #weekly-goals-list .goal-row span:last-child {
+        color: rgba(232, 244, 255, 0.76) !important;
+      }
+
+      html[data-theme="dark"] #home-power-list .power-row,
+      html[data-theme="dark"] #home-power-list .power-row:first-child {
+        background:
+          radial-gradient(circle at 100% 0%, rgba(108, 223, 153, 0.12), transparent 32%),
+          rgba(9, 22, 36, 0.94) !important;
+        border-color: rgba(151, 232, 224, 0.26) !important;
+        box-shadow: 0 18px 42px rgba(0, 0, 0, 0.34) !important;
+      }
+
+      html[data-theme="dark"] #home-power-list .power-row *,
+      html[data-theme="dark"] #home-power-list .power-row:first-child * {
+        color: #f7fbff !important;
+        opacity: 1 !important;
+      }
+
+      html[data-theme="dark"] #home-power-list .priority-badge,
+      html[data-theme="dark"] .power-row .rank {
+        color: #ffffff !important;
+      }
+
+      html[data-theme="dark"] #seed-contacts-btn,
+      html[data-theme="dark"] .ghost-btn,
+      html[data-theme="dark"] .filter-btn,
+      html[data-theme="dark"] .text-btn {
+        color: #9ff8ef !important;
+        background: rgba(255,255,255,0.08) !important;
+        border-color: rgba(255,255,255,0.18) !important;
+      }
+
+      html[data-theme="dark"] .filter-btn.active,
+      html[data-theme="dark"] .primary-btn {
+        color: #ffffff !important;
+        background: linear-gradient(135deg, #0d6f91, #2fc4c7, #6fcf75) !important;
+      }
+
+      html[data-theme="dark"] #contacts-screen input,
+      html[data-theme="dark"] #contacts-screen input::placeholder { color: #f7fbff !important; }
+      html[data-theme="dark"] #contacts-screen input::placeholder { opacity: 0.62 !important; }
+
+      html[data-theme="dark"] #edit-bio-btn {
+        background: transparent !important;
+        border: 0 !important;
+        box-shadow: none !important;
+      }
     </style>
   </head>
   <body>
@@ -10464,9 +10768,9 @@
           </div>
           <p class="landing-section-copy">PulseNow speeds up prospecting, clarifies your outreach, and removes the busywork that slows you down so you can focus on meaningful conversations that create impact.</p>
           <div class="landing-benefits">
-            <div class="landing-benefit"><span class="landing-benefit-icon">⚡</span><div><strong>Faster prospecting</strong><span>Research and qualify in minutes, not hours.</span></div></div>
-            <div class="landing-benefit"><span class="landing-benefit-icon">💬</span><div><strong>Clearer outreach</strong><span>Smarter angles and talking points that resonate.</span></div></div>
-            <div class="landing-benefit"><span class="landing-benefit-icon">♥</span><div><strong>More impact</strong><span>Spend less time on busywork and help more people.</span></div></div>
+            <div class="landing-benefit"><span class="landing-benefit-icon"><img src="/pulsenow_landing_layers/icons/icon_upload_csv.png" alt="" loading="lazy" /></span><div><strong>Faster prospecting</strong><span>Research and qualify in minutes, not hours.</span></div></div>
+            <div class="landing-benefit"><span class="landing-benefit-icon"><img src="/pulsenow_landing_layers/icons/icon_ai_coach.png" alt="" loading="lazy" /></span><div><strong>Clearer outreach</strong><span>Smarter angles and talking points that resonate.</span></div></div>
+            <div class="landing-benefit"><span class="landing-benefit-icon"><img src="/pulsenow_landing_layers/icons/icon_who_to_call.png" alt="" loading="lazy" /></span><div><strong>More impact</strong><span>Spend less time on busywork and help more people.</span></div></div>
           </div>
         </section>
 
@@ -10615,7 +10919,7 @@
           <div class="dream-builder-card">
             <div>
               <strong>Build my dream life with AI</strong>
-              <p class="muted">Describe the life you want. PulseNow turns it into a reveal board, milestones, and the next daily move.</p>
+              <p class="muted">Describe the life you want. PulseNow turns it into a mind map, milestones, and the next daily move.</p>
             </div>
             <button class="ghost-btn" type="button">Dream Builder</button>
           </div>
@@ -10973,16 +11277,12 @@
                 <span id="me-avatar" class="avatar">D</span>
                 <span class="photo-edit-chip">Change</span>
               </label>
+              <input id="profile-photo-input" class="profile-photo-input" type="file" accept="image/*" />
             </div>
             <div class="profile-copy">
               <p class="eyebrow">Me</p>
               <h2 id="me-name">Demo Agent</h2>
               <p class="muted"><span id="me-level">TA</span> · Agent Code <span id="me-code">DEMO</span></p>
-              <div class="profile-photo-actions">
-                <label class="ghost-btn" for="profile-photo-input">Change photo</label>
-                <small>Camera roll or take a photo</small>
-                <input id="profile-photo-input" type="file" accept="image/*" />
-              </div>
             </div>
           </div>
           <div class="profile-bio-card">
@@ -11247,6 +11547,58 @@
         ["enneagram", "Enneagram"],
         ["myers_briggs", "Myers-Briggs"]
       ];
+      const coachQuizBanks = {
+        working_genius: {
+          label: "Working Genius",
+          type: "single",
+          choices: ["Wonder", "Invention", "Discernment", "Galvanizing", "Enablement", "Tenacity"],
+          questions: [
+            "Which kind of work gives you the most energy?",
+            "When a project is unclear, what do you naturally do first?",
+            "Which role do teammates usually rely on you to play?"
+          ]
+        },
+        four_tendencies: {
+          label: "Four Tendencies",
+          type: "single",
+          choices: ["Upholder", "Questioner", "Obliger", "Rebel"],
+          questions: [
+            "When someone gives you a goal, what response feels most natural?",
+            "Which support helps you follow through?",
+            "What usually makes you resist a task?"
+          ]
+        },
+        enneagram: {
+          label: "Enneagram",
+          type: "single",
+          choices: [
+            "Type 1 - principled improver",
+            "Type 2 - helpful connector",
+            "Type 3 - driven achiever",
+            "Type 4 - expressive individualist",
+            "Type 5 - analytical observer",
+            "Type 6 - loyal planner",
+            "Type 7 - energetic enthusiast",
+            "Type 8 - decisive challenger",
+            "Type 9 - steady peacemaker"
+          ],
+          questions: [
+            "Which description sounds most like your default motivation?",
+            "When pressure rises, which pattern do you notice most?",
+            "Which strength do you want the coach to use when guiding you?"
+          ]
+        },
+        myers_briggs: {
+          label: "Myers-Briggs",
+          type: "letters",
+          questions: [
+            { prompt: "Where do you usually recharge?", choices: ["E - with people and external action", "I - alone or in quiet focus"] },
+            { prompt: "What information do you trust first?", choices: ["S - facts, details, and what is proven", "N - patterns, ideas, and possibility"] },
+            { prompt: "How do you tend to decide?", choices: ["T - logic, consistency, and outcomes", "F - people, values, and impact"] },
+            { prompt: "How do you prefer to operate?", choices: ["J - planned, decided, and structured", "P - flexible, open, and adaptive"] }
+          ]
+        }
+      };
       const demoLeaders = [
         { id: "u2", name: "Sam Knickerbocker", level: "SMD", pts: 28, tier: "All-the-Timer" },
         { id: "u3", name: "Kaden Murdock", level: "MD", pts: 19, tier: "Full Timer" },
@@ -11419,45 +11771,46 @@
         if (!grid) return;
         const activeIndex = ((activeDreamIndex % visionItems.length) + visionItems.length) % visionItems.length;
         const active = visionItems[activeIndex];
-        grid.className = "vision-board-grid dream-reveal-grid";
+        const nodeText = [
+          "Home, space, and the environment you are building toward.",
+          "Money freedom, pressure removed, and calmer decisions.",
+          "People, memories, travel, and the life this business funds."
+        ];
+        grid.className = "vision-board-grid dream-map-grid";
         grid.innerHTML =
-          '<div class="dream-reveal-stage">' +
-          '<button class="dream-reveal-card" data-dream-reveal type="button" aria-label="Reveal next dream">' +
-          '<img src="' +
-          active.url +
-          '" alt="' +
-          escapeHtml(active.title) +
-          '" loading="lazy" />' +
-          '<span class="dream-reveal-label">Dream reveal</span>' +
-          '<span class="vision-progress-badge">' +
-          escapeHtml(active.progress) +
-          "</span>" +
-          "<strong>" +
+          '<div class="dream-map-panel">' +
+          '<button class="dream-map-core" data-dream-builder type="button" style="--dream-image:url(&quot;' +
+          escapeHtml(active.url) +
+          '&quot;)">' +
+          '<span class="dream-map-label">Dream life map</span>' +
+          '<strong>' +
           escapeHtml(active.title) +
           "</strong>" +
-          "<p>See it, choose the next move, and let PulseNow turn the dream into daily action.</p>" +
+          "<p>Open the map, describe the life you want, and PulseNow turns it into visual areas, milestones, and a next move.</p>" +
           "</button>" +
-          '<div class="dream-reveal-actions">' +
-          '<button class="ghost-btn dream-shake-btn" data-dream-reveal type="button">Shake to reveal next</button>' +
-          "<span>AI board, milestones, and one next action.</span>" +
-          "</div>" +
-          "</div>" +
-          '<div class="dream-orbit-list" aria-label="Dream preview choices">' +
+          '<div class="dream-map-node-list" aria-label="Dream life areas">' +
           visionItems
             .map((item, index) => {
               return (
-                '<button class="dream-orbit-card' +
+                '<button class="dream-map-node' +
                 (index === activeIndex ? " active" : "") +
                 '" data-dream-index="' +
                 index +
-                '" type="button"><span>' +
-                escapeHtml(item.progress) +
-                "</span><strong>" +
+                '" type="button"><img src="' +
+                escapeHtml(item.url) +
+                '" alt="" loading="lazy" /><span><strong>' +
                 escapeHtml(item.title) +
-                "</strong></button>"
+                "</strong><span>" +
+                escapeHtml(nodeText[index] || "A tangible piece of your dream life.") +
+                "</span></span><em>Open</em></button>"
               );
             })
             .join("") +
+          "</div>" +
+          '<div class="dream-map-actions">' +
+          '<button class="ghost-btn" data-dream-builder type="button">Build my dream life with AI</button>' +
+          '<span class="muted">Mind map first, then photos, milestones, and daily action.</span>' +
+          "</div>" +
           "</div>";
 
         grid.querySelectorAll("[data-dream-index]").forEach((button) => {
@@ -11468,15 +11821,35 @@
           });
         });
 
-        grid.querySelectorAll("[data-dream-reveal]").forEach((button) => {
-          button.addEventListener("click", () => {
-            const stage = grid.querySelector(".dream-reveal-stage");
-            if (stage) stage.classList.add("is-shaking");
-            window.setTimeout(() => {
-              activeDreamIndex = (activeIndex + 1) % visionItems.length;
-              localStorage.setItem(activeDreamStorageKey, String(activeDreamIndex));
+        grid.querySelectorAll("[data-dream-builder]").forEach((button) => {
+          button.addEventListener("click", async () => {
+            const prompt = window.prompt("Describe the dream life you want PulseNow to map. Include home, family, money, travel, impact, and how it should feel.");
+            if (!prompt) return;
+            const original = button.textContent;
+            button.disabled = true;
+            if (button.tagName === "BUTTON") button.textContent = "Building dream map...";
+            const fallbackTitle = prompt.trim().split(/[,.]/)[0].slice(0, 42) || "Dream Life";
+            try {
+              const data = await apiRequest("/api/dream-life/generate", {
+                method: "POST",
+                body: JSON.stringify({
+                  prompt,
+                  current_items: visionItems,
+                  session: getCurrentSession()
+                })
+              });
+              const generatedItems = Array.isArray(data?.items) ? data.items : [];
+              generatedItems.slice(0, visionItems.length).forEach((item, index) => {
+                if (item?.title) visionItems[index].title = String(item.title).slice(0, 34);
+                if (item?.image_url) visionItems[index].url = item.image_url;
+              });
+            } catch (error) {
+              visionItems[activeIndex].title = fallbackTitle;
+            } finally {
+              button.disabled = false;
+              if (original) button.textContent = original;
               renderVisionWorkspace();
-            }, 420);
+            }
           });
         });
       }
@@ -12262,6 +12635,61 @@
       function handleCoachQuiz(button) {
         const key = button.dataset.quizKey;
         const label = button.dataset.quizLabel || "quiz";
+        const bank = coachQuizBanks[key];
+        if (bank) {
+          if (!window.confirm("Start the optional " + bank.label + " check-in? It is a lightweight self-assessment to help the coach personalize advice.")) return;
+          const answers = [];
+          if (bank.type === "letters") {
+            let result = "";
+            for (const item of bank.questions) {
+              const choiceText = item.choices.map((choice, index) => index + 1 + ". " + choice).join("\n");
+              const answer = window.prompt(item.prompt + "\n\n" + choiceText + "\n\nEnter a number.", "1");
+              if (answer === null) return;
+              const selected = Math.max(0, Math.min(item.choices.length - 1, Number(answer) - 1 || 0));
+              result += item.choices[selected].charAt(0);
+              answers.push(item.choices[selected]);
+            }
+            const profile = getCoachProfile();
+            profile[key] = result;
+            profile[key + "_answers"] = answers;
+            saveCoachProfile(profile);
+            renderCoachProfile();
+            coachMessages.push({ role: "coach", text: "Saved your " + bank.label + " as " + result + ". I will use that to shape coaching tone, next steps, and accountability." });
+            saveCoach();
+            renderCoach();
+            apiRequest("/api/assessments/submit", {
+              method: "POST",
+              body: JSON.stringify({ assessment_key: key, result, answers, session: getCurrentSession() })
+            }).catch(() => {});
+            return;
+          }
+
+          const scores = {};
+          bank.choices.forEach((choice) => (scores[choice] = 0));
+          for (const question of bank.questions) {
+            const choiceText = bank.choices.map((choice, index) => index + 1 + ". " + choice).join("\n");
+            const answer = window.prompt(question + "\n\n" + choiceText + "\n\nEnter the closest number.", "1");
+            if (answer === null) return;
+            const selected = Math.max(0, Math.min(bank.choices.length - 1, Number(answer) - 1 || 0));
+            const choice = bank.choices[selected];
+            scores[choice] += 1;
+            answers.push(choice);
+          }
+          const result = Object.entries(scores).sort((a, b) => b[1] - a[1])[0][0];
+          const profile = getCoachProfile();
+          profile[key] = result;
+          profile[key + "_answers"] = answers;
+          saveCoachProfile(profile);
+          renderCoachProfile();
+          coachMessages.push({ role: "coach", text: "Saved your " + bank.label + " as " + result + ". The more I know how you work, the more specific the coaching gets." });
+          saveCoach();
+          renderCoach();
+          apiRequest("/api/assessments/submit", {
+            method: "POST",
+            body: JSON.stringify({ assessment_key: key, result, scores, answers, session: getCurrentSession() })
+          }).catch(() => {});
+          return;
+        }
         const profile = getCoachProfile();
         const current = profile[key] || "";
         const value = window.prompt("Optional: enter your " + label + " result. Leave blank to remove it.", current);
