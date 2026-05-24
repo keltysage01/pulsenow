@@ -10420,31 +10420,52 @@
       .coach-quiz-grid { grid-template-columns: 1fr !important; gap: 12px !important; }
 
       .coach-quiz-card {
-        grid-template-columns: auto minmax(0, 1fr) !important;
-        align-items: start !important;
+        grid-template-columns: 70px minmax(0, 1fr) !important;
+        align-items: center !important;
         text-align: left !important;
         min-height: 0 !important;
-        padding: 15px !important;
-        gap: 12px !important;
+        padding: 15px 16px !important;
+        gap: 14px !important;
       }
 
       .coach-quiz-card span {
+        grid-row: 1 / span 2 !important;
+        grid-column: 1 !important;
         writing-mode: horizontal-tb !important;
         text-orientation: mixed !important;
-        min-width: 0 !important;
-        width: auto !important;
-        height: auto !important;
+        min-width: 54px !important;
+        width: 54px !important;
+        height: 38px !important;
         padding: 6px 9px !important;
         border-radius: 999px !important;
         font-size: 10px !important;
-        line-height: 1 !important;
+        line-height: 1.05 !important;
         letter-spacing: 0.12em !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        white-space: normal !important;
+        text-align: center !important;
       }
 
-      .coach-quiz-card strong { font-size: 16px !important; line-height: 1.18 !important; }
-      .coach-quiz-card small { font-size: 13px !important; line-height: 1.35 !important; overflow-wrap: break-word !important; }
+      .coach-quiz-card strong {
+        grid-column: 2 !important;
+        font-size: 17px !important;
+        line-height: 1.15 !important;
+        overflow-wrap: normal !important;
+        word-break: normal !important;
+      }
 
-      @media (min-width: 720px) {
+      .coach-quiz-card small {
+        grid-column: 2 !important;
+        font-size: 13.5px !important;
+        line-height: 1.35 !important;
+        overflow-wrap: normal !important;
+        word-break: normal !important;
+        text-align: left !important;
+      }
+
+      @media (min-width: 980px) {
         .coach-quiz-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
       }
 
@@ -10478,11 +10499,15 @@
         border: 0;
         border-radius: 30px;
         padding: 22px;
-        min-height: 220px;
+        min-height: 210px;
         color: white;
         text-align: left;
         position: relative;
         overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        gap: 10px;
         background-image:
           linear-gradient(135deg, rgba(2, 69, 106, 0.82), rgba(31, 163, 183, 0.7), rgba(115, 207, 123, 0.74)),
           var(--dream-image, none);
@@ -10497,7 +10522,7 @@
         position: absolute;
         inset: 0;
         background:
-          linear-gradient(180deg, rgba(5, 24, 46, 0.12), rgba(5, 24, 46, 0.58)),
+          linear-gradient(180deg, rgba(5, 24, 46, 0.08), rgba(5, 24, 46, 0.72)),
           radial-gradient(circle at 80% 18%, rgba(255,255,255,0.32), transparent 34%);
         pointer-events: none;
       }
@@ -10519,18 +10544,25 @@
 
       .dream-map-core strong {
         display: block;
-        margin-top: 42px;
-        font-size: clamp(28px, 7vw, 44px);
-        line-height: 0.98;
-        letter-spacing: -0.04em;
+        width: 100%;
+        margin: 0;
+        font-size: clamp(28px, 8vw, 38px);
+        line-height: 1.02;
+        letter-spacing: -0.035em;
+        color: #ffffff !important;
+        text-shadow: 0 2px 18px rgba(0, 0, 0, 0.34);
+        overflow-wrap: normal;
+        word-break: normal;
       }
 
       .dream-map-core p {
-        max-width: 26rem;
-        margin: 12px 0 0;
-        color: rgba(255,255,255,0.84);
-        font-size: 16px;
-        line-height: 1.4;
+        width: 100%;
+        max-width: 23rem;
+        margin: 0;
+        color: rgba(255,255,255,0.9);
+        font-size: 14px;
+        line-height: 1.35;
+        text-shadow: 0 1px 14px rgba(0, 0, 0, 0.34);
       }
 
       .dream-map-node-list { display: grid; gap: 10px; }
@@ -10540,7 +10572,7 @@
         border-radius: 24px;
         background: rgba(255,255,255,0.62);
         display: grid;
-        grid-template-columns: 62px 1fr auto;
+        grid-template-columns: 62px minmax(0, 1fr) 48px;
         align-items: center;
         gap: 12px;
         padding: 12px;
@@ -10561,11 +10593,52 @@
         object-fit: cover;
       }
 
-      .dream-map-node strong { display: block; font-size: 16px; line-height: 1.15; }
-      .dream-map-node span { display: block; margin-top: 3px; font-size: 13px; line-height: 1.25; color: var(--muted); }
-      .dream-map-node em { font-style: normal; font-size: 13px; color: var(--pulse-teal, #007c7d); font-weight: 700; }
+      .dream-map-node > span {
+        min-width: 0;
+        display: block;
+        margin: 0;
+        text-align: left !important;
+      }
+      .dream-map-node strong {
+        display: block;
+        font-size: 16px;
+        line-height: 1.15;
+        text-align: left !important;
+        overflow-wrap: normal;
+        word-break: normal;
+      }
+      .dream-map-node > span > span {
+        display: block;
+        margin-top: 3px;
+        font-size: 13px;
+        line-height: 1.25;
+        color: var(--muted);
+        text-align: left !important;
+      }
+      .dream-map-node em {
+        justify-self: end;
+        min-width: 42px;
+        font-style: normal;
+        font-size: 13px;
+        color: var(--pulse-teal, #007c7d);
+        font-weight: 700;
+        text-align: right;
+        white-space: nowrap;
+      }
       .dream-map-actions { display: grid; grid-template-columns: 1fr; gap: 10px; }
       .dream-map-actions .ghost-btn { width: 100%; }
+
+      .landing-relationship {
+        align-items: start !important;
+      }
+
+      .landing-benefit {
+        align-items: center !important;
+      }
+
+      .landing-benefit > div {
+        min-width: 0;
+      }
 
       #home-screen .choice-row {
         display: grid !important;
@@ -10683,6 +10756,62 @@
         background: transparent !important;
         border: 0 !important;
         box-shadow: none !important;
+      }
+
+      @media (max-width: 720px) {
+        .landing-relationship {
+          padding: 28px 22px !important;
+          gap: 22px !important;
+        }
+
+        .landing-relationship .landing-section-copy,
+        .landing-relationship .landing-section-copy p {
+          margin-bottom: 0 !important;
+        }
+
+        .landing-benefits {
+          gap: 18px !important;
+        }
+
+        .landing-benefit {
+          grid-template-columns: 56px minmax(0, 1fr) !important;
+          gap: 14px !important;
+        }
+
+        .landing-benefit-icon {
+          width: 56px !important;
+          height: 56px !important;
+        }
+
+        .landing-benefit-icon img {
+          width: 30px !important;
+          height: 30px !important;
+        }
+
+        .dream-map-core {
+          min-height: 190px !important;
+          padding: 20px !important;
+        }
+
+        .dream-map-core p {
+          font-size: 13.5px !important;
+        }
+
+        .dream-map-node {
+          grid-template-columns: 56px minmax(0, 1fr) 42px !important;
+          gap: 10px !important;
+          padding: 11px !important;
+        }
+
+        .dream-map-node img {
+          width: 56px !important;
+          height: 56px !important;
+        }
+
+        .dream-map-node em {
+          min-width: 38px !important;
+          font-size: 12px !important;
+        }
       }
     </style>
   </head>
@@ -11538,6 +11667,7 @@
       const coachStorageKey = "pulsenow_demo_coach";
       const coachProfileStorageKey = "pulsenow_demo_coach_profile";
       const activeDreamStorageKey = "pulsenow_demo_active_dream";
+      const dreamVisionStorageKey = "pulsenow_demo_dream_vision_items";
       const profileBioStoragePrefix = "pulsenow_demo_profile_bio_";
       let substepState = {};
       let activeDreamIndex = Number(localStorage.getItem(activeDreamStorageKey) || "0") || 0;
@@ -11703,6 +11833,32 @@
         return (session && session.bio) || saved || "I make dreams possible.";
       }
 
+      function loadDreamVisionItems() {
+        try {
+          const saved = JSON.parse(localStorage.getItem(dreamVisionStorageKey) || "[]");
+          if (!Array.isArray(saved)) return;
+          saved.slice(0, visionItems.length).forEach((item, index) => {
+            if (!item || typeof item !== "object") return;
+            ["title", "area", "description", "milestone", "next_action", "image_prompt"].forEach((key) => {
+              if (item[key]) visionItems[index][key] = String(item[key]);
+            });
+            if (item.image_url || item.url) visionItems[index].url = String(item.image_url || item.url);
+          });
+        } catch {
+          // Keep the default demo vision board if local storage has stale data.
+        }
+      }
+
+      function saveDreamVisionItems() {
+        try {
+          localStorage.setItem(dreamVisionStorageKey, JSON.stringify(visionItems));
+        } catch {
+          // Ignore storage failures in private browsing or locked-down previews.
+        }
+      }
+
+      loadDreamVisionItems();
+
       function setBioEditMode(isEditing) {
         if (!meBioEditor || !meBioInput || !editBioBtn) return;
         const session = getCurrentSession() || { name: "Demo Agent", level: "TA", agent_code: "DEMO" };
@@ -11776,6 +11932,7 @@
           "Money freedom, pressure removed, and calmer decisions.",
           "People, memories, travel, and the life this business funds."
         ];
+        const activeDescription = active.next_action || active.milestone || active.description || "Open your map to turn the dream into areas, milestones, and one next move.";
         grid.className = "vision-board-grid dream-map-grid";
         grid.innerHTML =
           '<div class="dream-map-panel">' +
@@ -11786,11 +11943,14 @@
           '<strong>' +
           escapeHtml(active.title) +
           "</strong>" +
-          "<p>Open the map, describe the life you want, and PulseNow turns it into visual areas, milestones, and a next move.</p>" +
+          "<p>" +
+          escapeHtml(activeDescription) +
+          "</p>" +
           "</button>" +
           '<div class="dream-map-node-list" aria-label="Dream life areas">' +
           visionItems
             .map((item, index) => {
+              const body = item.description || item.next_action || nodeText[index] || "A tangible piece of your dream life.";
               return (
                 '<button class="dream-map-node' +
                 (index === activeIndex ? " active" : "") +
@@ -11801,7 +11961,7 @@
                 '" alt="" loading="lazy" /><span><strong>' +
                 escapeHtml(item.title) +
                 "</strong><span>" +
-                escapeHtml(nodeText[index] || "A tangible piece of your dream life.") +
+                escapeHtml(body) +
                 "</span></span><em>Open</em></button>"
               );
             })
@@ -11842,9 +12002,15 @@
               generatedItems.slice(0, visionItems.length).forEach((item, index) => {
                 if (item?.title) visionItems[index].title = String(item.title).slice(0, 34);
                 if (item?.image_url) visionItems[index].url = item.image_url;
+                ["area", "description", "milestone", "next_action", "image_prompt"].forEach((key) => {
+                  if (item?.[key]) visionItems[index][key] = String(item[key]).slice(0, key === "title" ? 34 : 220);
+                });
               });
+              saveDreamVisionItems();
             } catch (error) {
               visionItems[activeIndex].title = fallbackTitle;
+              visionItems[activeIndex].description = "A first version of your dream map. Add more detail to sharpen this area.";
+              saveDreamVisionItems();
             } finally {
               button.disabled = false;
               if (original) button.textContent = original;
