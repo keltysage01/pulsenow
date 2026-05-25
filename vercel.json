@@ -11,11 +11,5 @@
       "path": "/api/cron/social-research-daily",
       "schedule": "0 8 * * *"
     }
-  ],
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    }
   ]
 }
