@@ -10417,6 +10417,75 @@
         line-height: 1.15 !important;
       }
 
+      /* Rescue pass: keep the existing UI, but fix the visible alignment issues. */
+      #today-path-card .quest-step {
+        display: grid !important;
+        grid-template-columns: 58px minmax(0, 1fr) minmax(0, 1fr) 24px !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+        justify-items: stretch !important;
+        column-gap: 14px !important;
+        min-height: 82px !important;
+        padding: 14px 18px !important;
+      }
+
+      #today-path-card .quest-step .quest-dot {
+        grid-column: 1 !important;
+        width: 48px !important;
+        height: 48px !important;
+        justify-self: center !important;
+        align-self: center !important;
+        font-size: 19px !important;
+        font-weight: 760 !important;
+      }
+
+      #today-path-card .quest-step.done .quest-dot {
+        font-size: 0 !important;
+      }
+
+      #today-path-card .quest-step.done .quest-dot::before {
+        font-size: 25px !important;
+        line-height: 1 !important;
+      }
+
+      #today-path-card .quest-step strong {
+        grid-column: 2 !important;
+        justify-self: start !important;
+        text-align: left !important;
+        font-size: 16px !important;
+        white-space: nowrap !important;
+      }
+
+      #today-path-card .quest-step small {
+        grid-column: 3 !important;
+        justify-self: start !important;
+        text-align: left !important;
+        font-size: 15px !important;
+        white-space: nowrap !important;
+      }
+
+      #today-path-card .quest-step::after {
+        grid-column: 4 !important;
+        justify-self: end !important;
+        align-self: center !important;
+      }
+
+      .landing-benefit-icon {
+        width: 76px !important;
+        height: 76px !important;
+        display: grid !important;
+        place-items: center !important;
+        justify-self: center !important;
+      }
+
+      .landing-benefit-icon img {
+        width: 46px !important;
+        height: 46px !important;
+        display: block !important;
+        object-fit: contain !important;
+        object-position: center !important;
+      }
+
       .coach-quiz-grid { grid-template-columns: 1fr !important; gap: 12px !important; }
 
       .coach-quiz-card {
