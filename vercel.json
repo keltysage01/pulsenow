@@ -1,6 +1,6 @@
 {
   "installCommand": "npm install --omit=dev --ignore-scripts",
-  "buildCommand": null,
+  "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "crons": [
     {
