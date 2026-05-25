@@ -12592,14 +12592,25 @@
           </section>
 
           <section id="dl-screen-processing" class="dl-card dl-hero dl-hidden">
-            <p class="dl-eyebrow">Generating</p>
-            <h2 class="dl-title">Generating your dream life</h2>
-            <p class="dl-copy">PulseNow is turning your words into themes, imagery, a future-self declaration, and the next aligned moves.</p>
+            <p class="dl-eyebrow">Working</p>
+            <h2 class="dl-title">Preparing your dream life</h2>
+            <p class="dl-copy">If you recorded, PulseNow is creating a transcript first. You will be able to edit it before anything is generated.</p>
             <div class="dl-processing-list">
               <div class="dl-process-step"><span class="dl-process-dot"></span><span>Listening for the feeling</span></div>
               <div class="dl-process-step"><span class="dl-process-dot"></span><span>Organizing your life areas</span></div>
               <div class="dl-process-step"><span class="dl-process-dot"></span><span>Building the visual map</span></div>
               <div class="dl-process-step"><span class="dl-process-dot"></span><span>Choosing aligned actions</span></div>
+            </div>
+          </section>
+
+          <section id="dl-screen-transcript" class="dl-card dl-hidden">
+            <p class="dl-eyebrow">Review Transcript</p>
+            <h2 class="dl-title">Edit what PulseNow heard.</h2>
+            <p class="dl-copy">Clean up names, places, missing details, or anything the recording missed before generating your Dream Life.</p>
+            <div class="dl-text-panel" style="margin-top:22px;">
+              <textarea id="dl-transcript-input" placeholder="Your transcript will appear here..."></textarea>
+              <button id="dl-transcript-generate-btn" class="dl-primary-btn" type="button">Generate from this transcript</button>
+              <button class="dl-mini-btn" data-dl-goto="voice" type="button">Record again</button>
             </div>
           </section>
 
@@ -12920,6 +12931,8 @@
       const dlTextPanel = document.getElementById("dl-text-panel");
       const dlTextInput = document.getElementById("dl-text-input");
       const dlTextSubmit = document.getElementById("dl-text-submit");
+      const dlTranscriptInput = document.getElementById("dl-transcript-input");
+      const dlTranscriptGenerateBtn = document.getElementById("dl-transcript-generate-btn");
       const dlDemoBtn = document.getElementById("dl-demo-btn");
       const dlReflectionGrid = document.getElementById("dl-reflection-grid");
       const dlHeardCard = document.getElementById("dl-heard-card");
@@ -13553,7 +13566,7 @@
       }
 
       function dlShowStep(step) {
-        ["voice", "processing", "reflection", "vision", "alignment"].forEach((name) => {
+        ["voice", "processing", "transcript", "reflection", "vision", "alignment"].forEach((name) => {
           const node = document.getElementById("dl-screen-" + name);
           if (node) node.classList.toggle("dl-hidden", name !== step);
         });
@@ -13612,6 +13625,7 @@
         dreamLifeVision = null;
         localStorage.removeItem(dreamLifeStorageKey);
         if (dlTextInput) dlTextInput.value = "";
+        if (dlTranscriptInput) dlTranscriptInput.value = "";
         if (dlTextPanel) dlTextPanel.classList.add("dl-hidden");
         if (dlTextToggle) dlTextToggle.textContent = "Add text instead";
         if (dlRecordStatus) dlRecordStatus.textContent = "Tap the microphone, say what you want your life to look and feel like, then tap again to generate it.";
@@ -13657,23 +13671,33 @@
         dlShowStep("reflection");
       }
 
+      async function generateDreamTranscriptFromAudio(audioBlob) {
+        const audioBase64 = await blobToBase64(audioBlob);
+        return apiRequest("/api/dream-life/generate", {
+          method: "POST",
+          body: JSON.stringify({
+            audio_base64: audioBase64,
+            mime_type: audioBlob.type || "audio/webm",
+            transcribe_only: true,
+            session: getCurrentSession()
+          })
+        });
+      }
+
       async function processDreamLifeAudio(audioBlob) {
         dlShowStep("processing");
         await delay(700);
         try {
-          const data = await generateDreamMapFromAudio(audioBlob);
-          dreamLifeVision = normalizeDreamLifeResponse(data, data?.transcript || "");
-          if (!dreamLifeVision) throw new Error("Dream Life did not return enough real content.");
-          if (dlTextInput && data?.transcript) dlTextInput.value = String(data.transcript);
-          applyDreamGeneration(data);
-          saveDreamVisionItems();
+          const data = await generateDreamTranscriptFromAudio(audioBlob);
+          const transcript = String(data?.transcript || "").trim();
+          if (transcript.length < 8) throw new Error("I did not catch enough speech to build a transcript.");
+          if (dlTranscriptInput) dlTranscriptInput.value = transcript;
+          if (dlTextInput) dlTextInput.value = transcript;
+          dlShowStep("transcript");
+          if (dlTranscriptInput) window.setTimeout(() => dlTranscriptInput.focus(), 0);
         } catch (error) {
-          showDreamLifeGenerationError(error.message || "I could not generate from that recording. Nothing fake was created. Try again or add text instead.");
-          return;
+          showDreamLifeGenerationError(error.message || "I could not transcribe that recording. Nothing fake was created. Try again or add text instead.");
         }
-        saveDreamLifeVision();
-        renderDreamLifeReflection();
-        dlShowStep("reflection");
       }
 
       function stopDreamLifeAudioTracks() {
@@ -16467,6 +16491,9 @@
         });
       }
       if (dlTextSubmit) dlTextSubmit.addEventListener("click", () => processDreamLifePrompt(dlTextInput && dlTextInput.value));
+      if (dlTranscriptGenerateBtn) {
+        dlTranscriptGenerateBtn.addEventListener("click", () => processDreamLifePrompt(dlTranscriptInput && dlTranscriptInput.value));
+      }
       if (dlDemoBtn) {
         dlDemoBtn.addEventListener("click", async () => {
           dlShowStep("processing");

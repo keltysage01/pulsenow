@@ -60,6 +60,12 @@ export default async function handler(req, res) {
       prompt = transcript;
     }
 
+    if (body.transcribe_only) {
+      if (!transcript) return sendJson(res, 400, { error: 'audio_required', message: 'Record audio before reviewing a transcript.' });
+      if (transcript.length < 8) return sendJson(res, 400, { error: 'empty_transcript', message: 'I did not catch enough speech to build a transcript.' });
+      return sendJson(res, 200, { ok: true, transcript });
+    }
+
     if (prompt.length < 8) return sendJson(res, 400, { error: 'prompt_required' });
     if (prompt.length > 20000) return sendJson(res, 413, { error: 'prompt_too_large' });
 
