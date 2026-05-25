@@ -2,7 +2,7 @@
 <html lang="en" data-theme="light">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#38B249" />
     <title>Pulsenow</title>
     <link rel="stylesheet" href="public/design-system/pulsenow.tokens.css" />
@@ -11411,6 +11411,13 @@
         background: rgba(10, 25, 39, 0.94) !important;
         border-color: rgba(255,255,255,0.16) !important;
       }
+
+      /* Mobile browsers zoom focused inputs below 16px. Keep the viewport stable after login. */
+      input,
+      select,
+      textarea {
+        font-size: 16px !important;
+      }
     </style>
   </head>
   <body>
@@ -12296,6 +12303,10 @@
       const dreamTextEntryPanel = document.getElementById("dream-text-entry-panel");
       const dreamTextInput = document.getElementById("dream-text-input");
       const dreamTextSubmit = document.getElementById("dream-text-submit");
+
+      if ("scrollRestoration" in history) {
+        history.scrollRestoration = "manual";
+      }
 
       let mode = "login";
       let currentLog = {};
@@ -13293,7 +13304,17 @@
         enterBtn.textContent = mode === "login" ? "Log In" : "Create Account";
       }
 
+      function resetAppViewport() {
+        if (document.activeElement && typeof document.activeElement.blur === "function") {
+          document.activeElement.blur();
+        }
+        window.scrollTo(0, 0);
+        if (document.documentElement) document.documentElement.scrollTop = 0;
+        if (document.body) document.body.scrollTop = 0;
+      }
+
       function showApp(session) {
+        resetAppViewport();
         landing.classList.add("hidden");
         login.classList.add("hidden");
         app.classList.remove("hidden");
@@ -13304,6 +13325,9 @@
         renderVisionWorkspace();
         renderImageRevealGoals();
         updateTodayPath();
+        window.requestAnimationFrame(resetAppViewport);
+        window.setTimeout(resetAppViewport, 60);
+        window.setTimeout(resetAppViewport, 240);
       }
 
       function showLogin() {
