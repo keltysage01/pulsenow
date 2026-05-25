@@ -13483,70 +13483,12 @@
           return;
         }
         const label = button.dataset.quizLabel || "quiz";
-        const bank = coachQuizBanks[key];
-        if (bank) {
-          if (!window.confirm("Start the optional " + bank.label + " check-in? It is a lightweight self-assessment to help the coach personalize advice.")) return;
-          const answers = [];
-          if (bank.type === "letters") {
-            let result = "";
-            for (const item of bank.questions) {
-              const choiceText = item.choices.map((choice, index) => index + 1 + ". " + choice).join("\n");
-              const answer = window.prompt(item.prompt + "\n\n" + choiceText + "\n\nEnter a number.", "1");
-              if (answer === null) return;
-              const selected = Math.max(0, Math.min(item.choices.length - 1, Number(answer) - 1 || 0));
-              result += item.choices[selected].charAt(0);
-              answers.push(item.choices[selected]);
-            }
-            const profile = getCoachProfile();
-            profile[key] = result;
-            profile[key + "_answers"] = answers;
-            saveCoachProfile(profile);
-            renderCoachProfile();
-            coachMessages.push({ role: "coach", text: "Saved your " + bank.label + " as " + result + ". I will use that to shape coaching tone, next steps, and accountability." });
-            saveCoach();
-            renderCoach();
-            apiRequest("/api/assessments/submit", {
-              method: "POST",
-              body: JSON.stringify({ assessment_key: key, result, answers, session: getCurrentSession() })
-            }).catch(() => {});
-            return;
-          }
-
-          const scores = {};
-          bank.choices.forEach((choice) => (scores[choice] = 0));
-          for (const question of bank.questions) {
-            const choiceText = bank.choices.map((choice, index) => index + 1 + ". " + choice).join("\n");
-            const answer = window.prompt(question + "\n\n" + choiceText + "\n\nEnter the closest number.", "1");
-            if (answer === null) return;
-            const selected = Math.max(0, Math.min(bank.choices.length - 1, Number(answer) - 1 || 0));
-            const choice = bank.choices[selected];
-            scores[choice] += 1;
-            answers.push(choice);
-          }
-          const result = Object.entries(scores).sort((a, b) => b[1] - a[1])[0][0];
-          const profile = getCoachProfile();
-          profile[key] = result;
-          profile[key + "_answers"] = answers;
-          saveCoachProfile(profile);
-          renderCoachProfile();
-          coachMessages.push({ role: "coach", text: "Saved your " + bank.label + " as " + result + ". The more I know how you work, the more specific the coaching gets." });
-          saveCoach();
-          renderCoach();
-          apiRequest("/api/assessments/submit", {
-            method: "POST",
-            body: JSON.stringify({ assessment_key: key, result, scores, answers, session: getCurrentSession() })
-          }).catch(() => {});
-          return;
-        }
-        const profile = getCoachProfile();
-        const current = profile[key] || "";
-        const value = window.prompt("Optional: enter your " + label + " result. Leave blank to remove it.", current);
-        if (value === null) return;
-        const clean = value.trim().slice(0, 80);
-        if (clean) profile[key] = clean;
-        else delete profile[key];
-        saveCoachProfile(profile);
-        renderCoachProfile();
+        coachMessages.push({
+          role: "coach",
+          text: label + " is not active yet. Working Genius and Four Tendencies are ready now and open inside PulseNow, not a browser popup."
+        });
+        saveCoach();
+        renderCoach();
       }
 
       function coachPersonalizationLine() {
