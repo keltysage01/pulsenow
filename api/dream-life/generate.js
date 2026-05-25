@@ -25,7 +25,7 @@ const DREAM_SCHEMA = {
       items: {
         type: 'object',
         additionalProperties: false,
-        required: ['title', 'area', 'description', 'milestone', 'next_action', 'image_prompt'],
+        required: ['title', 'area', 'description', 'milestone', 'next_action', 'image_prompt', 'feeling_words'],
         properties: {
           title: { type: 'string' },
           area: { type: 'string' },
