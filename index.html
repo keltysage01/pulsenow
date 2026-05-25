@@ -1526,8 +1526,8 @@
       a:focus-visible,
       input:focus-visible,
       select:focus-visible {
-        outline: 3px solid rgba(72,199,217,0.42);
-        outline-offset: 3px;
+        outline: 0 !important;
+        box-shadow: 0 0 0 4px rgba(72,199,217,0.16) !important;
       }
 
       .topbar {
@@ -3834,8 +3834,8 @@
       .text-btn:focus-visible,
       .ghost-btn:hover,
       .ghost-btn:focus-visible {
-        outline: 2px solid rgba(27, 111, 151, 0.28) !important;
-        outline-offset: 3px !important;
+        outline: 0 !important;
+        box-shadow: 0 0 0 4px rgba(72,199,217,0.14) !important;
       }
 
       .text-btn,
@@ -8584,6 +8584,13 @@
         text-align: right !important;
       }
 
+      #app #menu-btn:focus-visible,
+      #app #theme-btn:focus-visible {
+        outline: 0 !important;
+        box-shadow: none !important;
+        text-shadow: 0 0 18px rgba(72, 199, 217, 0.42) !important;
+      }
+
       .profile.pulse-main-container {
         margin-top: 4px !important;
       }
@@ -11385,6 +11392,12 @@
       html[data-theme="dark"] #coach-screen .coach-quiz-action {
         background: rgba(10, 25, 39, 0.94) !important;
         border-color: rgba(255,255,255,0.16) !important;
+      }
+
+      button:focus-visible,
+      a:focus-visible,
+      [role="button"]:focus-visible {
+        outline: 0 !important;
       }
 
       /* Mobile browsers zoom focused inputs below 16px. Keep the viewport stable after login. */
