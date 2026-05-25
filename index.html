@@ -8395,6 +8395,15 @@
         overflow: hidden;
       }
 
+      .coach-intel-card.is-collapsed {
+        gap: 8px;
+        padding-bottom: 16px !important;
+      }
+
+      .coach-intel-card.is-collapsed .coach-quiz-actions {
+        display: none !important;
+      }
+
       .coach-intel-head {
         align-items: start !important;
         gap: 12px !important;
@@ -11547,7 +11556,7 @@
             </div>
             <button class="text-btn" data-screen="quiz" type="button">Open</button>
           </div>
-          <p class="muted" style="margin-top: 10px; line-height: 1.6;">Complete Working Genius and Four Tendencies so the coach can personalize your Today feed and weekly insights.</p>
+          <p class="muted" style="margin-top: 10px; line-height: 1.6;">Complete Working Genius, Four Tendencies, Enneagram, and Myers-Briggs so the coach can personalize your Today feed and weekly insights.</p>
         </section>
 
         <section class="section card standings-card">
@@ -12013,6 +12022,8 @@
           <div class="board-tabs">
             <button id="quiz-tab-working" class="filter-btn active" data-quiz-type="working_genius" type="button">Working Genius</button>
             <button id="quiz-tab-tendencies" class="filter-btn" data-quiz-type="four_tendencies" type="button">Four Tendencies</button>
+            <button id="quiz-tab-enneagram" class="filter-btn" data-quiz-type="enneagram" type="button">Enneagram</button>
+            <button id="quiz-tab-mb" class="filter-btn" data-quiz-type="myers_briggs" type="button">Myers-Briggs</button>
           </div>
         </section>
 
@@ -12035,7 +12046,7 @@
         <section class="card">
           <p class="eyebrow">Results</p>
           <h2>Your PulseNow profile</h2>
-          <p id="quiz-profile-summary" class="muted" style="line-height:1.6;">Complete both quizzes to unlock your combined coaching profile.</p>
+          <p id="quiz-profile-summary" class="muted" style="line-height:1.6;">Complete any quiz to unlock your combined coaching profile.</p>
           <div id="quiz-results-list" class="quiz-shell" style="margin-top:14px;"></div>
         </section>
 
@@ -12207,6 +12218,7 @@
       const fireUpStorageKey = "pulsenow_demo_fire_up";
       const coachStorageKey = "pulsenow_demo_coach";
       const coachProfileStorageKey = "pulsenow_demo_coach_profile";
+      const coachIqDismissedStorageKey = "pulsenow_demo_coach_iq_dismissed";
       const activeDreamStorageKey = "pulsenow_demo_active_dream";
       const dreamVisionStorageKey = "pulsenow_demo_dream_vision_items_v2";
       const profileBioStoragePrefix = "pulsenow_demo_profile_bio_";
@@ -12216,7 +12228,9 @@
         type: "working_genius",
         index: 0,
         workingAnswers: {},
-        tendencyAnswers: {}
+        tendencyAnswers: {},
+        enneagramAnswers: {},
+        myersBriggsAnswers: {}
       };
       const workingGeniusTypes = ["wonder", "invention", "discernment", "galvanizing", "enablement", "tenacity"];
       const workingGeniusQuestionText = {
@@ -12258,6 +12272,163 @@
           { id: "B", label: "I need to understand why it matters before I fully commit.", tendency: "questioner" },
           { id: "C", label: "I do best when someone else is counting on me.", tendency: "obliger" },
           { id: "D", label: "I need room to choose it in my own way.", tendency: "rebel" }
+        ]
+      }));
+      const enneagramTypes = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine"];
+      const enneagramLabels = {
+        one: "Type 1 - Principled Improver",
+        two: "Type 2 - Helpful Connector",
+        three: "Type 3 - Driven Achiever",
+        four: "Type 4 - Expressive Individualist",
+        five: "Type 5 - Analytical Observer",
+        six: "Type 6 - Loyal Planner",
+        seven: "Type 7 - Energetic Enthusiast",
+        eight: "Type 8 - Decisive Challenger",
+        nine: "Type 9 - Steady Peacemaker"
+      };
+      const enneagramCopy = {
+        one: ["You are motivated by improvement, integrity, and doing the work the right way.", "You raise standards and help the team tighten sloppy execution.", "Watch for perfectionism delaying real outreach."],
+        two: ["You are motivated by helping, connecting, and being useful to people.", "You build trust quickly and notice who needs support.", "Watch for over-giving before your own goals are protected."],
+        three: ["You are motivated by progress, achievement, and visible wins.", "You create momentum and model goal-focused action.", "Watch for measuring your worth only by the scoreboard."],
+        four: ["You are motivated by meaning, authenticity, and personal expression.", "You bring emotional honesty and a sharper read on what feels true.", "Watch for letting mood decide whether the next action happens."],
+        five: ["You are motivated by clarity, mastery, and conserving focused energy.", "You bring useful analysis before the team wastes motion.", "Watch for staying in research when one call would create better data."],
+        six: ["You are motivated by security, loyalty, and having a dependable plan.", "You spot risk early and help the team prepare.", "Watch for over-checking before you trust the next step."],
+        seven: ["You are motivated by possibility, energy, and keeping options open.", "You create optimism and fresh angles when work feels heavy.", "Watch for jumping to the next idea before closing the loop."],
+        eight: ["You are motivated by strength, truth, and direct control of outcomes.", "You bring decisive action and protect people from drift.", "Watch for pushing so hard that quieter signals get missed."],
+        nine: ["You are motivated by steadiness, harmony, and keeping things grounded.", "You calm friction and help the team stay connected.", "Watch for avoiding the uncomfortable ask that would move the goal forward."]
+      };
+      const enneagramScenarios = [
+        ["EN_01", "A hard outreach day starts to drag. What pulls you forward?", {
+          one: "Doing it correctly because the standard matters.",
+          two: "Remembering who this could help.",
+          three: "Seeing the win that comes from finishing strong.",
+          four: "Finding a more honest reason the work matters.",
+          five: "Getting enough clarity to act with confidence.",
+          six: "Following the plan so nothing important slips.",
+          seven: "Turning it into a fresh challenge or sprint.",
+          eight: "Taking control and forcing momentum.",
+          nine: "Finding a calm rhythm and staying with it."
+        }],
+        ["EN_02", "When a teammate is stuck, what do you naturally offer first?", {
+          one: "A cleaner standard or better way to execute.",
+          two: "Personal support and encouragement.",
+          three: "A goal, target, or scoreboard to chase.",
+          four: "Space to name what is really going on.",
+          five: "A clear explanation or useful information.",
+          six: "A safer plan with next steps and backup options.",
+          seven: "A new angle that makes it feel lighter.",
+          eight: "Direct truth and a push to act.",
+          nine: "A steady presence that lowers the tension."
+        }],
+        ["EN_03", "What kind of coaching usually lands best?", {
+          one: "Show me the right standard and where to improve.",
+          two: "Connect it to people and relationships.",
+          three: "Make the outcome measurable and worth chasing.",
+          four: "Make it personal and emotionally honest.",
+          five: "Give me the logic and enough context.",
+          six: "Help me trust the plan and reduce risk.",
+          seven: "Keep it energetic, practical, and flexible.",
+          eight: "Be direct and tell me the move.",
+          nine: "Keep it calm, simple, and doable."
+        }],
+        ["EN_04", "Under pressure, what pattern shows up fastest?", {
+          one: "I get critical of what is wrong.",
+          two: "I focus on everyone else before myself.",
+          three: "I push harder to prove I can win.",
+          four: "I compare how things feel versus what I wanted.",
+          five: "I pull back to think and conserve energy.",
+          six: "I scan for what could go wrong.",
+          seven: "I look for a better or more exciting option.",
+          eight: "I take charge and may get intense.",
+          nine: "I avoid conflict and try to keep peace."
+        }],
+        ["EN_05", "What makes you proud at the end of a week?", {
+          one: "I improved the system and did it well.",
+          two: "I helped people feel seen and supported.",
+          three: "I produced results I can point to.",
+          four: "I stayed true to what mattered.",
+          five: "I understood the work and used my energy wisely.",
+          six: "I was dependable and prepared.",
+          seven: "I created possibility and kept moving.",
+          eight: "I made the hard calls and owned the outcome.",
+          nine: "I kept things steady and moved without drama."
+        }],
+        ["EN_06", "What usually blocks your follow-through?", {
+          one: "Waiting until the work feels good enough.",
+          two: "Letting other people's needs take over.",
+          three: "Avoiding anything that feels like a visible loss.",
+          four: "Needing the work to feel aligned first.",
+          five: "Wanting more information before acting.",
+          six: "Needing more certainty before trusting the move.",
+          seven: "Getting pulled toward a more interesting option.",
+          eight: "Resisting anything that feels like control.",
+          nine: "Letting discomfort fade into later."
+        }],
+        ["EN_07", "In sales conversations, which strength do you lean on?", {
+          one: "Credibility and doing things properly.",
+          two: "Warmth and personal connection.",
+          three: "Confidence and outcome focus.",
+          four: "Depth and sincerity.",
+          five: "Knowledge and calm explanation.",
+          six: "Preparedness and trust-building.",
+          seven: "Energy and possibility.",
+          eight: "Directness and conviction.",
+          nine: "Ease and patience."
+        }],
+        ["EN_08", "What do you want the coach to protect you from?", {
+          one: "Over-polishing instead of shipping.",
+          two: "Helping everyone except myself.",
+          three: "Chasing status instead of the right action.",
+          four: "Getting stuck in feelings before movement.",
+          five: "Thinking longer than the decision needs.",
+          six: "Over-planning because of uncertainty.",
+          seven: "Starting too much and finishing too little.",
+          eight: "Forcing the outcome without listening.",
+          nine: "Staying comfortable instead of making the ask."
+        }],
+        ["EN_09", "What kind of goal language feels most motivating?", {
+          one: "Make it cleaner and more excellent.",
+          two: "Make it helpful and relational.",
+          three: "Make it measurable and ambitious.",
+          four: "Make it meaningful and true.",
+          five: "Make it clear and efficient.",
+          six: "Make it dependable and well-supported.",
+          seven: "Make it exciting and full of options.",
+          eight: "Make it direct and powerful.",
+          nine: "Make it steady and peaceful."
+        }]
+      ];
+      const enneagramQuestions = enneagramScenarios.map(([id, prompt, labels]) => ({
+        id,
+        prompt,
+        options: enneagramTypes.map((type) => ({ id: type, label: labels[type], enneagramType: type }))
+      }));
+      const myersBriggsDimensions = [
+        ["EI", "E", "I", "Energy"],
+        ["SN", "S", "N", "Information"],
+        ["TF", "T", "F", "Decisions"],
+        ["JP", "J", "P", "Structure"]
+      ];
+      const myersBriggsQuestions = [
+        ["MB_EI_01", "After a packed day, what restores you faster?", "E", "Talking it out or doing something active with people.", "I", "Quiet time, space, and fewer inputs."],
+        ["MB_EI_02", "When you are solving a problem, where do you start?", "E", "External discussion and quick action.", "I", "Internal processing before I speak or move."],
+        ["MB_EI_03", "In a team sprint, what feels natural?", "E", "Keeping energy visible and interactive.", "I", "Holding focused space and contributing when clear."],
+        ["MB_SN_01", "What kind of information do you trust first?", "S", "Specific facts, proof, and what has worked before.", "N", "Patterns, possibilities, and what could work next."],
+        ["MB_SN_02", "A new sales idea comes up. What do you ask for?", "S", "The practical steps and real examples.", "N", "The bigger picture and strategic upside."],
+        ["MB_SN_03", "What makes coaching easier to follow?", "S", "Concrete details and exact next actions.", "N", "A concept I can adapt creatively."],
+        ["MB_TF_01", "When deciding between two moves, what weighs more?", "T", "Logic, consistency, and measurable outcome.", "F", "People, values, and relationship impact."],
+        ["MB_TF_02", "What feedback style is easiest to use?", "T", "Direct, objective, and specific.", "F", "Supportive, personal, and context-aware."],
+        ["MB_TF_03", "In conflict, what do you try to protect?", "T", "Fairness, truth, and clear standards.", "F", "Trust, morale, and human impact."],
+        ["MB_JP_01", "How do you prefer to run your day?", "J", "Planned, decided, and structured.", "P", "Flexible, responsive, and open."],
+        ["MB_JP_02", "A deadline is coming. What helps most?", "J", "A clear plan and early closure.", "P", "Room to adapt as better information appears."],
+        ["MB_JP_03", "What kind of task list feels better?", "J", "Prioritized and checked off.", "P", "Loose enough to follow energy and opportunity."]
+      ].map(([id, prompt, firstId, firstLabel, secondId, secondLabel]) => ({
+        id,
+        prompt,
+        dimension: id.slice(3, 5),
+        options: [
+          { id: firstId, label: firstLabel, letter: firstId },
+          { id: secondId, label: secondLabel, letter: secondId }
         ]
       }));
       let activeDreamIndex = Number(localStorage.getItem(activeDreamStorageKey) || "0") || 0;
@@ -13402,6 +13573,7 @@
             coachMessages = [];
           }
         }
+        coachMessages = coachMessages.filter((message) => !String(message.text || "").includes("is not active yet. Working Genius and Four Tendencies are ready now"));
         if (coachMessages.length === 0) {
           coachMessages = [{ role: "coach", text: "Tell me what you want to improve today. I can use your points, contacts, pipeline, and Power List preview." }];
         }
@@ -13455,8 +13627,22 @@
           .join("; ");
       }
 
+      function getCoachIntelligence() {
+        return {
+          summary: getCoachProfileSummary(),
+          display: getCoachProfile(),
+          results: getQuizProfile()
+        };
+      }
+
       function renderCoachProfile() {
         const profile = getCoachProfile();
+        const summary = getCoachProfileSummary();
+        const dismissed = localStorage.getItem(coachIqDismissedStorageKey) === "true" && !summary;
+        const card = document.querySelector(".coach-intel-card");
+        if (card) card.classList.toggle("is-collapsed", dismissed);
+        const clearButton = document.getElementById("coach-profile-clear");
+        if (clearButton) clearButton.textContent = dismissed ? "Show" : "Clear";
         document.querySelectorAll("[data-quiz-key]").forEach((button) => {
           const value = profile[button.dataset.quizKey];
           const status = button.querySelector("span");
@@ -13467,43 +13653,47 @@
         });
         const note = document.getElementById("coach-profile-note");
         if (!note) return;
-        const summary = getCoachProfileSummary();
-        note.textContent = summary
+        note.textContent = dismissed
+          ? "Coach IQ is cleared and tucked away. Tap Show when you want to add quiz context again."
+          : summary
           ? "Coaching profile active: " + summary
           : "Optional. The more the coach knows, the more specific the outreach advice becomes.";
       }
 
       function handleCoachQuiz(button) {
         const key = button.dataset.quizKey;
-        if (key === "working_genius" || key === "four_tendencies") {
-          quizState.type = key;
-          quizState.index = 0;
-          renderQuiz();
-          setScreen("quiz");
-          return;
-        }
-        const label = button.dataset.quizLabel || "quiz";
-        coachMessages.push({
-          role: "coach",
-          text: label + " is not active yet. Working Genius and Four Tendencies are ready now and open inside PulseNow, not a browser popup."
-        });
-        saveCoach();
-        renderCoach();
+        localStorage.removeItem(coachIqDismissedStorageKey);
+        quizState.type = key;
+        quizState.index = 0;
+        renderCoachProfile();
+        renderQuiz();
+        setScreen("quiz");
       }
 
       function coachPersonalizationLine() {
-        const summary = getCoachProfileSummary();
+        const intelligence = getCoachIntelligence();
+        const summary = intelligence.summary;
+        const profile = intelligence.results || {};
+        const extra = [];
+        if (profile.enneagram?.watchOut) extra.push("For Enneagram, I will guard against: " + profile.enneagram.watchOut);
+        if (profile.myers_briggs?.coachingStyle) extra.push("For Myers-Briggs, I will frame it as: " + profile.myers_briggs.coachingStyle);
         return summary
-          ? " I am factoring in your Coach IQ profile (" + summary + ") so this advice fits how you work."
+          ? " I am factoring in your Coach IQ profile (" + summary + ") so this advice fits how you work. " + extra.join(" ")
           : " Add Working Genius, Four Tendencies, Enneagram, or Myers-Briggs in Coach IQ when you want the coaching to get more personal.";
       }
 
       function quizQuestionsFor(type) {
-        return type === "four_tendencies" ? fourTendenciesQuestions : workingGeniusQuestions;
+        if (type === "four_tendencies") return fourTendenciesQuestions;
+        if (type === "enneagram") return enneagramQuestions;
+        if (type === "myers_briggs") return myersBriggsQuestions;
+        return workingGeniusQuestions;
       }
 
       function activeQuizAnswers() {
-        return quizState.type === "four_tendencies" ? quizState.tendencyAnswers : quizState.workingAnswers;
+        if (quizState.type === "four_tendencies") return quizState.tendencyAnswers;
+        if (quizState.type === "enneagram") return quizState.enneagramAnswers;
+        if (quizState.type === "myers_briggs") return quizState.myersBriggsAnswers;
+        return quizState.workingAnswers;
       }
 
       function scoreWorkingGeniusLocal(answers) {
@@ -13545,6 +13735,69 @@
         };
       }
 
+      function scoreEnneagramLocal(answers) {
+        const scores = {};
+        enneagramTypes.forEach((type) => (scores[type] = 0));
+        enneagramQuestions.forEach((question) => {
+          const option = question.options.find((item) => item.id === answers[question.id]);
+          if (option) scores[option.enneagramType] += 1;
+        });
+        const ranked = enneagramTypes.slice().sort((a, b) => scores[b] - scores[a] || enneagramTypes.indexOf(a) - enneagramTypes.indexOf(b));
+        const primary = ranked[0];
+        const secondary = scores[ranked[1]] > 0 ? ranked[1] : null;
+        return {
+          quizType: "enneagram",
+          scores,
+          primaryType: primary,
+          secondaryType: secondary,
+          profileSummary: enneagramLabels[primary] + ": " + enneagramCopy[primary][0],
+          teamContribution: enneagramCopy[primary][1],
+          watchOut: enneagramCopy[primary][2],
+          explanation: "This result helps the coach understand your default motivation under pressure, not just your task preference."
+        };
+      }
+
+      function scoreMyersBriggsLocal(answers) {
+        const scores = { E: 0, I: 0, S: 0, N: 0, T: 0, F: 0, J: 0, P: 0 };
+        myersBriggsQuestions.forEach((question) => {
+          const option = question.options.find((item) => item.id === answers[question.id]);
+          if (option) scores[option.letter] += 1;
+        });
+        const type = [
+          scores.E >= scores.I ? "E" : "I",
+          scores.S >= scores.N ? "S" : "N",
+          scores.T >= scores.F ? "T" : "F",
+          scores.J >= scores.P ? "J" : "P"
+        ].join("");
+        const dimensionCopy = {
+          E: "external energy and fast conversation",
+          I: "quiet focus and internal processing",
+          S: "concrete details and proven next steps",
+          N: "patterns, meaning, and future possibilities",
+          T: "logic, standards, and clean decisions",
+          F: "people, values, and relationship impact",
+          J: "structure, closure, and planned execution",
+          P: "flexibility, responsiveness, and adaptive action"
+        };
+        return {
+          quizType: "myers_briggs",
+          scores,
+          personalityType: type,
+          dimensions: type.split(""),
+          profileSummary: "Your Myers-Briggs style reads as " + type + ", which means coaching should respect " + type.split("").map((letter) => dimensionCopy[letter]).join(", ") + ".",
+          teamContribution: "You help the team by bringing " + dimensionCopy[type[0]] + " plus " + dimensionCopy[type[3]] + " to daily execution.",
+          watchOut: "Under pressure, balance your natural " + dimensionCopy[type[1]] + " with the opposite view so sales activity does not get too narrow.",
+          coachingStyle: "Use " + (type.includes("J") ? "clear plans and deadlines" : "flexible options and quick experiments") + " with " + (type.includes("T") ? "direct logic" : "relationship-aware language") + "."
+        };
+      }
+
+      function scoreQuizLocal(type, answers) {
+        if (type === "four_tendencies") return scoreFourTendenciesLocal(answers);
+        if (type === "enneagram") return scoreEnneagramLocal(answers);
+        if (type === "myers_briggs") return scoreMyersBriggsLocal(answers);
+        return scoreWorkingGeniusLocal(answers);
+      }
+
       function renderQuizResults() {
         const profile = getQuizProfile();
         const resultList = document.getElementById("quiz-results-list");
@@ -13558,17 +13811,28 @@
         if (profile.four_tendencies) {
           pieces.push(["Four Tendencies", titleCase(profile.four_tendencies.primaryTendency)]);
         }
+        if (profile.enneagram) {
+          pieces.push(["Enneagram", enneagramLabels[profile.enneagram.primaryType] || titleCase(profile.enneagram.primaryType)]);
+        }
+        if (profile.myers_briggs) {
+          pieces.push(["Myers-Briggs", profile.myers_briggs.personalityType]);
+        }
         pieces.forEach(([label, text]) => {
           const block = document.createElement("div");
           block.className = "quiz-result-block";
-          block.innerHTML = "<strong>" + escapeHtml(label) + "</strong><p>" + escapeHtml(text) + "</p>";
+          const result = label === "Working Genius" ? profile.working_genius
+            : label === "Four Tendencies" ? profile.four_tendencies
+            : label === "Enneagram" ? profile.enneagram
+            : profile.myers_briggs;
+          const explanation = [result?.profileSummary, result?.teamContribution, result?.watchOut ? "Watch out: " + result.watchOut : "", result?.explanation].filter(Boolean).join(" ");
+          block.innerHTML = "<strong>" + escapeHtml(label) + "</strong><p>" + escapeHtml(text) + "</p><p>" + escapeHtml(explanation) + "</p>";
           resultList.appendChild(block);
         });
-        summary.textContent = pieces.length ? [profile.working_genius?.profileSummary, profile.four_tendencies?.profileSummary].filter(Boolean).join(" ") : "Complete both quizzes to unlock your combined coaching profile.";
+        summary.textContent = pieces.length ? [profile.working_genius?.profileSummary, profile.four_tendencies?.profileSummary, profile.enneagram?.profileSummary, profile.myers_briggs?.profileSummary].filter(Boolean).join(" ") : "Complete any quiz to unlock your combined coaching profile.";
         if (profile.working_genius && profile.four_tendencies) {
           todayCard.classList.remove("hidden");
           document.getElementById("quiz-today-title").textContent = "Use your " + titleCase(profile.working_genius.workingGenius[0]) + " today";
-          document.getElementById("quiz-today-body").textContent = "Lead with " + profile.working_genius.workingGenius.map(titleCase).join(" + ") + ". Your tendency is " + titleCase(profile.four_tendencies.primaryTendency) + ". Pick one action that fits that style, then close the loop.";
+          document.getElementById("quiz-today-body").textContent = "Lead with " + profile.working_genius.workingGenius.map(titleCase).join(" + ") + ". Your tendency is " + titleCase(profile.four_tendencies.primaryTendency) + (profile.enneagram ? ", and your Enneagram pattern is " + (enneagramLabels[profile.enneagram.primaryType] || titleCase(profile.enneagram.primaryType)) : "") + (profile.myers_briggs ? ". Your Myers-Briggs style is " + profile.myers_briggs.personalityType : "") + ". Pick one action that fits that style, then close the loop.";
         } else {
           todayCard.classList.add("hidden");
         }
@@ -13581,10 +13845,24 @@
         const question = questions[quizState.index];
         const answers = activeQuizAnswers();
         const total = questions.length;
-        document.getElementById("quiz-title").textContent = type === "four_tendencies" ? "Four Tendencies" : "Working Genius";
-        document.getElementById("quiz-intro").textContent = type === "four_tendencies" ? "Choose the response that sounds most like you. This is 16 scenario questions." : "Rate each prompt from 1 to 5. This is 36 questions, six for each Working Genius type.";
+        const labels = {
+          working_genius: "Working Genius",
+          four_tendencies: "Four Tendencies",
+          enneagram: "Enneagram",
+          myers_briggs: "Myers-Briggs"
+        };
+        const intros = {
+          working_genius: "Rate each prompt from 1 to 5. This is 36 questions, six for each Working Genius type.",
+          four_tendencies: "Choose the response that sounds most like you. This is 16 scenario questions.",
+          enneagram: "Choose the response that sounds most like your default motivation. This is 9 scenario questions.",
+          myers_briggs: "Choose the response that feels more natural. This is 12 questions across the four preference pairs."
+        };
+        document.getElementById("quiz-title").textContent = labels[type] || "Personal profile";
+        document.getElementById("quiz-intro").textContent = intros[type] || "";
         document.getElementById("quiz-tab-working").classList.toggle("active", type === "working_genius");
         document.getElementById("quiz-tab-tendencies").classList.toggle("active", type === "four_tendencies");
+        document.getElementById("quiz-tab-enneagram").classList.toggle("active", type === "enneagram");
+        document.getElementById("quiz-tab-mb").classList.toggle("active", type === "myers_briggs");
         document.getElementById("quiz-step-label").textContent = "Step " + (quizState.index + 1) + " of " + total;
         document.getElementById("quiz-question").textContent = question.prompt;
         document.getElementById("quiz-progress-fill").style.width = Math.round(((quizState.index + 1) / total) * 100) + "%";
@@ -13602,7 +13880,7 @@
             button.textContent = value;
             button.className = Number(answers[question.id]) === value ? "active" : "";
             button.addEventListener("click", () => {
-              quizState.workingAnswers[question.id] = value;
+              activeQuizAnswers()[question.id] = value;
               renderQuiz();
             });
             row.appendChild(button);
@@ -13617,7 +13895,7 @@
             button.textContent = option.label;
             button.className = answers[question.id] === option.id ? "active" : "";
             button.addEventListener("click", () => {
-              quizState.tendencyAnswers[question.id] = option.id;
+              activeQuizAnswers()[question.id] = option.id;
               renderQuiz();
             });
             list.appendChild(button);
@@ -13630,13 +13908,22 @@
       async function finishQuiz() {
         const type = quizState.type;
         const answers = activeQuizAnswers();
-        const result = type === "four_tendencies" ? scoreFourTendenciesLocal(answers) : scoreWorkingGeniusLocal(answers);
+        const result = scoreQuizLocal(type, answers);
         const profile = getQuizProfile();
         profile[type] = result;
         saveQuizProfile(profile);
         const coachProfile = getCoachProfile();
-        coachProfile[type] = type === "four_tendencies" ? titleCase(result.primaryTendency) : result.workingGenius.map(titleCase).join(" + ");
+        if (type === "four_tendencies") coachProfile[type] = titleCase(result.primaryTendency);
+        else if (type === "enneagram") coachProfile[type] = enneagramLabels[result.primaryType] || titleCase(result.primaryType);
+        else if (type === "myers_briggs") coachProfile[type] = result.personalityType;
+        else coachProfile[type] = result.workingGenius.map(titleCase).join(" + ");
         saveCoachProfile(coachProfile);
+        localStorage.removeItem(coachIqDismissedStorageKey);
+        coachMessages.push({
+          role: "coach",
+          text: "Saved your " + (type === "myers_briggs" ? "Myers-Briggs" : titleCase(type)) + " result. I will use it when I coach your outreach, follow-up, and daily action."
+        });
+        saveCoach();
         renderCoachProfile();
         renderQuizResults();
         try {
@@ -13688,7 +13975,7 @@
               message: prompt,
               currentLog,
               contacts,
-              coach_profile: getCoachProfile()
+              coach_profile: getCoachIntelligence()
             })
           });
           coachMessages[coachMessages.length - 1] = { role: "coach", text: data.reply || buildCoachReply(prompt) };
@@ -14973,7 +15260,14 @@
       const coachProfileClear = document.getElementById("coach-profile-clear");
       if (coachProfileClear) {
         coachProfileClear.addEventListener("click", () => {
+          if (localStorage.getItem(coachIqDismissedStorageKey) === "true") {
+            localStorage.removeItem(coachIqDismissedStorageKey);
+            renderCoachProfile();
+            return;
+          }
           saveCoachProfile({});
+          saveQuizProfile({});
+          localStorage.setItem(coachIqDismissedStorageKey, "true");
           renderCoachProfile();
         });
       }

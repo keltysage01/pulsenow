@@ -1,5 +1,6 @@
 export const workingGeniusTypes = ['wonder', 'invention', 'discernment', 'galvanizing', 'enablement', 'tenacity'];
 export const tendencyTypes = ['upholder', 'questioner', 'obliger', 'rebel'];
+export const enneagramTypes = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
 
 const wgPrompts = {
   wonder: ['ask whether we are solving the right problem', 'spot opportunities other people have not named', 'ask deeper questions about people and patterns', 'pause and clarify what matters most', 'open possibilities before plans lock in', 'sit with uncertainty to find a better question'],
@@ -66,15 +67,83 @@ const tendencyCopy = {
   rebel: ['You move best when the work connects to identity, freedom, and choice.', 'You challenge stale rules and bring independence to the team.', 'Frame commitments as choices you own so resistance does not block progress.'],
 };
 
+const enneagramLabels = {
+  one: 'Type 1 - Principled Improver',
+  two: 'Type 2 - Helpful Connector',
+  three: 'Type 3 - Driven Achiever',
+  four: 'Type 4 - Expressive Individualist',
+  five: 'Type 5 - Analytical Observer',
+  six: 'Type 6 - Loyal Planner',
+  seven: 'Type 7 - Energetic Enthusiast',
+  eight: 'Type 8 - Decisive Challenger',
+  nine: 'Type 9 - Steady Peacemaker',
+};
+
+const enneagramCopy = {
+  one: ['You are motivated by improvement, integrity, and doing the work the right way.', 'You raise standards and help the team tighten sloppy execution.', 'Watch for perfectionism delaying real outreach.'],
+  two: ['You are motivated by helping, connecting, and being useful to people.', 'You build trust quickly and notice who needs support.', 'Watch for over-giving before your own goals are protected.'],
+  three: ['You are motivated by progress, achievement, and visible wins.', 'You create momentum and model goal-focused action.', 'Watch for measuring your worth only by the scoreboard.'],
+  four: ['You are motivated by meaning, authenticity, and personal expression.', 'You bring emotional honesty and a sharper read on what feels true.', 'Watch for letting mood decide whether the next action happens.'],
+  five: ['You are motivated by clarity, mastery, and conserving focused energy.', 'You bring useful analysis before the team wastes motion.', 'Watch for staying in research when one call would create better data.'],
+  six: ['You are motivated by security, loyalty, and having a dependable plan.', 'You spot risk early and help the team prepare.', 'Watch for over-checking before you trust the next step.'],
+  seven: ['You are motivated by possibility, energy, and keeping options open.', 'You create optimism and fresh angles when work feels heavy.', 'Watch for jumping to the next idea before closing the loop.'],
+  eight: ['You are motivated by strength, truth, and direct control of outcomes.', 'You bring decisive action and protect people from drift.', 'Watch for pushing so hard that quieter signals get missed.'],
+  nine: ['You are motivated by steadiness, harmony, and keeping things grounded.', 'You calm friction and help the team stay connected.', 'Watch for avoiding the uncomfortable ask that would move the goal forward.'],
+};
+
+export const enneagramQuestions = [
+  ['EN_01', 'A hard outreach day starts to drag. What pulls you forward?'],
+  ['EN_02', 'When a teammate is stuck, what do you naturally offer first?'],
+  ['EN_03', 'What kind of coaching usually lands best?'],
+  ['EN_04', 'Under pressure, what pattern shows up fastest?'],
+  ['EN_05', 'What makes you proud at the end of a week?'],
+  ['EN_06', 'What usually blocks your follow-through?'],
+  ['EN_07', 'In sales conversations, which strength do you lean on?'],
+  ['EN_08', 'What do you want the coach to protect you from?'],
+  ['EN_09', 'What kind of goal language feels most motivating?'],
+].map(([id, prompt]) => ({
+  id,
+  quizType: 'enneagram',
+  prompt,
+  options: enneagramTypes.map((type) => ({ id: type, label: enneagramLabels[type], enneagramType: type })),
+}));
+
+export const myersBriggsQuestions = [
+  ['MB_EI_01', 'After a packed day, what restores you faster?', 'E', 'Talking it out or doing something active with people.', 'I', 'Quiet time, space, and fewer inputs.'],
+  ['MB_EI_02', 'When you are solving a problem, where do you start?', 'E', 'External discussion and quick action.', 'I', 'Internal processing before I speak or move.'],
+  ['MB_EI_03', 'In a team sprint, what feels natural?', 'E', 'Keeping energy visible and interactive.', 'I', 'Holding focused space and contributing when clear.'],
+  ['MB_SN_01', 'What kind of information do you trust first?', 'S', 'Specific facts, proof, and what has worked before.', 'N', 'Patterns, possibilities, and what could work next.'],
+  ['MB_SN_02', 'A new sales idea comes up. What do you ask for?', 'S', 'The practical steps and real examples.', 'N', 'The bigger picture and strategic upside.'],
+  ['MB_SN_03', 'What makes coaching easier to follow?', 'S', 'Concrete details and exact next actions.', 'N', 'A concept I can adapt creatively.'],
+  ['MB_TF_01', 'When deciding between two moves, what weighs more?', 'T', 'Logic, consistency, and measurable outcome.', 'F', 'People, values, and relationship impact.'],
+  ['MB_TF_02', 'What feedback style is easiest to use?', 'T', 'Direct, objective, and specific.', 'F', 'Supportive, personal, and context-aware.'],
+  ['MB_TF_03', 'In conflict, what do you try to protect?', 'T', 'Fairness, truth, and clear standards.', 'F', 'Trust, morale, and human impact.'],
+  ['MB_JP_01', 'How do you prefer to run your day?', 'J', 'Planned, decided, and structured.', 'P', 'Flexible, responsive, and open.'],
+  ['MB_JP_02', 'A deadline is coming. What helps most?', 'J', 'A clear plan and early closure.', 'P', 'Room to adapt as better information appears.'],
+  ['MB_JP_03', 'What kind of task list feels better?', 'J', 'Prioritized and checked off.', 'P', 'Loose enough to follow energy and opportunity.'],
+].map(([id, prompt, firstId, firstLabel, secondId, secondLabel]) => ({
+  id,
+  quizType: 'myers_briggs',
+  prompt,
+  options: [
+    { id: firstId, label: firstLabel, letter: firstId },
+    { id: secondId, label: secondLabel, letter: secondId },
+  ],
+}));
+
 export function getQuestions(quizType) {
   if (quizType === 'working_genius') return workingGeniusQuestions;
   if (quizType === 'four_tendencies') return fourTendenciesQuestions;
+  if (quizType === 'enneagram') return enneagramQuestions;
+  if (quizType === 'myers_briggs') return myersBriggsQuestions;
   throw new Error('invalid_quiz_type');
 }
 
 export function scoreQuiz(quizType, answers = {}) {
   if (quizType === 'working_genius') return scoreWorkingGenius(answers);
   if (quizType === 'four_tendencies') return scoreFourTendencies(answers);
+  if (quizType === 'enneagram') return scoreEnneagram(answers);
+  if (quizType === 'myers_briggs') return scoreMyersBriggs(answers);
   throw new Error('invalid_quiz_type');
 }
 
@@ -118,6 +187,63 @@ export function scoreFourTendencies(answers) {
     profileSummary: tendencyCopy[ranked[0]][0],
     teamContribution: tendencyCopy[ranked[0]][1],
     watchOut: tendencyCopy[ranked[0]][2],
+  };
+}
+
+export function scoreEnneagram(answers) {
+  if (Object.keys(answers).length !== enneagramQuestions.length) throw new Error('Answer all 9 Enneagram questions.');
+  const scores = Object.fromEntries(enneagramTypes.map((type) => [type, 0]));
+  for (const question of enneagramQuestions) {
+    const option = question.options.find((item) => item.id === answers[question.id]);
+    if (!option) throw new Error('Enneagram answers must use valid option ids.');
+    scores[option.enneagramType] += 1;
+  }
+  const ranked = enneagramTypes.slice().sort((a, b) => scores[b] - scores[a] || enneagramTypes.indexOf(a) - enneagramTypes.indexOf(b));
+  return {
+    quizType: 'enneagram',
+    scores,
+    primaryType: ranked[0],
+    secondaryType: scores[ranked[1]] > 0 ? ranked[1] : null,
+    profileSummary: enneagramLabels[ranked[0]] + ': ' + enneagramCopy[ranked[0]][0],
+    teamContribution: enneagramCopy[ranked[0]][1],
+    watchOut: enneagramCopy[ranked[0]][2],
+    explanation: 'This result helps the coach understand your default motivation under pressure, not just your task preference.',
+  };
+}
+
+export function scoreMyersBriggs(answers) {
+  if (Object.keys(answers).length !== myersBriggsQuestions.length) throw new Error('Answer all 12 Myers-Briggs questions.');
+  const scores = { E: 0, I: 0, S: 0, N: 0, T: 0, F: 0, J: 0, P: 0 };
+  for (const question of myersBriggsQuestions) {
+    const option = question.options.find((item) => item.id === answers[question.id]);
+    if (!option) throw new Error('Myers-Briggs answers must use valid option ids.');
+    scores[option.letter] += 1;
+  }
+  const personalityType = [
+    scores.E >= scores.I ? 'E' : 'I',
+    scores.S >= scores.N ? 'S' : 'N',
+    scores.T >= scores.F ? 'T' : 'F',
+    scores.J >= scores.P ? 'J' : 'P',
+  ].join('');
+  const dimensionCopy = {
+    E: 'external energy and fast conversation',
+    I: 'quiet focus and internal processing',
+    S: 'concrete details and proven next steps',
+    N: 'patterns, meaning, and future possibilities',
+    T: 'logic, standards, and clean decisions',
+    F: 'people, values, and relationship impact',
+    J: 'structure, closure, and planned execution',
+    P: 'flexibility, responsiveness, and adaptive action',
+  };
+  return {
+    quizType: 'myers_briggs',
+    scores,
+    personalityType,
+    dimensions: personalityType.split(''),
+    profileSummary: 'Your Myers-Briggs style reads as ' + personalityType + ', which means coaching should respect ' + personalityType.split('').map((letter) => dimensionCopy[letter]).join(', ') + '.',
+    teamContribution: 'You help the team by bringing ' + dimensionCopy[personalityType[0]] + ' plus ' + dimensionCopy[personalityType[3]] + ' to daily execution.',
+    watchOut: 'Under pressure, balance your natural ' + dimensionCopy[personalityType[1]] + ' with the opposite view so sales activity does not get too narrow.',
+    coachingStyle: 'Use ' + (personalityType.includes('J') ? 'clear plans and deadlines' : 'flexible options and quick experiments') + ' with ' + (personalityType.includes('T') ? 'direct logic' : 'relationship-aware language') + '.',
   };
 }
 
