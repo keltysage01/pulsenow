@@ -15,6 +15,7 @@ const staticEntries = [
   'pulsenow-logo.jpeg',
 ];
 const publicEntries = ['design-system', 'backgrounds'];
+const publicFiles = ['dream-mic-button.png'];
 
 await rm(outDir, { recursive: true, force: true });
 await mkdir(outDir, { recursive: true });
@@ -29,6 +30,13 @@ for (const entry of publicEntries) {
   if (!existsSync(source)) continue;
   await mkdir(`${outDir}/public`, { recursive: true });
   await cp(source, `${outDir}/public/${entry}`, { recursive: true });
+}
+
+for (const file of publicFiles) {
+  const source = `public/${file}`;
+  if (!existsSync(source)) continue;
+  await mkdir(`${outDir}/public`, { recursive: true });
+  await cp(source, `${outDir}/public/${file}`);
 }
 
 await rm(`${outDir}/public/backgrounds/premium_seed_images`, { recursive: true, force: true });

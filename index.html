@@ -8683,74 +8683,49 @@
 
       .dream-big-mic {
         display: grid;
-        width: 148px;
-        height: 148px;
-        min-height: 148px !important;
+        width: 156px;
+        height: 156px;
+        min-height: 156px !important;
         place-items: center;
         border: 0 !important;
         border-radius: 999px !important;
-        background:
-          radial-gradient(circle at 50% 35%, rgba(255,255,255,0.3), transparent 34%),
-          linear-gradient(135deg, var(--pulse-navy, #16466d), var(--pulse-teal, #007c7d), var(--pulse-lime, #86bd4d)) !important;
-        color: #fff !important;
-        box-shadow:
-          0 22px 46px rgba(22, 70, 109, 0.24),
-          0 0 0 12px rgba(72, 199, 217, 0.1),
-          inset 0 1px 0 rgba(255,255,255,0.4) !important;
+        background: transparent !important;
+        color: transparent !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+        overflow: visible !important;
+        transition: filter 180ms ease, transform 180ms ease;
       }
 
       .dream-big-mic.is-recording {
-        background: linear-gradient(135deg, #8f1733, #e25757) !important;
+        animation: dreamMicGlow 1.45s ease-in-out infinite;
+        filter:
+          drop-shadow(0 0 16px rgba(72, 199, 217, 0.72))
+          drop-shadow(0 0 34px rgba(134, 189, 77, 0.5));
       }
 
-      .dream-mic-icon {
-        position: relative;
+      .dream-big-mic:disabled {
+        opacity: 0.82;
+      }
+
+      .dream-big-mic img {
+        width: 100%;
+        height: 100%;
         display: block;
-        width: 54px;
-        height: 72px;
-      }
-
-      .dream-mic-head {
-        position: absolute;
-        left: 12px;
-        top: 0;
-        width: 30px;
-        height: 48px;
-        border: 4px solid rgba(255,255,255,0.94);
         border-radius: 999px;
-        background: rgba(255,255,255,0.12);
-        box-shadow: inset 0 0 18px rgba(255,255,255,0.16);
+        object-fit: cover;
+        transform: scale(1.02);
+        filter: drop-shadow(0 16px 30px rgba(31, 65, 85, 0.16));
       }
 
-      .dream-mic-stem {
-        position: absolute;
-        left: 25px;
-        top: 50px;
-        width: 4px;
-        height: 14px;
-        border-radius: 999px;
-        background: #fff;
-      }
-
-      .dream-mic-base {
-        position: absolute;
-        left: 15px;
-        bottom: 0;
-        width: 24px;
-        height: 4px;
-        border-radius: 999px;
-        background: #fff;
-      }
-
-      .dream-mic-wave {
-        position: absolute;
-        left: 3px;
-        top: 20px;
-        width: 48px;
-        height: 36px;
-        border: 4px solid rgba(255,255,255,0.72);
-        border-top: 0;
-        border-radius: 0 0 999px 999px;
+      @keyframes dreamMicGlow {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.045);
+        }
       }
 
       .dream-builder-input-panel textarea {
@@ -11660,12 +11635,7 @@
           </div>
           <div id="dream-builder-input-panel" class="dream-builder-input-panel hidden">
             <button id="dream-record-btn" class="dream-big-mic" type="button" aria-label="Start recording">
-              <span class="dream-mic-icon" aria-hidden="true">
-                <span class="dream-mic-head"></span>
-                <span class="dream-mic-wave"></span>
-                <span class="dream-mic-stem"></span>
-                <span class="dream-mic-base"></span>
-              </span>
+              <img src="/public/dream-mic-button.png" alt="" aria-hidden="true" />
             </button>
             <p id="dream-record-status" class="muted">Tap the mic, speak your dream life, then tap again to generate the map.</p>
             <div class="dream-provider-row">
