@@ -8780,6 +8780,17 @@
         text-decoration: underline;
       }
 
+      .dream-provider-row {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 8px;
+      }
+
+      .dream-provider-row .dream-text-toggle {
+        padding: 4px 8px !important;
+      }
+
       .dream-map-empty-state,
       .dream-generating-state {
         display: grid;
@@ -11637,7 +11648,7 @@
               <strong>Speak the vision. Watch it grow.</strong>
               <p class="muted">PulseNow turns your dream into a clickable map, milestones, and the next daily move.</p>
             </div>
-            <button class="ghost-btn" data-dream-builder type="button">Dream Builder</button>
+            <button class="ghost-btn" data-dream-builder onclick="window.pulseNowOpenDreamBuilderPanel && window.pulseNowOpenDreamBuilderPanel()" type="button">Dream Builder</button>
           </div>
           <div id="dream-builder-input-panel" class="dream-builder-input-panel hidden">
             <button id="dream-record-btn" class="dream-big-mic" type="button" aria-label="Start recording">
@@ -11648,10 +11659,13 @@
                 <span class="dream-mic-base"></span>
               </span>
             </button>
-            <p id="dream-record-status" class="muted">Tap the mic and speak the dream life you are building.</p>
-            <button id="dream-text-toggle" class="dream-text-toggle" type="button">Add text instead</button>
+            <p id="dream-record-status" class="muted">Tap the mic or use Wispr Flow. Your transcript appears below before the map builds.</p>
+            <div class="dream-provider-row">
+              <button id="dream-text-toggle" class="dream-text-toggle" type="button">Add text instead</button>
+              <button id="dream-wispr-btn" class="dream-text-toggle" type="button">Dictate with Wispr Flow</button>
+            </div>
             <div id="dream-text-entry-panel" class="dream-text-entry-panel hidden">
-              <textarea id="dream-text-input" placeholder="Type or paste the vision here..."></textarea>
+              <textarea id="dream-text-input" placeholder="Your voice or Wispr Flow transcript appears here..."></textarea>
               <button id="dream-text-submit" class="ghost-btn" type="button">Build dream map</button>
             </div>
           </div>
@@ -12277,6 +12291,7 @@
       const dreamRecordBtn = document.getElementById("dream-record-btn");
       const dreamRecordStatus = document.getElementById("dream-record-status");
       const dreamTextToggle = document.getElementById("dream-text-toggle");
+      const dreamWisprBtn = document.getElementById("dream-wispr-btn");
       const dreamTextEntryPanel = document.getElementById("dream-text-entry-panel");
       const dreamTextInput = document.getElementById("dream-text-input");
       const dreamTextSubmit = document.getElementById("dream-text-submit");
@@ -12744,9 +12759,11 @@
       function openDreamBuilderPanel() {
         if (!dreamBuilderInputPanel) return;
         dreamBuilderInputPanel.classList.remove("hidden");
-        if (dreamRecordStatus) dreamRecordStatus.textContent = "Tap the mic and speak the dream life you are building.";
+        if (dreamRecordStatus) dreamRecordStatus.textContent = "Tap the mic or use Wispr Flow. Your transcript appears below before the map builds.";
         dreamBuilderInputPanel.scrollIntoView({ behavior: "smooth", block: "center" });
       }
+
+      window.pulseNowOpenDreamBuilderPanel = openDreamBuilderPanel;
 
       function delay(ms) {
         return new Promise((resolve) => window.setTimeout(resolve, ms));
@@ -12813,6 +12830,14 @@
         if (isHidden && dreamTextInput) window.setTimeout(() => dreamTextInput.focus(), 0);
       }
 
+      function focusWisprDictation() {
+        if (dreamBuilderInputPanel) dreamBuilderInputPanel.classList.remove("hidden");
+        if (dreamTextEntryPanel) dreamTextEntryPanel.classList.remove("hidden");
+        if (dreamTextToggle) dreamTextToggle.textContent = "Hide text option";
+        if (dreamRecordStatus) dreamRecordStatus.textContent = "Wispr Flow is connected here: start Wispr, dictate into this transcript box, then press Build dream map.";
+        if (dreamTextInput) window.setTimeout(() => dreamTextInput.focus(), 0);
+      }
+
       function toggleDreamRecording() {
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         if (!SpeechRecognition) {
@@ -12839,7 +12864,9 @@
             .filter(Boolean)
             .join(" ");
           if (dreamTextInput) dreamTextInput.value = transcript;
-          buildDreamMapFromText(transcript, dreamRecordBtn);
+          if (dreamTextEntryPanel) dreamTextEntryPanel.classList.remove("hidden");
+          if (dreamTextToggle) dreamTextToggle.textContent = "Hide text option";
+          if (dreamRecordStatus) dreamRecordStatus.textContent = "Transcript captured below. Review it, then press Build dream map.";
         };
         dreamRecognition.onerror = () => {
           if (dreamRecordStatus) dreamRecordStatus.textContent = "Voice capture missed that. Try again or add text instead.";
@@ -12954,7 +12981,7 @@
         grid.innerHTML =
           '<div class="dream-map-panel is-mindmap">' +
           '<div class="dream-map-node-list" aria-label="Dream life areas">' +
-          '<button class="dream-map-core" data-dream-builder type="button">' +
+          '<button class="dream-map-core" data-dream-builder onclick="window.pulseNowOpenDreamBuilderPanel && window.pulseNowOpenDreamBuilderPanel()" type="button">' +
           '<span class="dream-map-label">Dream map</span>' +
           "<strong>Future Self</strong>" +
           "<p>" +
@@ -12996,7 +13023,7 @@
           escapeHtml(activeDescription) +
           "</strong></article>" +
           '<div class="dream-map-actions">' +
-          '<button class="ghost-btn" data-dream-builder type="button">Speak the vision. Watch it grow.</button>' +
+          '<button class="ghost-btn" data-dream-builder onclick="window.pulseNowOpenDreamBuilderPanel && window.pulseNowOpenDreamBuilderPanel()" type="button">Speak the vision. Watch it grow.</button>' +
           '<span class="muted">Tap an area to open the next move.</span>' +
           "</div>" +
           "</div>";
@@ -15363,8 +15390,21 @@
       document.querySelectorAll("[data-screen]").forEach((button) => {
         button.addEventListener("click", () => setScreen(button.dataset.screen));
       });
+      document.addEventListener("click", (event) => {
+        const dreamButton = event.target.closest("[data-dream-builder]");
+        if (!dreamButton) return;
+        event.preventDefault();
+        openDreamBuilderPanel();
+      });
       if (dreamRecordBtn) dreamRecordBtn.addEventListener("click", toggleDreamRecording);
       if (dreamTextToggle) dreamTextToggle.addEventListener("click", toggleDreamTextEntry);
+      if (dreamWisprBtn) dreamWisprBtn.addEventListener("click", focusWisprDictation);
+      if (dreamTextInput) {
+        dreamTextInput.addEventListener("input", () => {
+          const hasTranscript = dreamTextInput.value.trim().length > 0;
+          if (hasTranscript && dreamRecordStatus) dreamRecordStatus.textContent = "Transcript ready. Press Build dream map when it sounds right.";
+        });
+      }
       if (dreamTextSubmit) {
         dreamTextSubmit.addEventListener("click", () => buildDreamMapFromText(dreamTextInput && dreamTextInput.value, dreamTextSubmit));
       }
