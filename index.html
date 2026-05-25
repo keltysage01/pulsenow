@@ -10783,6 +10783,113 @@
       .dream-map-actions { display: grid; grid-template-columns: 1fr; gap: 10px; }
       .dream-map-actions .ghost-btn { width: 100%; }
 
+      .dream-map-panel.is-mindmap {
+        gap: 14px;
+      }
+
+      .dream-map-panel.is-mindmap .dream-map-core {
+        width: 136px;
+        height: 136px;
+        min-height: 136px;
+        margin: 0 auto;
+        padding: 16px;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        border-radius: 999px;
+        background-image: linear-gradient(135deg, var(--pulse-navy, #16466d), var(--pulse-teal, #007c7d), var(--pulse-lime, #86bd4d));
+      }
+
+      .dream-map-panel.is-mindmap .dream-map-core strong {
+        font-size: 18px;
+        letter-spacing: 0;
+        line-height: 1.1;
+      }
+
+      .dream-map-panel.is-mindmap .dream-map-core p {
+        font-size: 12px;
+        text-align: center;
+      }
+
+      .dream-map-panel.is-mindmap .dream-map-node-list {
+        position: relative;
+        display: grid;
+        min-height: 280px;
+        place-items: center;
+        overflow: hidden;
+        border: 1px solid rgba(255,255,255,0.58);
+        border-radius: 24px;
+        background: radial-gradient(circle at center, rgba(72,199,217,0.18), transparent 132px), rgba(255,255,255,0.26);
+        padding: 14px;
+      }
+
+      .dream-map-panel.is-mindmap .dream-map-node-list .dream-map-core {
+        position: relative;
+        z-index: 2;
+      }
+
+      .dream-map-panel.is-mindmap .dream-map-node {
+        position: absolute;
+        display: grid;
+        grid-template-columns: 1fr;
+        width: min(42%, 168px);
+        min-height: 62px;
+        gap: 2px;
+        padding: 9px 11px;
+        border-radius: 18px;
+        background: rgba(255,255,255,0.72);
+      }
+
+      .dream-map-panel.is-mindmap .dream-map-node img,
+      .dream-map-panel.is-mindmap .dream-map-node em {
+        display: none;
+      }
+
+      .dream-map-panel.is-mindmap .dream-map-node > span > span {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        font-size: 10px;
+        font-weight: 900;
+      }
+
+      .dream-map-panel.is-mindmap .dream-map-node strong {
+        display: -webkit-box;
+        overflow: hidden;
+        font-size: 14px;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+      }
+
+      .dream-map-panel.is-mindmap .dream-map-node.node-0 { top: 22px; left: 10px; }
+      .dream-map-panel.is-mindmap .dream-map-node.node-1 { top: 22px; right: 10px; }
+      .dream-map-panel.is-mindmap .dream-map-node.node-2 { top: 50%; right: 0; transform: translateY(-50%); }
+      .dream-map-panel.is-mindmap .dream-map-node.node-3 { right: 10px; bottom: 22px; }
+      .dream-map-panel.is-mindmap .dream-map-node.node-4 { left: 10px; bottom: 22px; }
+      .dream-map-panel.is-mindmap .dream-map-node.node-5 { top: 50%; left: 0; transform: translateY(-50%); }
+
+      .dream-map-detail {
+        display: grid;
+        gap: 12px;
+        border: 1px solid rgba(255,255,255,0.68);
+        border-radius: 22px;
+        background: rgba(255,255,255,0.54);
+        padding: 12px;
+      }
+
+      .dream-map-detail img {
+        width: 100%;
+        max-height: 210px;
+        object-fit: cover;
+        border-radius: 18px;
+      }
+
+      .dream-map-detail strong {
+        color: var(--pulse-teal, #007c7d);
+      }
+
       .landing-relationship {
         align-items: start !important;
       }
@@ -11347,8 +11454,8 @@
           </div>
           <div class="dream-builder-card">
             <div>
-              <strong>Build my dream life with AI</strong>
-              <p class="muted">Describe the life you want. PulseNow turns it into a mind map, milestones, and the next daily move.</p>
+              <strong>Speak the vision. Watch it grow.</strong>
+              <p class="muted">PulseNow turns your dream into a clickable map, milestones, and the next daily move.</p>
             </div>
             <button class="ghost-btn" type="button">Dream Builder</button>
           </div>
@@ -11984,9 +12091,12 @@
       let apiPowerPicks = null;
       let lastImportedContacts = [];
       const visionItems = [
-        { id: 1, title: "New Home", progress: "36%", size: "tall", url: "https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=500&q=80" },
-        { id: 2, title: "Debt Free", progress: "52%", size: "wide", url: "https://images.unsplash.com/photo-1554415707-6e8cfc93fe23?auto=format&fit=crop&w=500&q=80" },
-        { id: 3, title: "Family Trip", progress: "74%", size: "tall", url: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=500&q=80" }
+        { id: 1, title: "Peaceful Home Base", area: "Home", description: "A calm, beautiful place that makes the work feel worth it.", next_action: "Save one real image that matches the feeling of home.", progress: "36%", size: "tall", url: "https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=500&q=80" },
+        { id: 2, title: "Financial Margin", area: "Money", description: "Less pressure, more options, and a business rhythm that funds peace.", next_action: "Tie one money goal to this week's contact goal.", progress: "52%", size: "wide", url: "https://images.unsplash.com/photo-1554415707-6e8cfc93fe23?auto=format&fit=crop&w=500&q=80" },
+        { id: 3, title: "People And Memories", area: "Relationships", description: "The people and experiences this work is meant to protect.", next_action: "Write why that experience matters enough to build for.", progress: "74%", size: "tall", url: "https://images.unsplash.com/photo-1511895426328-dc8714191300?auto=format&fit=crop&w=500&q=80" },
+        { id: 4, title: "Strong And Clear", area: "Health", description: "A body and nervous system with enough energy to enjoy what you are building.", next_action: "Schedule one walk, workout, or recovery block this week.", progress: "48%", size: "wide", url: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=500&q=80" },
+        { id: 5, title: "Adventure Fund", area: "Travel", description: "The places, memories, and open-air moments that remind you why freedom matters.", next_action: "Save one travel image and connect it to a weekly business activity.", progress: "41%", size: "tall", url: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=500&q=80" },
+        { id: 6, title: "Impact Work", area: "Purpose", description: "A business that builds confidence, leadership, and service.", next_action: "Pick one person to encourage or serve this week.", progress: "63%", size: "wide", url: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=500&q=80" }
       ];
       const weeklyGoalItems = [
         { label: "Contacts", value: 42, target: 120 },
@@ -12021,7 +12131,7 @@
       const coachStorageKey = "pulsenow_demo_coach";
       const coachProfileStorageKey = "pulsenow_demo_coach_profile";
       const activeDreamStorageKey = "pulsenow_demo_active_dream";
-      const dreamVisionStorageKey = "pulsenow_demo_dream_vision_items";
+      const dreamVisionStorageKey = "pulsenow_demo_dream_vision_items_v2";
       const profileBioStoragePrefix = "pulsenow_demo_profile_bio_";
       const quizProfileStorageKey = "pulsenow_demo_quiz_profile";
       let substepState = {};
@@ -12330,33 +12440,26 @@
         if (!grid) return;
         const activeIndex = ((activeDreamIndex % visionItems.length) + visionItems.length) % visionItems.length;
         const active = visionItems[activeIndex];
-        const nodeText = [
-          "Home, space, and the environment you are building toward.",
-          "Money freedom, pressure removed, and calmer decisions.",
-          "People, memories, travel, and the life this business funds."
-        ];
         const activeDescription = active.next_action || active.milestone || active.description || "Open your map to turn the dream into areas, milestones, and one next move.";
         grid.className = "vision-board-grid dream-map-grid";
         grid.innerHTML =
-          '<div class="dream-map-panel">' +
-          '<button class="dream-map-core" data-dream-builder type="button" style="--dream-image:url(&quot;' +
-          escapeHtml(active.url) +
-          '&quot;)">' +
-          '<span class="dream-map-label">Dream life map</span>' +
-          '<strong>' +
-          escapeHtml(active.title) +
-          "</strong>" +
-          "<p>" +
-          escapeHtml(activeDescription) +
-          "</p>" +
-          "</button>" +
+          '<div class="dream-map-panel is-mindmap">' +
           '<div class="dream-map-node-list" aria-label="Dream life areas">' +
+          '<button class="dream-map-core" data-dream-builder type="button">' +
+          '<span class="dream-map-label">Dream map</span>' +
+          "<strong>Future Self</strong>" +
+          "<p>" +
+          visionItems.length +
+          " areas</p>" +
+          "</button>" +
           visionItems
             .map((item, index) => {
-              const body = item.description || item.next_action || nodeText[index] || "A tangible piece of your dream life.";
+              const body = item.area || item.description || item.next_action || "A tangible piece of your dream life.";
               return (
                 '<button class="dream-map-node' +
                 (index === activeIndex ? " active" : "") +
+                " node-" +
+                index +
                 '" data-dream-index="' +
                 index +
                 '" type="button"><img src="' +
@@ -12370,9 +12473,22 @@
             })
             .join("") +
           "</div>" +
+          '<article class="dream-map-detail">' +
+          '<img src="' +
+          escapeHtml(active.url) +
+          '" alt="" loading="lazy" />' +
+          '<p class="eyebrow">' +
+          escapeHtml(active.area || "Dream area") +
+          "</p><h2>" +
+          escapeHtml(active.title) +
+          '</h2><p class="muted">' +
+          escapeHtml(active.description || "A tangible part of the life you are building.") +
+          "</p><strong>" +
+          escapeHtml(activeDescription) +
+          "</strong></article>" +
           '<div class="dream-map-actions">' +
-          '<button class="ghost-btn" data-dream-builder type="button">Build my dream life with AI</button>' +
-          '<span class="muted">Mind map first, then photos, milestones, and daily action.</span>' +
+          '<button class="ghost-btn" data-dream-builder type="button">Speak the vision. Watch it grow.</button>' +
+          '<span class="muted">Tap an area to open the next move.</span>' +
           "</div>" +
           "</div>";
 
