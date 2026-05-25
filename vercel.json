@@ -1,7 +1,7 @@
 {
   "installCommand": "npm install --omit=dev --ignore-scripts",
   "buildCommand": null,
-  "outputDirectory": ".",
+  "outputDirectory": "dist",
   "crons": [
     {
       "path": "/api/cron/power-list-daily",
