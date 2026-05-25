@@ -12765,6 +12765,17 @@
         return new Promise((resolve) => window.setTimeout(resolve, ms));
       }
 
+      function applyDreamGeneration(data) {
+        const generatedItems = Array.isArray(data?.items) ? data.items : [];
+        generatedItems.slice(0, visionItems.length).forEach((item, index) => {
+          if (item?.title) visionItems[index].title = String(item.title).slice(0, 34);
+          if (item?.image_url) visionItems[index].url = item.image_url;
+          ["area", "description", "milestone", "next_action", "image_prompt"].forEach((key) => {
+            if (item?.[key]) visionItems[index][key] = String(item[key]).slice(0, key === "title" ? 34 : 220);
+          });
+        });
+      }
+
       async function buildDreamMapFromText(prompt, sourceButton) {
         const cleanPrompt = String(prompt || "").trim();
         if (cleanPrompt.length < 8) {
@@ -12794,14 +12805,7 @@
               session: getCurrentSession()
             })
           });
-          const generatedItems = Array.isArray(data?.items) ? data.items : [];
-          generatedItems.slice(0, visionItems.length).forEach((item, index) => {
-            if (item?.title) visionItems[index].title = String(item.title).slice(0, 34);
-            if (item?.image_url) visionItems[index].url = item.image_url;
-            ["area", "description", "milestone", "next_action", "image_prompt"].forEach((key) => {
-              if (item?.[key]) visionItems[index][key] = String(item[key]).slice(0, key === "title" ? 34 : 220);
-            });
-          });
+          applyDreamGeneration(data);
         } catch (error) {
           visionItems[activeDreamIndex].title = fallbackTitle;
           visionItems[activeDreamIndex].description = "A first version of your dream map. Add more detail to sharpen this area.";
@@ -12852,17 +12856,17 @@
         });
       }
 
-      async function transcribeDreamAudio(audioBlob) {
+      async function generateDreamMapFromAudio(audioBlob) {
         const audioBase64 = await blobToBase64(audioBlob);
-        const data = await apiRequest("/api/dream-life/transcribe", {
+        return apiRequest("/api/dream-life/generate", {
           method: "POST",
           body: JSON.stringify({
             audio_base64: audioBase64,
             mime_type: audioBlob.type || "audio/webm",
+            current_items: visionItems,
             session: getCurrentSession()
           })
         });
-        return String(data.transcript || "").trim();
       }
 
       async function finishDreamRecording() {
@@ -12881,17 +12885,23 @@
         }
         try {
           if (dreamRecordStatus) dreamRecordStatus.textContent = "Transcribing your voice...";
-          const transcript = await transcribeDreamAudio(audioBlob);
-          if (!transcript || transcript.length < 8) {
-            throw new Error("Transcript was too short.");
-          }
-          if (dreamTextInput) dreamTextInput.value = transcript;
-          if (dreamRecordStatus) dreamRecordStatus.textContent = "Generating your dream life...";
-          await buildDreamMapFromText(transcript, dreamRecordBtn);
+          dreamMapReady = false;
+          dreamMapGenerating = true;
+          renderVisionWorkspace();
+          const data = await generateDreamMapFromAudio(audioBlob);
+          if (dreamTextInput && data.transcript) dreamTextInput.value = String(data.transcript);
+          applyDreamGeneration(data);
+          saveDreamVisionItems();
+          dreamMapGenerating = false;
+          dreamMapReady = true;
+          if (dreamRecordStatus) dreamRecordStatus.textContent = "Your map is ready. Tap any area to open the next move.";
+          renderVisionWorkspace();
         } catch (error) {
+          dreamMapGenerating = false;
           if (dreamRecordStatus) dreamRecordStatus.textContent = "Voice generation missed that. Tap the mic again or add text instead.";
           if (dreamTextEntryPanel) dreamTextEntryPanel.classList.remove("hidden");
           if (dreamTextToggle) dreamTextToggle.textContent = "Hide text option";
+          renderVisionWorkspace();
         } finally {
           if (dreamRecordBtn) dreamRecordBtn.disabled = false;
         }

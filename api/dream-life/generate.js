@@ -1,5 +1,7 @@
 import { getSessionFromRequest, getSupabaseAdmin, readJson, sendJson } from '../_lib/pulse-utils.js';
 
+const MAX_AUDIO_BYTES = 25 * 1024 * 1024;
+
 const FALLBACK_IMAGES = {
   home: 'https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=900&q=80',
   money: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=900&q=80',
@@ -47,7 +49,17 @@ export default async function handler(req, res) {
   try {
     const body = await readJson(req);
     const session = getSessionFromRequest(req, body);
-    const prompt = String(body.prompt || '').trim();
+    let prompt = String(body.prompt || '').trim();
+    let transcript = '';
+
+    if (!prompt && body.audio_base64) {
+      transcript = await transcribeDreamAudio({
+        audioBase64: String(body.audio_base64 || ''),
+        mimeType: String(body.mime_type || 'audio/webm').slice(0, 80),
+      });
+      prompt = transcript;
+    }
+
     if (prompt.length < 8) return sendJson(res, 400, { error: 'prompt_required' });
     if (prompt.length > 20000) return sendJson(res, 413, { error: 'prompt_too_large' });
 
@@ -75,6 +87,7 @@ export default async function handler(req, res) {
         categories: items,
       },
       items,
+      transcript: transcript || undefined,
       note,
     };
 
@@ -82,6 +95,42 @@ export default async function handler(req, res) {
     return sendJson(res, 200, response);
   } catch (error) {
     return sendJson(res, 500, { error: error.message || 'dream_life_generation_failed' });
+  }
+}
+
+async function transcribeDreamAudio({ audioBase64, mimeType }) {
+  if (!process.env.OPENAI_API_KEY) throw new Error('voice_transcription_not_configured');
+  if (!audioBase64) throw new Error('audio_required');
+
+  const audioBuffer = Buffer.from(audioBase64, 'base64');
+  if (audioBuffer.length < 1200) throw new Error('audio_too_short');
+  if (audioBuffer.length > MAX_AUDIO_BYTES) throw new Error('audio_too_large');
+
+  const extension = mimeType.includes('mp4') || mimeType.includes('aac') ? 'mp4' : 'webm';
+  const form = new FormData();
+  form.append('model', process.env.OPENAI_TRANSCRIBE_MODEL || 'gpt-4o-mini-transcribe');
+  form.append('file', new Blob([audioBuffer], { type: mimeType }), `dream-life-recording.${extension}`);
+
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 45000);
+  try {
+    const response = await fetch('https://api.openai.com/v1/audio/transcriptions', {
+      method: 'POST',
+      signal: controller.signal,
+      headers: {
+        authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+      },
+      body: form,
+    });
+
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data?.error?.message || 'voice_transcription_failed');
+
+    const transcript = String(data.text || '').trim();
+    if (!transcript) throw new Error('empty_transcript');
+    return transcript;
+  } finally {
+    clearTimeout(timeout);
   }
 }
 
