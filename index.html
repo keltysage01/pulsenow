@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#38B249" />
     <title>Pulsenow</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="public/design-system/pulsenow.tokens.css" />
     <style>
       :root {
@@ -8824,6 +8827,539 @@
         to { transform: rotate(360deg); }
       }
 
+      :root {
+        --dl-mint: #DFF7EF;
+        --dl-soft-mint: #F1FCF8;
+        --dl-teal-soft: #BFEFF1;
+        --dl-line: rgba(22, 90, 128, 0.14);
+        --dl-blush: #F8DFE6;
+        --dl-gold: #F8D56B;
+        --dl-success: #88C76D;
+        --dl-serif: "Cormorant Garamond", Georgia, serif;
+      }
+
+      .app.dream-life-active {
+        padding-bottom: 0;
+      }
+
+      .app.dream-life-active .bottom-nav {
+        display: none !important;
+      }
+
+      .dream-life-entry-card {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        gap: 14px;
+        align-items: center;
+        width: 100%;
+        margin: 0 0 18px;
+        padding: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.82);
+        border-radius: 26px;
+        background:
+          radial-gradient(circle at 88% 12%, rgba(136, 199, 109, 0.24), transparent 34%),
+          linear-gradient(135deg, rgba(255, 255, 255, 0.86), rgba(224, 250, 250, 0.68));
+        box-shadow: 0 18px 44px rgba(31, 65, 85, 0.1);
+        color: var(--text);
+        text-align: left;
+      }
+
+      .dream-life-entry-card:hover,
+      .dream-life-entry-card:focus-visible {
+        transform: translateY(-1px);
+        box-shadow: 0 22px 50px rgba(31, 65, 85, 0.14);
+      }
+
+      .dl-entry-icon {
+        display: grid;
+        width: 54px;
+        height: 54px;
+        place-items: center;
+        border-radius: 18px;
+        background: linear-gradient(135deg, #155676, #4dc7d7 52%, #8bd66d);
+        box-shadow: 0 12px 28px rgba(72, 199, 217, 0.22);
+      }
+
+      .dl-entry-icon img {
+        width: 52px;
+        height: 52px;
+        border-radius: 999px;
+        object-fit: cover;
+      }
+
+      .dl-entry-title {
+        display: block;
+        color: var(--pulse-navy, #16466d);
+        font-size: 19px;
+        font-weight: 760;
+        letter-spacing: 0;
+      }
+
+      .dl-entry-sub {
+        display: block;
+        margin-top: 3px;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.35;
+      }
+
+      .dl-entry-arrow {
+        color: var(--pulse-teal, #1699a8);
+        font-size: 24px;
+        font-weight: 800;
+      }
+
+      .dream-life-flow {
+        padding-bottom: 32px;
+      }
+
+      .dl-shell {
+        display: grid;
+        gap: 18px;
+      }
+
+      .dl-topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding-top: 4px;
+      }
+
+      .dl-back-btn,
+      .dl-mini-btn {
+        min-height: 40px !important;
+        border: 1px solid rgba(22, 90, 128, 0.12) !important;
+        border-radius: 999px !important;
+        background: rgba(255, 255, 255, 0.72) !important;
+        color: var(--pulse-navy, #16466d) !important;
+        box-shadow: 0 12px 28px rgba(31, 65, 85, 0.08) !important;
+      }
+
+      .dl-brand-mark {
+        color: var(--pulse-teal, #1699a8);
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+      }
+
+      .dl-card {
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.84);
+        border-radius: 32px;
+        background:
+          radial-gradient(circle at 88% 12%, rgba(136, 199, 109, 0.2), transparent 34%),
+          linear-gradient(160deg, rgba(255, 255, 255, 0.9), rgba(231, 251, 247, 0.72));
+        box-shadow: 0 24px 70px rgba(31, 65, 85, 0.12);
+        padding: 24px;
+      }
+
+      .dl-hero {
+        min-height: 540px;
+        display: grid;
+        align-content: center;
+        justify-items: center;
+        text-align: center;
+      }
+
+      .dl-eyebrow {
+        color: var(--pulse-teal, #1699a8);
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+      }
+
+      .dl-title {
+        margin: 8px auto 0;
+        max-width: 520px;
+        color: var(--pulse-navy, #16466d);
+        font-family: var(--dl-serif);
+        font-size: clamp(42px, 10vw, 72px);
+        line-height: 0.9;
+        letter-spacing: 0;
+      }
+
+      .dl-copy {
+        max-width: 440px;
+        margin: 14px auto 0;
+        color: var(--muted);
+        font-size: 16px;
+        line-height: 1.55;
+      }
+
+      .dl-mic-stage {
+        position: relative;
+        display: grid;
+        width: min(78vw, 250px);
+        aspect-ratio: 1;
+        margin: 30px auto 0;
+        place-items: center;
+      }
+
+      .dl-orb-ring {
+        position: absolute;
+        inset: 0;
+        border: 1px solid rgba(255, 255, 255, 0.82);
+        border-radius: 50%;
+        box-shadow: inset 0 0 42px rgba(255, 255, 255, 0.54);
+      }
+
+      .dl-orb-ring:nth-child(2) {
+        inset: 16px;
+        opacity: 0.72;
+      }
+
+      .dl-record-btn {
+        position: relative;
+        z-index: 2;
+        display: grid;
+        width: 164px;
+        height: 164px;
+        place-items: center;
+        border: 0 !important;
+        border-radius: 999px !important;
+        background: transparent !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+      }
+
+      .dl-record-btn img {
+        width: 100%;
+        height: 100%;
+        display: block;
+        border-radius: 999px;
+        object-fit: cover;
+        filter: drop-shadow(0 18px 32px rgba(31, 65, 85, 0.18));
+      }
+
+      .dl-record-btn.is-recording img {
+        animation: dlMicPulse 1.35s ease-in-out infinite;
+        filter:
+          drop-shadow(0 0 18px rgba(72, 199, 217, 0.78))
+          drop-shadow(0 0 42px rgba(136, 199, 109, 0.55));
+      }
+
+      @keyframes dlMicPulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.045); }
+      }
+
+      .dl-waveform-ring {
+        position: absolute;
+        inset: 2px;
+        border-radius: 50%;
+        pointer-events: none;
+      }
+
+      .dl-wave-bar {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 3px;
+        height: var(--bar-height, 18px);
+        border-radius: 999px;
+        background: linear-gradient(180deg, rgba(72, 199, 217, 0.9), rgba(136, 199, 109, 0.72));
+        transform: rotate(var(--angle)) translateY(-123px);
+        transform-origin: center top;
+        opacity: 0.22;
+      }
+
+      .dl-recording .dl-wave-bar {
+        animation: dlWave 900ms ease-in-out infinite;
+        animation-delay: var(--delay);
+        opacity: 0.8;
+      }
+
+      @keyframes dlWave {
+        0%, 100% { height: 12px; opacity: 0.32; }
+        50% { height: var(--bar-height); opacity: 0.95; }
+      }
+
+      .dl-actions {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 22px;
+      }
+
+      .dl-primary-btn {
+        min-height: 48px !important;
+        border: 0 !important;
+        border-radius: 999px !important;
+        background: linear-gradient(135deg, #155676, #4dc7d7 55%, #8bd66d) !important;
+        color: #fff !important;
+        padding: 0 22px !important;
+        font-weight: 760 !important;
+        box-shadow: 0 14px 34px rgba(72, 199, 217, 0.24) !important;
+      }
+
+      .dl-text-panel {
+        display: grid;
+        width: 100%;
+        gap: 10px;
+        margin-top: 16px;
+      }
+
+      .dl-text-panel textarea {
+        min-height: 130px;
+        resize: vertical;
+        border: 1px solid var(--dl-line);
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.72);
+        padding: 14px;
+        color: var(--text);
+        font: inherit;
+        line-height: 1.5;
+      }
+
+      .dl-hidden {
+        display: none !important;
+      }
+
+      .dl-processing-list {
+        display: grid;
+        gap: 12px;
+        width: 100%;
+        max-width: 440px;
+        margin: 28px auto 0;
+      }
+
+      .dl-process-step {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 13px 14px;
+        border: 1px solid rgba(255, 255, 255, 0.76);
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.56);
+        color: var(--pulse-navy, #16466d);
+        font-weight: 700;
+      }
+
+      .dl-process-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 999px;
+        background: var(--dl-success);
+        box-shadow: 0 0 0 8px rgba(136, 199, 109, 0.16);
+      }
+
+      .dl-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+        margin-top: 18px;
+      }
+
+      .dl-reflection-card,
+      .dl-vision-tile,
+      .dl-align-card,
+      .dl-heard-card,
+      .dl-declaration-card {
+        border: 1px solid rgba(255, 255, 255, 0.78);
+        border-radius: 24px;
+        background: rgba(255, 255, 255, 0.62);
+        box-shadow: 0 16px 36px rgba(31, 65, 85, 0.08);
+      }
+
+      .dl-reflection-card {
+        display: grid;
+        gap: 8px;
+        min-height: 154px;
+        padding: 16px;
+      }
+
+      .dl-reflection-icon {
+        font-size: 25px;
+      }
+
+      .dl-reflection-card h3,
+      .dl-vision-tile h3 {
+        margin: 0;
+        color: var(--pulse-navy, #16466d);
+        font-size: 17px;
+        line-height: 1.12;
+      }
+
+      .dl-reflection-card p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.38;
+      }
+
+      .dl-pill-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      .dl-pill {
+        border-radius: 999px;
+        background: rgba(72, 199, 217, 0.12);
+        color: var(--pulse-navy, #16466d);
+        padding: 5px 8px;
+        font-size: 11px;
+        font-weight: 760;
+      }
+
+      .dl-heard-card,
+      .dl-declaration-card {
+        margin-top: 14px;
+        padding: 18px;
+      }
+
+      .dl-heard-card p,
+      .dl-declaration-card p {
+        margin: 8px 0 0;
+        color: var(--muted);
+        line-height: 1.5;
+      }
+
+      .dl-vision-tile {
+        overflow: hidden;
+        min-height: 228px;
+      }
+
+      .dl-vision-tile img {
+        width: 100%;
+        height: 132px;
+        display: block;
+        object-fit: cover;
+      }
+
+      .dl-vision-body {
+        padding: 14px;
+      }
+
+      .dl-vision-body p {
+        margin: 7px 0 0;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.38;
+      }
+
+      .dl-declaration-card {
+        background:
+          radial-gradient(circle at 100% 0%, rgba(248, 213, 107, 0.24), transparent 34%),
+          rgba(255, 255, 255, 0.66);
+      }
+
+      .dl-declaration-card strong {
+        color: var(--pulse-navy, #16466d);
+        font-family: var(--dl-serif);
+        font-size: 28px;
+        line-height: 1.03;
+      }
+
+      .dl-score-wrap {
+        display: grid;
+        place-items: center;
+        margin: 24px auto 10px;
+      }
+
+      .dl-score-ring {
+        position: relative;
+        width: 210px;
+        height: 210px;
+      }
+
+      .dl-score-ring svg {
+        transform: rotate(-90deg);
+      }
+
+      .dl-score-center {
+        position: absolute;
+        inset: 26px;
+        display: grid;
+        place-items: center;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.68);
+        text-align: center;
+      }
+
+      .dl-score-center strong {
+        color: var(--pulse-navy, #16466d);
+        font-family: var(--dl-serif);
+        font-size: 58px;
+        line-height: 0.88;
+      }
+
+      .dl-score-center span {
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      .dl-align-list {
+        display: grid;
+        gap: 12px;
+        margin-top: 18px;
+      }
+
+      .dl-align-card {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 12px;
+        align-items: center;
+        padding: 14px;
+      }
+
+      .dl-week-dot {
+        display: grid;
+        width: 44px;
+        height: 44px;
+        place-items: center;
+        border-radius: 999px;
+        background: linear-gradient(135deg, rgba(72, 199, 217, 0.84), rgba(136, 199, 109, 0.82));
+        color: #fff;
+        font-weight: 820;
+      }
+
+      .dl-align-card strong {
+        color: var(--pulse-navy, #16466d);
+      }
+
+      .dl-align-card p {
+        margin: 3px 0 0;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.35;
+      }
+
+      @media (max-width: 520px) {
+        .dream-life-entry-card {
+          grid-template-columns: auto 1fr;
+        }
+
+        .dl-entry-arrow {
+          display: none;
+        }
+
+        .dl-card {
+          padding: 20px;
+          border-radius: 28px;
+        }
+
+        .dl-hero {
+          min-height: 520px;
+        }
+
+        .dl-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .dl-wave-bar {
+          transform: rotate(var(--angle)) translateY(-112px);
+        }
+      }
+
       #today-path-card.card.today-path-card {
         padding: 20px !important;
       }
@@ -11969,6 +12505,15 @@
       </main>
 
       <main id="board-screen" class="shell hidden">
+        <button class="dream-life-entry-card" data-screen="dream-life" type="button" aria-label="Open Dream Life Builder">
+          <span class="dl-entry-icon"><img src="/public/dream-mic-button.png" alt="" aria-hidden="true" /></span>
+          <span>
+            <span class="dl-entry-title">Dream Life</span>
+            <span class="dl-entry-sub">Speak your vision into existence, then turn it into a beautiful map and weekly actions.</span>
+          </span>
+          <span class="dl-entry-arrow" aria-hidden="true">→</span>
+        </button>
+
         <section class="card">
           <div class="section-head">
             <div>
@@ -12014,6 +12559,86 @@
           </div>
           <div id="competition-list" class="competition-list"></div>
         </section>
+      </main>
+
+      <main id="dream-life-screen" class="shell hidden dream-life-flow">
+        <div class="dl-shell">
+          <div class="dl-topbar">
+            <button id="dl-back-home" class="dl-back-btn" type="button">Back</button>
+            <span class="dl-brand-mark">Dream Life</span>
+            <button id="dl-reset-btn" class="dl-mini-btn" type="button">New</button>
+          </div>
+
+          <section id="dl-screen-voice" class="dl-card dl-hero">
+            <p class="dl-eyebrow">Dream Life Builder</p>
+            <h1 class="dl-title">Speak the vision. Watch it grow.</h1>
+            <p id="dl-record-status" class="dl-copy">Tap the microphone, say what you want your life to look and feel like, then tap again to generate it.</p>
+            <div id="dl-mic-stage" class="dl-mic-stage">
+              <span class="dl-orb-ring" aria-hidden="true"></span>
+              <span class="dl-orb-ring" aria-hidden="true"></span>
+              <div id="dl-waveform-ring" class="dl-waveform-ring" aria-hidden="true"></div>
+              <button id="dl-record-btn" class="dl-record-btn" type="button" aria-label="Start Dream Life recording">
+                <img src="/public/dream-mic-button.png" alt="" aria-hidden="true" />
+              </button>
+            </div>
+            <div class="dl-actions">
+              <button id="dl-text-toggle" class="dl-mini-btn" type="button">Add text instead</button>
+              <button id="dl-demo-btn" class="dl-mini-btn" type="button">Try demo</button>
+            </div>
+            <div id="dl-text-panel" class="dl-text-panel dl-hidden">
+              <textarea id="dl-text-input" placeholder="Type your dream life here..."></textarea>
+              <button id="dl-text-submit" class="dl-primary-btn" type="button">Generate your dream life</button>
+            </div>
+          </section>
+
+          <section id="dl-screen-processing" class="dl-card dl-hero dl-hidden">
+            <p class="dl-eyebrow">Generating</p>
+            <h2 class="dl-title">Generating your dream life</h2>
+            <p class="dl-copy">PulseNow is turning your words into themes, imagery, a future-self declaration, and the next aligned moves.</p>
+            <div class="dl-processing-list">
+              <div class="dl-process-step"><span class="dl-process-dot"></span><span>Listening for the feeling</span></div>
+              <div class="dl-process-step"><span class="dl-process-dot"></span><span>Organizing your life areas</span></div>
+              <div class="dl-process-step"><span class="dl-process-dot"></span><span>Building the visual map</span></div>
+              <div class="dl-process-step"><span class="dl-process-dot"></span><span>Choosing aligned actions</span></div>
+            </div>
+          </section>
+
+          <section id="dl-screen-reflection" class="dl-card dl-hidden">
+            <p class="dl-eyebrow">AI Reflection</p>
+            <h2 class="dl-title">Here is what I heard.</h2>
+            <p class="dl-copy">These are the clearest pieces of the life you described.</p>
+            <div id="dl-reflection-grid" class="dl-grid"></div>
+            <div id="dl-heard-card" class="dl-heard-card"></div>
+            <div class="dl-actions">
+              <button id="dl-generate-vision-btn" class="dl-primary-btn" type="button">Generate my vision</button>
+              <button class="dl-mini-btn" data-dl-goto="voice" type="button">Edit</button>
+            </div>
+          </section>
+
+          <section id="dl-screen-vision" class="dl-card dl-hidden">
+            <p class="dl-eyebrow">My Vision</p>
+            <h2 class="dl-title">The life you are building.</h2>
+            <p class="dl-copy">Tap back anytime to record a sharper version. This draft stays saved on this device.</p>
+            <div id="dl-vision-grid" class="dl-grid"></div>
+            <div id="dl-declaration-card" class="dl-declaration-card"></div>
+            <div class="dl-actions">
+              <button id="dl-see-alignment-btn" class="dl-primary-btn" type="button">See my alignment</button>
+              <button class="dl-mini-btn" data-dl-goto="voice" type="button">Record again</button>
+            </div>
+          </section>
+
+          <section id="dl-screen-alignment" class="dl-card dl-hidden">
+            <p class="dl-eyebrow">Alignment</p>
+            <h2 class="dl-title">Keep it moving.</h2>
+            <p class="dl-copy">A dream becomes practical when today has one clear next move.</p>
+            <div id="dl-score-wrap" class="dl-score-wrap"></div>
+            <div id="dl-align-list" class="dl-align-list"></div>
+            <div class="dl-actions">
+              <button class="dl-primary-btn" data-dl-goto="voice" type="button">Add more vision</button>
+              <button class="dl-mini-btn" data-dl-goto="vision" type="button">Back to vision</button>
+            </div>
+          </section>
+        </div>
       </main>
 
       <main id="me-screen" class="shell hidden">
@@ -12240,6 +12865,7 @@
       const powerlistScreen = document.getElementById("powerlist-screen");
       const pipelineScreen = document.getElementById("pipeline-screen");
       const boardScreen = document.getElementById("board-screen");
+      const dreamLifeScreen = document.getElementById("dream-life-screen");
       const meScreen = document.getElementById("me-screen");
       const coachScreen = document.getElementById("coach-screen");
       const quizScreen = document.getElementById("quiz-screen");
@@ -12284,6 +12910,25 @@
       const dreamTextEntryPanel = document.getElementById("dream-text-entry-panel");
       const dreamTextInput = document.getElementById("dream-text-input");
       const dreamTextSubmit = document.getElementById("dream-text-submit");
+      const dlBackHome = document.getElementById("dl-back-home");
+      const dlResetBtn = document.getElementById("dl-reset-btn");
+      const dlRecordBtn = document.getElementById("dl-record-btn");
+      const dlRecordStatus = document.getElementById("dl-record-status");
+      const dlMicStage = document.getElementById("dl-mic-stage");
+      const dlWaveformRing = document.getElementById("dl-waveform-ring");
+      const dlTextToggle = document.getElementById("dl-text-toggle");
+      const dlTextPanel = document.getElementById("dl-text-panel");
+      const dlTextInput = document.getElementById("dl-text-input");
+      const dlTextSubmit = document.getElementById("dl-text-submit");
+      const dlDemoBtn = document.getElementById("dl-demo-btn");
+      const dlReflectionGrid = document.getElementById("dl-reflection-grid");
+      const dlHeardCard = document.getElementById("dl-heard-card");
+      const dlGenerateVisionBtn = document.getElementById("dl-generate-vision-btn");
+      const dlVisionGrid = document.getElementById("dl-vision-grid");
+      const dlDeclarationCard = document.getElementById("dl-declaration-card");
+      const dlSeeAlignmentBtn = document.getElementById("dl-see-alignment-btn");
+      const dlScoreWrap = document.getElementById("dl-score-wrap");
+      const dlAlignList = document.getElementById("dl-align-list");
 
       if ("scrollRestoration" in history) {
         history.scrollRestoration = "manual";
@@ -12330,6 +12975,7 @@
         board: ["dashboard", "pulsenow_dashboard_12.svg"],
         coach: ["coach", "pulsenow_coach_03.svg"],
         quiz: ["coach", "pulsenow_coach_15.svg"],
+        "dream-life": ["ambient", "pulsenow_ambient_04.svg"],
         contacts: ["crm", "pulsenow_crm_01.svg"],
         powerlist: ["crm", "pulsenow_crm_08.svg"],
         pipeline: ["crm", "pulsenow_crm_13.svg"],
@@ -12351,10 +12997,17 @@
       const coachIqDismissedStorageKey = "pulsenow_demo_coach_iq_dismissed";
       const activeDreamStorageKey = "pulsenow_demo_active_dream";
       const dreamVisionStorageKey = "pulsenow_demo_dream_vision_items_v2";
+      const dreamLifeStorageKey = "pulsenow_demo_dream_life_vision_v1";
       const profileBioStoragePrefix = "pulsenow_demo_profile_bio_";
       const quizProfileStorageKey = "pulsenow_demo_quiz_profile";
       let dreamMapReady = false;
       let dreamMapGenerating = false;
+      let dreamLifeVision = null;
+      let dlMediaRecorder = null;
+      let dlAudioChunks = [];
+      let dlAudioStream = null;
+      let dlRecordingTimeout = null;
+      let dlRecording = false;
       let substepState = {};
       let quizState = {
         type: "working_genius",
@@ -12753,16 +13406,322 @@
       loadDreamVisionItems();
 
       function openDreamBuilderPanel() {
-        if (!dreamBuilderInputPanel) return;
-        dreamBuilderInputPanel.classList.remove("hidden");
-        if (dreamRecordStatus) dreamRecordStatus.textContent = "Tap the mic, speak your dream life, then tap again to generate the map.";
-        dreamBuilderInputPanel.scrollIntoView({ behavior: "smooth", block: "center" });
+        openDreamLifeFlow();
       }
 
       window.pulseNowOpenDreamBuilderPanel = openDreamBuilderPanel;
 
       function delay(ms) {
         return new Promise((resolve) => window.setTimeout(resolve, ms));
+      }
+
+      const dreamLifeDemoPrompt = "I want a peaceful home with big windows, more financial breathing room, stronger health, more travel with my family, work that feels meaningful, and a daily rhythm that feels calm instead of rushed.";
+      const dreamLifeCategoryImages = {
+        home: "https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=900&q=82",
+        money: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=900&q=82",
+        relationships: "https://images.unsplash.com/photo-1511895426328-dc8714191300?auto=format&fit=crop&w=900&q=82",
+        travel: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=900&q=82",
+        health: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=900&q=82",
+        purpose: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=900&q=82",
+        other: "https://images.unsplash.com/photo-1490730141103-6cac27aaab94?auto=format&fit=crop&w=900&q=82"
+      };
+      const dreamLifeCategoryIcons = {
+        home: "⌂",
+        money: "$",
+        relationships: "♡",
+        travel: "✦",
+        health: "+",
+        purpose: "↑",
+        other: "•"
+      };
+
+      function getDreamLifeCategoryKey(value) {
+        const text = String(value || "").toLowerCase();
+        if (/home|house|space|base/.test(text)) return "home";
+        if (/money|financial|income|margin|wealth|fund/.test(text)) return "money";
+        if (/family|relationship|people|marriage|friend/.test(text)) return "relationships";
+        if (/travel|adventure|trip|place|world/.test(text)) return "travel";
+        if (/health|body|strong|energy|fitness|nervous/.test(text)) return "health";
+        if (/purpose|impact|work|career|business|service/.test(text)) return "purpose";
+        return "other";
+      }
+
+      function saveDreamLifeVision() {
+        if (!dreamLifeVision) return;
+        try {
+          localStorage.setItem(dreamLifeStorageKey, JSON.stringify(dreamLifeVision));
+        } catch {
+          // Keep the session usable even when local storage is not available.
+        }
+      }
+
+      function loadDreamLifeVision() {
+        try {
+          const saved = JSON.parse(localStorage.getItem(dreamLifeStorageKey) || "null");
+          if (saved && Array.isArray(saved.categories)) dreamLifeVision = saved;
+        } catch {
+          dreamLifeVision = null;
+        }
+      }
+
+      function buildDreamLifeFallback(prompt) {
+        const clean = String(prompt || dreamLifeDemoPrompt).trim();
+        const firstSentence = clean.split(/[.!?]/)[0] || "A life with peace, margin, energy, and people I love";
+        const fallbackItems = [
+          ["home", "Peaceful Home Base", "A calm, beautiful home that makes the work feel worth it.", "Create one small corner that feels like the future home."],
+          ["money", "Financial Breathing Room", "More margin, more options, and less pressure around every decision.", "Connect this week's contact goal to one specific money target."],
+          ["relationships", "People And Memories", "A life rich with family, friendship, and moments that feel protected.", "Plan one meaningful touchpoint with someone who matters."],
+          ["travel", "Adventure With Freedom", "Open-air experiences that remind you what the effort is for.", "Save one real place and attach it to a business milestone."],
+          ["health", "Strong And Clear", "A body and nervous system with enough energy to enjoy the dream.", "Schedule one recovery or movement block this week."],
+          ["purpose", "Work With Impact", "Useful work that builds confidence, leadership, and service.", "Pick one person to help or encourage today."]
+        ];
+        return {
+          transcript: clean,
+          title: "Future Self",
+          what_i_heard: firstSentence,
+          center_declaration: "I am building a life that feels peaceful, free, connected, and fully alive.",
+          future_self_statement: "I become this version of myself by taking one aligned action every day.",
+          alignment_score: 72,
+          categories: fallbackItems.map(([key, title, statement, action]) => ({
+            category_key: key,
+            display_name: title,
+            distilled_statement: statement,
+            present_tense_declaration: action,
+            image_url: dreamLifeCategoryImages[key],
+            feeling_words: key === "money" ? ["secure", "free"] : key === "health" ? ["strong", "clear"] : ["peaceful", "alive"]
+          })),
+          aligned_actions: fallbackItems.slice(0, 3).map(([, title, , action], index) => ({
+            day: index + 1,
+            title,
+            action
+          }))
+        };
+      }
+
+      function normalizeDreamLifeResponse(data, prompt) {
+        const base = buildDreamLifeFallback(data?.transcript || prompt);
+        const items = Array.isArray(data?.items) && data.items.length ? data.items : [];
+        if (!items.length) return base;
+        const categories = items.slice(0, 6).map((item, index) => {
+          const categoryKey = getDreamLifeCategoryKey(item?.area || item?.title || item?.description);
+          const title = String(item?.title || item?.area || base.categories[index % base.categories.length].display_name).slice(0, 42);
+          const description = String(item?.description || base.categories[index % base.categories.length].distilled_statement).slice(0, 220);
+          return {
+            category_key: categoryKey,
+            display_name: title,
+            distilled_statement: description,
+            present_tense_declaration: String(item?.next_action || item?.milestone || base.categories[index % base.categories.length].present_tense_declaration).slice(0, 180),
+            image_url: item?.image_url || dreamLifeCategoryImages[categoryKey] || dreamLifeCategoryImages.other,
+            feeling_words: Array.isArray(item?.feeling_words) ? item.feeling_words.slice(0, 3) : base.categories[index % base.categories.length].feeling_words
+          };
+        });
+        return {
+          ...base,
+          transcript: String(data?.transcript || prompt || base.transcript),
+          what_i_heard: String(data?.summary || data?.what_i_heard || base.what_i_heard),
+          center_declaration: String(data?.center_declaration || base.center_declaration),
+          future_self_statement: String(data?.future_self_statement || base.future_self_statement),
+          categories,
+          aligned_actions: categories.slice(0, 3).map((category, index) => ({
+            day: index + 1,
+            title: category.display_name,
+            action: category.present_tense_declaration
+          })),
+          alignment_score: Math.max(58, Math.min(94, Number(data?.alignment_score) || 72 + Math.min(12, categories.length * 2)))
+        };
+      }
+
+      function buildDreamLifeWaveform() {
+        if (!dlWaveformRing) return;
+        dlWaveformRing.innerHTML = Array.from({ length: 44 }, (_, index) => {
+          const height = 12 + ((index * 7) % 28);
+          return '<span class="dl-wave-bar" style="--angle:' + (index * (360 / 44)) + 'deg;--bar-height:' + height + 'px;--delay:' + (index * 24) + 'ms"></span>';
+        }).join("");
+      }
+
+      function dlShowStep(step) {
+        ["voice", "processing", "reflection", "vision", "alignment"].forEach((name) => {
+          const node = document.getElementById("dl-screen-" + name);
+          if (node) node.classList.toggle("dl-hidden", name !== step);
+        });
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
+      function renderDreamLifeReflection() {
+        if (!dreamLifeVision || !dlReflectionGrid || !dlHeardCard) return;
+        dlReflectionGrid.innerHTML = dreamLifeVision.categories.map((category) => (
+          '<article class="dl-reflection-card">' +
+          '<div class="dl-reflection-icon" aria-hidden="true">' + escapeHtml(dreamLifeCategoryIcons[category.category_key] || dreamLifeCategoryIcons.other) + "</div>" +
+          "<h3>" + escapeHtml(category.display_name) + "</h3>" +
+          "<p>" + escapeHtml(category.distilled_statement) + "</p>" +
+          '<div class="dl-pill-row">' +
+          (category.feeling_words || []).slice(0, 3).map((word) => '<span class="dl-pill">' + escapeHtml(word) + "</span>").join("") +
+          "</div></article>"
+        )).join("");
+        dlHeardCard.innerHTML = '<strong>What I heard</strong><p>' + escapeHtml(dreamLifeVision.what_i_heard || dreamLifeVision.transcript || "") + "</p>";
+      }
+
+      function renderDreamLifeVision() {
+        if (!dreamLifeVision || !dlVisionGrid || !dlDeclarationCard) return;
+        dlVisionGrid.innerHTML = dreamLifeVision.categories.map((category) => (
+          '<article class="dl-vision-tile">' +
+          '<img src="' + escapeHtml(category.image_url || dreamLifeCategoryImages.other) + '" alt="" loading="lazy" />' +
+          '<div class="dl-vision-body"><h3>' + escapeHtml(category.display_name) + "</h3>" +
+          "<p>" + escapeHtml(category.distilled_statement) + "</p></div></article>"
+        )).join("");
+        dlDeclarationCard.innerHTML =
+          "<strong>" + escapeHtml(dreamLifeVision.center_declaration || "I am building a life that feels aligned and alive.") + "</strong>" +
+          "<p>" + escapeHtml(dreamLifeVision.future_self_statement || "I become this version through one aligned action every day.") + "</p>";
+      }
+
+      function renderDreamLifeAlignment() {
+        if (!dreamLifeVision || !dlScoreWrap || !dlAlignList) return;
+        const score = Math.max(0, Math.min(100, Number(dreamLifeVision.alignment_score) || 72));
+        const circumference = 2 * Math.PI * 84;
+        const offset = circumference - (score / 100) * circumference;
+        dlScoreWrap.innerHTML =
+          '<div class="dl-score-ring"><svg width="210" height="210" viewBox="0 0 210 210" aria-hidden="true">' +
+          '<circle cx="105" cy="105" r="84" fill="none" stroke="rgba(22,90,128,0.1)" stroke-width="16"></circle>' +
+          '<circle cx="105" cy="105" r="84" fill="none" stroke="url(#dlScoreGrad)" stroke-width="16" stroke-linecap="round" stroke-dasharray="' + circumference + '" stroke-dashoffset="' + offset + '"></circle>' +
+          '<defs><linearGradient id="dlScoreGrad" x1="0" x2="1"><stop stop-color="#155676"></stop><stop offset="0.55" stop-color="#4dc7d7"></stop><stop offset="1" stop-color="#88c76d"></stop></linearGradient></defs>' +
+          '</svg><div class="dl-score-center"><div><strong>' + score + '</strong><span>Aligned</span></div></div></div>';
+        const actions = Array.isArray(dreamLifeVision.aligned_actions) && dreamLifeVision.aligned_actions.length ? dreamLifeVision.aligned_actions : buildDreamLifeFallback().aligned_actions;
+        dlAlignList.innerHTML = actions.slice(0, 5).map((action, index) => (
+          '<article class="dl-align-card"><span class="dl-week-dot">' + (action.day || index + 1) + '</span><div><strong>' +
+          escapeHtml(action.title || "Aligned move") + "</strong><p>" +
+          escapeHtml(action.action || "Take one clear action toward the life you described.") +
+          "</p></div></article>"
+        )).join("");
+      }
+
+      function openDreamLifeFlow() {
+        setScreen("dream-life");
+      }
+
+      function resetDreamLifeFlow() {
+        dreamLifeVision = null;
+        localStorage.removeItem(dreamLifeStorageKey);
+        if (dlTextInput) dlTextInput.value = "";
+        if (dlTextPanel) dlTextPanel.classList.add("dl-hidden");
+        if (dlTextToggle) dlTextToggle.textContent = "Add text instead";
+        if (dlRecordStatus) dlRecordStatus.textContent = "Tap the microphone, say what you want your life to look and feel like, then tap again to generate it.";
+        dlShowStep("voice");
+      }
+
+      async function processDreamLifePrompt(prompt) {
+        const cleanPrompt = String(prompt || "").trim();
+        if (cleanPrompt.length < 8) {
+          if (dlRecordStatus) dlRecordStatus.textContent = "Add a little more detail so PulseNow can shape the vision.";
+          if (dlTextPanel) dlTextPanel.classList.remove("dl-hidden");
+          if (dlTextInput) window.setTimeout(() => dlTextInput.focus(), 0);
+          return;
+        }
+        dlShowStep("processing");
+        await delay(900);
+        try {
+          const data = await apiRequest("/api/dream-life/generate", {
+            method: "POST",
+            body: JSON.stringify({
+              prompt: cleanPrompt,
+              current_items: visionItems,
+              session: getCurrentSession()
+            })
+          });
+          dreamLifeVision = normalizeDreamLifeResponse(data, cleanPrompt);
+          applyDreamGeneration(data);
+          saveDreamVisionItems();
+        } catch {
+          dreamLifeVision = buildDreamLifeFallback(cleanPrompt);
+        }
+        saveDreamLifeVision();
+        renderDreamLifeReflection();
+        dlShowStep("reflection");
+      }
+
+      async function processDreamLifeAudio(audioBlob) {
+        dlShowStep("processing");
+        await delay(700);
+        try {
+          const data = await generateDreamMapFromAudio(audioBlob);
+          dreamLifeVision = normalizeDreamLifeResponse(data, data?.transcript || "");
+          if (dlTextInput && data?.transcript) dlTextInput.value = String(data.transcript);
+          applyDreamGeneration(data);
+          saveDreamVisionItems();
+        } catch {
+          dreamLifeVision = buildDreamLifeFallback("A peaceful, free, healthy, connected life with more margin, travel, family memories, and meaningful work.");
+        }
+        saveDreamLifeVision();
+        renderDreamLifeReflection();
+        dlShowStep("reflection");
+      }
+
+      function stopDreamLifeAudioTracks() {
+        if (dlAudioStream) {
+          dlAudioStream.getTracks().forEach((track) => track.stop());
+          dlAudioStream = null;
+        }
+        if (dlRecordingTimeout) {
+          window.clearTimeout(dlRecordingTimeout);
+          dlRecordingTimeout = null;
+        }
+      }
+
+      async function finishDreamLifeRecording() {
+        dlRecording = false;
+        if (dlRecordBtn) dlRecordBtn.classList.remove("is-recording");
+        if (dlMicStage) dlMicStage.classList.remove("dl-recording");
+        stopDreamLifeAudioTracks();
+        const audioBlob = new Blob(dlAudioChunks, { type: dlAudioChunks[0]?.type || "audio/webm" });
+        dlAudioChunks = [];
+        if (audioBlob.size < 1200) {
+          if (dlRecordStatus) dlRecordStatus.textContent = "I did not catch enough audio. Tap the microphone and try again.";
+          return;
+        }
+        await processDreamLifeAudio(audioBlob);
+      }
+
+      async function toggleDreamLifeRecording() {
+        if (dlRecording && dlMediaRecorder) {
+          if (dlRecordStatus) dlRecordStatus.textContent = "Finishing recording...";
+          dlMediaRecorder.stop();
+          return;
+        }
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.MediaRecorder) {
+          if (dlRecordStatus) dlRecordStatus.textContent = "Voice recording is not available here. Add text instead.";
+          if (dlTextPanel) dlTextPanel.classList.remove("dl-hidden");
+          return;
+        }
+        try {
+          dlAudioChunks = [];
+          dlAudioStream = await navigator.mediaDevices.getUserMedia({
+            audio: {
+              echoCancellation: true,
+              noiseSuppression: true,
+              autoGainControl: true
+            }
+          });
+          const mimeType = chooseDreamAudioMimeType();
+          dlMediaRecorder = new MediaRecorder(dlAudioStream, mimeType ? { mimeType } : undefined);
+          dlMediaRecorder.addEventListener("dataavailable", (event) => {
+            if (event.data && event.data.size > 0) dlAudioChunks.push(event.data);
+          });
+          dlMediaRecorder.addEventListener("stop", finishDreamLifeRecording, { once: true });
+          dlRecording = true;
+          dlMediaRecorder.start();
+          if (dlRecordBtn) dlRecordBtn.classList.add("is-recording");
+          if (dlMicStage) dlMicStage.classList.add("dl-recording");
+          if (dlRecordStatus) dlRecordStatus.textContent = "Recording. Speak naturally, then tap the microphone again to generate it.";
+          dlRecordingTimeout = window.setTimeout(() => {
+            if (dlRecording && dlMediaRecorder) dlMediaRecorder.stop();
+          }, 45000);
+        } catch {
+          stopDreamLifeAudioTracks();
+          dlRecording = false;
+          if (dlRecordBtn) dlRecordBtn.classList.remove("is-recording");
+          if (dlMicStage) dlMicStage.classList.remove("dl-recording");
+          if (dlRecordStatus) dlRecordStatus.textContent = "Microphone access is needed to record. You can still add text instead.";
+          if (dlTextPanel) dlTextPanel.classList.remove("dl-hidden");
+        }
       }
 
       function applyDreamGeneration(data) {
@@ -13053,63 +14012,19 @@
         }
 
         grid.innerHTML =
-          '<div class="dream-map-panel is-mindmap">' +
-          '<div class="dream-map-node-list" aria-label="Dream life areas">' +
-          '<button class="dream-map-core" data-dream-builder onclick="window.pulseNowOpenDreamBuilderPanel && window.pulseNowOpenDreamBuilderPanel()" type="button">' +
-          '<span class="dream-map-label">Dream map</span>' +
-          "<strong>Future Self</strong>" +
-          "<p>" +
-          visionItems.length +
-          " areas</p>" +
-          "</button>" +
-          visionItems
-            .map((item, index) => {
-              const body = item.area || item.description || item.next_action || "A tangible piece of your dream life.";
-              return (
-                '<button class="dream-map-node' +
-                (index === activeIndex ? " active" : "") +
-                " node-" +
-                index +
-                '" data-dream-index="' +
-                index +
-                '" type="button"><img src="' +
-                escapeHtml(item.url) +
-                '" alt="" loading="lazy" /><span><strong>' +
-                escapeHtml(item.title) +
-                "</strong><span>" +
-                escapeHtml(body) +
-                "</span></span><em>Open</em></button>"
-              );
-            })
-            .join("") +
-          "</div>" +
-          '<article class="dream-map-detail">' +
-          '<img src="' +
-          escapeHtml(active.url) +
-          '" alt="" loading="lazy" />' +
-          '<p class="eyebrow">' +
-          escapeHtml(active.area || "Dream area") +
-          "</p><h2>" +
-          escapeHtml(active.title) +
-          '</h2><p class="muted">' +
-          escapeHtml(active.description || "A tangible part of the life you are building.") +
-          "</p><strong>" +
+          '<div class="dream-map-empty-state">' +
+          "<strong>Your Dream Life is ready.</strong>" +
+          '<p class="muted">' +
           escapeHtml(activeDescription) +
-          "</strong></article>" +
-          '<div class="dream-map-actions">' +
-          '<button class="ghost-btn" data-dream-builder onclick="window.pulseNowOpenDreamBuilderPanel && window.pulseNowOpenDreamBuilderPanel()" type="button">Speak the vision. Watch it grow.</button>' +
-          '<span class="muted">Tap an area to open the next move.</span>' +
+          "</p>" +
+          '<div class="dl-grid" style="width:100%;margin-top:6px;">' +
+          visionItems.slice(0, 4).map((item) => (
+            '<article class="dl-vision-tile"><img src="' + escapeHtml(item.url) + '" alt="" loading="lazy" />' +
+            '<div class="dl-vision-body"><h3>' + escapeHtml(item.title) + '</h3><p>' + escapeHtml(item.area || item.description || "") + '</p></div></article>'
+          )).join("") +
           "</div>" +
+          '<button class="ghost-btn" data-dream-builder type="button">Open Dream Life</button>' +
           "</div>";
-
-        grid.querySelectorAll("[data-dream-index]").forEach((button) => {
-          button.addEventListener("click", () => {
-            activeDreamIndex = Number(button.dataset.dreamIndex) || 0;
-            localStorage.setItem(activeDreamStorageKey, String(activeDreamIndex));
-            renderVisionWorkspace();
-          });
-        });
-
         bindDreamBuilderButtons();
       }
 
@@ -15281,7 +16196,32 @@
           if (button.closest(".bottom-inner")) button.classList.toggle("active", button.dataset.screen === activeNavScreen);
         });
         drawer.classList.remove("open");
+        if (app) app.classList.toggle("dream-life-active", screen === "dream-life");
+        if (screen !== "dream-life" && dreamLifeScreen) dreamLifeScreen.classList.add("hidden");
         window.scrollTo({ top: 0, behavior: "smooth" });
+        if (screen === "dream-life") {
+          buildDreamLifeWaveform();
+          loadDreamLifeVision();
+          homeScreen.classList.add("hidden");
+          logScreen.classList.add("hidden");
+          contactsScreen.classList.add("hidden");
+          powerlistScreen.classList.add("hidden");
+          pipelineScreen.classList.add("hidden");
+          boardScreen.classList.add("hidden");
+          if (dreamLifeScreen) dreamLifeScreen.classList.remove("hidden");
+          meScreen.classList.add("hidden");
+          coachScreen.classList.add("hidden");
+          quizScreen.classList.add("hidden");
+          placeholderScreen.classList.add("hidden");
+          if (dreamLifeVision) {
+            renderDreamLifeVision();
+            renderDreamLifeAlignment();
+            dlShowStep("vision");
+          } else {
+            dlShowStep("voice");
+          }
+          return;
+        }
         if (screen === "home") {
           hydrateContacts();
           hydrateLog();
@@ -15494,6 +16434,39 @@
       if (dreamTextSubmit) {
         dreamTextSubmit.addEventListener("click", () => buildDreamMapFromText(dreamTextInput && dreamTextInput.value, dreamTextSubmit));
       }
+      if (dlBackHome) dlBackHome.addEventListener("click", () => setScreen("home"));
+      if (dlResetBtn) dlResetBtn.addEventListener("click", resetDreamLifeFlow);
+      if (dlRecordBtn) dlRecordBtn.addEventListener("click", toggleDreamLifeRecording);
+      if (dlTextToggle) {
+        dlTextToggle.addEventListener("click", () => {
+          const shouldOpen = dlTextPanel && dlTextPanel.classList.contains("dl-hidden");
+          if (dlTextPanel) dlTextPanel.classList.toggle("dl-hidden", !shouldOpen);
+          dlTextToggle.textContent = shouldOpen ? "Hide text option" : "Add text instead";
+          if (shouldOpen && dlTextInput) window.setTimeout(() => dlTextInput.focus(), 0);
+        });
+      }
+      if (dlTextSubmit) dlTextSubmit.addEventListener("click", () => processDreamLifePrompt(dlTextInput && dlTextInput.value));
+      if (dlDemoBtn) dlDemoBtn.addEventListener("click", () => processDreamLifePrompt(dreamLifeDemoPrompt));
+      if (dlGenerateVisionBtn) {
+        dlGenerateVisionBtn.addEventListener("click", () => {
+          renderDreamLifeVision();
+          dlShowStep("vision");
+        });
+      }
+      if (dlSeeAlignmentBtn) {
+        dlSeeAlignmentBtn.addEventListener("click", () => {
+          renderDreamLifeAlignment();
+          dlShowStep("alignment");
+        });
+      }
+      document.querySelectorAll("[data-dl-goto]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const target = button.dataset.dlGoto;
+          if (target === "vision") renderDreamLifeVision();
+          if (target === "alignment") renderDreamLifeAlignment();
+          dlShowStep(target || "voice");
+        });
+      });
       document.getElementById("refresh-board-btn").addEventListener("click", renderBoard);
       document.querySelectorAll("[data-board-range]").forEach((button) => {
         button.addEventListener("click", () => {
