@@ -39,7 +39,7 @@ Build **Contact Intelligence** so a logged-in PulseNow user can upload a contact
 
 1. Store the raw CSV securely in Supabase Storage.
 2. Parse and normalize names, phones, emails, follow-up dates, companies, roles, notes, social links, and qualifier fields.
-3. Populate an organized contact chart/table.
+3. Populate an organized contact chart/table that clearly lists every imported contact by name.
 4. Segment contacts by values including:
    - man
    - woman
@@ -58,6 +58,41 @@ Build **Contact Intelligence** so a logged-in PulseNow user can upload a contact
 5. Use AI to summarize evidence and recommend next actions.
 6. Let the user click **Research socials + LinkedIn**.
 7. Export a cleaned, organized CSV.
+
+## Required output clarity
+
+The post-import experience must be obvious to a non-technical user. Do not show a vague generated chart without explaining who is in it and why they are grouped.
+
+After a CSV import, the page should lead with:
+
+1. A clear heading such as **Potential Prospects From This CSV**.
+2. A count summary: total contacts imported, total potential prospects, total manual review, total do not contact, total missing key info.
+3. A visible named list/table where every parsed contact appears by cleaned full name. If a name is missing, show the best available identifier such as email or phone and flag `missing_name`.
+4. A plain-language note that these people are **potential prospects**, not approved leads, until the user reviews the evidence and next action.
+5. Category summary cards with short helper text explaining what each category means.
+
+Each contact row should make the prospect framing clear:
+
+- Show `Prospect status` as one of: `Potential prospect`, `Needs review`, `Nurture`, `Do not contact`, `Not enough data`.
+- Show `Why this category` as a short evidence-based sentence.
+- Show `What to do next` as a human-reviewed suggested next step.
+- Show `Missing info` when the CSV lacks phone, email, name, company, role, or useful notes.
+- Keep the contact's name visible while horizontal scrolling the table if practical.
+
+Category helper text should be available in the UI and export metadata:
+
+- **Life insurance partner**: may be a fit for insurance partnership or recruiting conversation based on allowed professional evidence.
+- **Financial educator**: may be a fit for financial education, workshops, or community education based on role, notes, or public professional context.
+- **Referral partner**: may know people who need support but is not necessarily a direct client or partner.
+- **Client prospect**: may be a fit for a client conversation based on allowed CSV fields and notes.
+- **Nurture**: keep in long-term follow-up because timing, fit, or evidence is not strong enough yet.
+- **Manual review**: not enough reliable information or there are compliance/sensitivity concerns.
+- **Do not contact**: opt-out, do-not-contact, bad data, or other compliance reason.
+- **Captive agent**: appears to be tied to a captive insurance company; use only professional evidence, not protected traits.
+- **Non-captive independent**: appears to work independently or with non-captive insurance/financial services; use only professional evidence.
+- **Unknown**: the system does not have enough evidence to classify.
+
+The AI assessment must never hide behind a score alone. Every score or category must have a concise evidence summary and confidence level.
 
 ## Non-negotiable rules
 
@@ -177,16 +212,20 @@ The screen should include:
 - CSV file picker
 - Create import/upload button
 - Upload progress and status
+- Clear **Potential Prospects From This CSV** section
+- Named prospect list showing every parsed contact
 - Research socials + LinkedIn button
 - Download organized CSV button
 - Stats cards
 - Charts or grouped counts
+- Category definition/helper area
 - Filterable table
 - Manual edit support, either drawer or inline edit
 
 The table should include:
 
 - Name
+- Prospect status
 - Phone
 - Email
 - Gender label
@@ -198,10 +237,13 @@ The table should include:
 - Educator score
 - Client prospect score
 - Priority tier
+- Why this category
 - Next action
 - Follow-up date
 - Research status
 - Evidence summary
+- Confidence
+- Missing info
 - Source links
 - Manual review flag
 
@@ -257,14 +299,16 @@ A successful build means:
 4. Raw CSV is stored in private Supabase Storage.
 5. Rows appear in Supabase.
 6. Contacts are normalized.
-7. Charts/table populate from stored data.
+7. Charts/table populate from stored data and clearly list every imported contact by name.
 8. AI assessment writes rows to `contact_ai_assessments`.
 9. User can research selected rows without LinkedIn scraping.
 10. User can export organized CSV.
 11. RLS prevents users from seeing other users' imports.
 12. Frontend never receives service-role credentials.
 13. Manual review and compliance flags are visible.
-14. Existing PulseNow UI, nav, auth, Dream Life Builder, quiz, coach, and current backend routes still build.
+14. Category definitions explain what each segment means in plain language.
+15. Every category/score has a concise evidence summary, confidence level, and suggested next human-reviewed action.
+16. Existing PulseNow UI, nav, auth, Dream Life Builder, quiz, coach, and current backend routes still build.
 
 ## Verification
 
