@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { PulseBackground } from "./components/ui/PulseBackground";
+import { QuizScreen } from "./features/quiz/QuizScreen";
 
-type Screen = "home" | "log" | "board" | "pipeline" | "me" | "contacts" | "coach";
+type Screen = "home" | "log" | "board" | "pipeline" | "me" | "contacts" | "coach" | "quiz";
 type ContactType = "prospect" | "recruit" | "client";
 
 type Session = {
@@ -225,7 +226,7 @@ function App() {
           <button className="drawer-bg" onClick={() => setDrawer(false)} />
           <nav className="drawer-panel">
             <img src={logo} alt="Pulsenow" />
-            {(["contacts", "coach"] as Screen[]).map((item) => (
+            {(["contacts", "coach", "quiz"] as Screen[]).map((item) => (
               <button key={item} onClick={() => { setScreen(item); setDrawer(false); }}>{item}</button>
             ))}
             <button onClick={logout}>Sign out</button>
@@ -252,6 +253,7 @@ function App() {
         {screen === "me" ? <MeScreen session={session} log={log} points={points} tier={tier} /> : null}
         {screen === "contacts" ? <ContactsScreen contacts={contacts} setContacts={setContacts} /> : null}
         {screen === "coach" ? <CoachScreen messages={coach} sendCoach={sendCoach} /> : null}
+        {screen === "quiz" ? <QuizScreen session={session} /> : null}
       </main>
 
       <nav className="bottom-nav">
@@ -286,6 +288,10 @@ function Home(props: { session: Session; log: LogFields; points: number; tier: s
         <h2>{props.points < 21 ? "Push toward All-the-Timer" : "Protect your lead"}</h2>
         <p className="muted">{Math.max(0, 21 - props.points)} more points to hit the top weekly tier.</p>
         <button className="primary" onClick={() => props.setScreen("log")}>Log activity</button>
+      </section>
+      <section className="card">
+        <div className="section-head"><h2>Personal Profile</h2><button onClick={() => props.setScreen("quiz")}>Open</button></div>
+        <p className="muted">Complete Working Genius and Four Tendencies to unlock coaching that fits your style.</p>
       </section>
       <section className="card">
         <div className="section-head"><h2>Power List</h2><button onClick={() => props.setScreen("contacts")}>Open CRM</button></div>
@@ -360,7 +366,8 @@ function PipelineScreen(props: {
 }) {
   const stages = props.pipelineType === "recruit" ? recruitStages : salesStages;
   const cards = props.contacts.filter((contact) => props.pipelineType === "recruit" ? contact.type === "recruit" : contact.type !== "recruit");
-  const selectedSteps = props.selectedRecruit ? recruitSubsteps[props.selectedRecruit.stage] || [] : [];
+  const selectedRecruit = props.selectedRecruit;
+  const selectedSteps = selectedRecruit ? recruitSubsteps[selectedRecruit.stage] || [] : [];
   return (
     <>
       <section className="card">
@@ -385,9 +392,9 @@ function PipelineScreen(props: {
           </article>
         ))}
       </section>
-      {props.selectedRecruit ? <section className="card"><h2>{props.selectedRecruit.name}</h2>{selectedSteps.length ? selectedSteps.map((step, index) => {
-        const key = props.selectedRecruit.id + "::" + props.selectedRecruit.stage + "::" + index;
-        return <button className={"check-row " + (props.substeps[key] ? "done" : "")} key={step} onClick={() => props.toggleSubstep(props.selectedRecruit as Contact, index)}>{props.substeps[key] ? "Done" : "Open"} · {step}</button>;
+      {selectedRecruit ? <section className="card"><h2>{selectedRecruit.name}</h2>{selectedSteps.length ? selectedSteps.map((step, index) => {
+        const key = selectedRecruit.id + "::" + selectedRecruit.stage + "::" + index;
+        return <button className={"check-row " + (props.substeps[key] ? "done" : "")} key={step} onClick={() => props.toggleSubstep(selectedRecruit, index)}>{props.substeps[key] ? "Done" : "Open"} · {step}</button>;
       }) : <p className="muted">No checklist items for this stage.</p>}</section> : null}
     </>
   );
@@ -407,7 +414,8 @@ function ContactsScreen(props: { contacts: Contact[]; setContacts: (contacts: Co
   const [draft, setDraft] = useState("");
   function add() {
     if (!draft.trim()) return;
-    props.setContacts([{ id: "c" + Date.now(), name: draft, phone: "", type: "prospect", stage: salesStages[0], score: 0, lastContact: "", followUp: "" }].concat(props.contacts));
+    const contact: Contact = { id: "c" + Date.now(), name: draft, phone: "", type: "prospect", stage: salesStages[0], score: 0, lastContact: "", followUp: "" };
+    props.setContacts([contact].concat(props.contacts));
     setDraft("");
   }
   return (
