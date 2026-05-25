@@ -11457,7 +11457,7 @@
               <strong>Speak the vision. Watch it grow.</strong>
               <p class="muted">PulseNow turns your dream into a clickable map, milestones, and the next daily move.</p>
             </div>
-            <button class="ghost-btn" type="button">Dream Builder</button>
+            <button class="ghost-btn" data-dream-builder type="button">Dream Builder</button>
           </div>
           <div id="vision-board-grid" class="vision-board-grid"></div>
           <p class="muted" style="margin-top: 10px; font-style: italic;">I make dreams possible by showing up every day.</p>
@@ -12500,7 +12500,9 @@
           });
         });
 
-        grid.querySelectorAll("[data-dream-builder]").forEach((button) => {
+        document.querySelectorAll("[data-dream-builder]").forEach((button) => {
+          if (button.dataset.dreamBuilderBound === "true") return;
+          button.dataset.dreamBuilderBound = "true";
           button.addEventListener("click", async () => {
             const prompt = window.prompt("Describe the dream life you want PulseNow to map. Include home, family, money, travel, impact, and how it should feel.");
             if (!prompt) return;
