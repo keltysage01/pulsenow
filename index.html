@@ -11046,6 +11046,72 @@
           grid-template-columns: 1fr !important;
         }
       }
+
+      #coach-screen .coach-quiz-actions {
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+        width: 100% !important;
+      }
+
+      #coach-screen .coach-quiz-action {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) auto !important;
+        gap: 8px 14px !important;
+        width: 100% !important;
+        min-height: 86px !important;
+        padding: 16px 18px !important;
+        border: 1px solid rgba(255, 255, 255, 0.76) !important;
+        border-radius: 24px !important;
+        background: rgba(255, 255, 255, 0.72) !important;
+        color: var(--text) !important;
+        text-align: left !important;
+        box-shadow: 0 14px 34px rgba(31, 65, 85, 0.1), inset 0 1px 0 rgba(255,255,255,0.84) !important;
+      }
+
+      #coach-screen .coach-quiz-action strong {
+        grid-column: 1 !important;
+        display: block !important;
+        min-width: 0 !important;
+        font-size: clamp(20px, 5vw, 24px) !important;
+        line-height: 1.1 !important;
+        letter-spacing: -0.035em !important;
+        color: var(--text) !important;
+      }
+
+      #coach-screen .coach-quiz-action small {
+        grid-column: 1 / -1 !important;
+        display: block !important;
+        min-width: 0 !important;
+        color: var(--sub) !important;
+        font-size: 14px !important;
+        line-height: 1.35 !important;
+      }
+
+      #coach-screen .coach-quiz-action span {
+        grid-column: 2 !important;
+        grid-row: 1 !important;
+        justify-self: end !important;
+        align-self: start !important;
+        display: inline-flex !important;
+        min-height: 30px !important;
+        align-items: center !important;
+        border-radius: 999px !important;
+        padding: 7px 10px !important;
+        background: rgba(72, 199, 217, 0.14) !important;
+        color: #0d6f78 !important;
+        font-size: 10px !important;
+        font-weight: 800 !important;
+        line-height: 1 !important;
+        letter-spacing: 0.08em !important;
+        text-transform: uppercase !important;
+        white-space: nowrap !important;
+      }
+
+      html[data-theme="dark"] #coach-screen .coach-quiz-action {
+        background: rgba(10, 25, 39, 0.94) !important;
+        border-color: rgba(255,255,255,0.16) !important;
+      }
     </style>
   </head>
   <body>
@@ -11727,23 +11793,23 @@
             </div>
             <button id="coach-profile-clear" class="text-btn" type="button">Clear</button>
           </div>
-          <div class="coach-quiz-grid" aria-label="Optional coach intelligence quizzes">
-            <button class="coach-quiz-card" data-quiz-key="working_genius" data-quiz-label="Working Genius" data-quiz-hint="Energy, teamwork, and what type of work lights you up." type="button">
+          <div class="coach-quiz-actions" aria-label="Optional coach intelligence quizzes">
+            <button class="coach-quiz-action" data-quiz-key="working_genius" data-quiz-label="Working Genius" data-quiz-hint="Energy, teamwork, and what type of work lights you up." type="button">
               <span>Optional</span>
               <strong>Working Genius</strong>
               <small>Energy, teamwork, and what work lights you up.</small>
             </button>
-            <button class="coach-quiz-card" data-quiz-key="four_tendencies" data-quiz-label="Four Tendencies" data-quiz-hint="How you respond to internal and external expectations." type="button">
+            <button class="coach-quiz-action" data-quiz-key="four_tendencies" data-quiz-label="Four Tendencies" data-quiz-hint="How you respond to internal and external expectations." type="button">
               <span>Optional</span>
               <strong>Four Tendencies</strong>
               <small>How you respond to internal and external expectations.</small>
             </button>
-            <button class="coach-quiz-card" data-quiz-key="enneagram" data-quiz-label="Enneagram" data-quiz-hint="Motivation, stress patterns, and blind spots." type="button">
+            <button class="coach-quiz-action" data-quiz-key="enneagram" data-quiz-label="Enneagram" data-quiz-hint="Motivation, stress patterns, and blind spots." type="button">
               <span>Optional</span>
               <strong>Enneagram</strong>
               <small>Motivation, stress patterns, and blind spots.</small>
             </button>
-            <button class="coach-quiz-card" data-quiz-key="myers_briggs" data-quiz-label="Myers-Briggs" data-quiz-hint="Communication style and decision-making preferences." type="button">
+            <button class="coach-quiz-action" data-quiz-key="myers_briggs" data-quiz-label="Myers-Briggs" data-quiz-hint="Communication style and decision-making preferences." type="button">
               <span>Optional</span>
               <strong>Myers-Briggs</strong>
               <small>Communication style and decision-making preferences.</small>
