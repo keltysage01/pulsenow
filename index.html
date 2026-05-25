@@ -8657,6 +8657,65 @@
         white-space: nowrap !important;
       }
 
+      .dream-builder-input-panel {
+        display: grid;
+        justify-items: center;
+        gap: 12px;
+        margin: -4px 0 16px;
+        padding: 16px;
+        border-radius: 24px;
+        background:
+          radial-gradient(circle at 50% 0%, rgba(72, 199, 217, 0.18), transparent 42%),
+          rgba(255, 255, 255, 0.62);
+        border: 1px solid rgba(255, 255, 255, 0.78);
+        text-align: center;
+      }
+
+      .dream-big-mic {
+        display: grid;
+        width: 132px;
+        height: 132px;
+        min-height: 132px !important;
+        place-items: center;
+        border: 0 !important;
+        border-radius: 999px !important;
+        background: linear-gradient(135deg, var(--pulse-navy, #16466d), var(--pulse-teal, #007c7d), var(--pulse-lime, #86bd4d)) !important;
+        color: #fff !important;
+        box-shadow: 0 22px 46px rgba(22, 70, 109, 0.22), 0 0 0 12px rgba(72, 199, 217, 0.1) !important;
+        font-size: 44px;
+      }
+
+      .dream-big-mic.is-recording {
+        background: linear-gradient(135deg, #8f1733, #e25757) !important;
+      }
+
+      .dream-builder-input-panel textarea {
+        width: 100%;
+        min-height: 118px;
+        resize: vertical;
+        border: 1px solid rgba(31, 65, 85, 0.12);
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.72);
+        padding: 12px;
+        font: inherit;
+        line-height: 1.45;
+      }
+
+      .dream-text-entry-panel {
+        display: grid;
+        width: 100%;
+        gap: 10px;
+      }
+
+      .dream-text-toggle {
+        min-height: 30px !important;
+        border: 0 !important;
+        background: transparent !important;
+        color: var(--muted) !important;
+        font-size: 12px !important;
+        text-decoration: underline;
+      }
+
       #today-path-card.card.today-path-card {
         padding: 20px !important;
       }
@@ -11459,6 +11518,15 @@
             </div>
             <button class="ghost-btn" data-dream-builder type="button">Dream Builder</button>
           </div>
+          <div id="dream-builder-input-panel" class="dream-builder-input-panel hidden">
+            <button id="dream-record-btn" class="dream-big-mic" type="button" aria-label="Start recording">🎙</button>
+            <p id="dream-record-status" class="muted">Tap the mic and speak the dream life you are building.</p>
+            <button id="dream-text-toggle" class="dream-text-toggle" type="button">Add text instead</button>
+            <div id="dream-text-entry-panel" class="dream-text-entry-panel hidden">
+              <textarea id="dream-text-input" placeholder="Type or paste the vision here..."></textarea>
+              <button id="dream-text-submit" class="ghost-btn" type="button">Build dream map</button>
+            </div>
+          </div>
           <div id="vision-board-grid" class="vision-board-grid"></div>
           <p class="muted" style="margin-top: 10px; font-style: italic;">I make dreams possible by showing up every day.</p>
         </section>
@@ -12075,6 +12143,13 @@
       const meBioInput = document.getElementById("me-bio-input");
       const meDreamText = document.getElementById("me-dream-text");
       const pulseRouteBackground = document.getElementById("pulse-route-background");
+      const dreamBuilderInputPanel = document.getElementById("dream-builder-input-panel");
+      const dreamRecordBtn = document.getElementById("dream-record-btn");
+      const dreamRecordStatus = document.getElementById("dream-record-status");
+      const dreamTextToggle = document.getElementById("dream-text-toggle");
+      const dreamTextEntryPanel = document.getElementById("dream-text-entry-panel");
+      const dreamTextInput = document.getElementById("dream-text-input");
+      const dreamTextSubmit = document.getElementById("dream-text-submit");
 
       let mode = "login";
       let currentLog = {};
@@ -12090,6 +12165,8 @@
       let coachMessages = [];
       let apiPowerPicks = null;
       let lastImportedContacts = [];
+      let dreamRecognition = null;
+      let dreamRecording = false;
       const visionItems = [
         { id: 1, title: "Peaceful Home Base", area: "Home", description: "A calm, beautiful place that makes the work feel worth it.", next_action: "Save one real image that matches the feeling of home.", progress: "36%", size: "tall", url: "https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=500&q=80" },
         { id: 2, title: "Financial Margin", area: "Money", description: "Less pressure, more options, and a business rhythm that funds peace.", next_action: "Tie one money goal to this week's contact goal.", progress: "52%", size: "wide", url: "https://images.unsplash.com/photo-1554415707-6e8cfc93fe23?auto=format&fit=crop&w=500&q=80" },
@@ -12372,6 +12449,105 @@
 
       loadDreamVisionItems();
 
+      function openDreamBuilderPanel() {
+        if (!dreamBuilderInputPanel) return;
+        dreamBuilderInputPanel.classList.remove("hidden");
+        if (dreamRecordStatus) dreamRecordStatus.textContent = "Tap the mic and speak the dream life you are building.";
+        dreamBuilderInputPanel.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+
+      async function buildDreamMapFromText(prompt, sourceButton) {
+        const cleanPrompt = String(prompt || "").trim();
+        if (cleanPrompt.length < 8) {
+          if (dreamRecordStatus) dreamRecordStatus.textContent = "Add a little more detail so PulseNow can shape the map.";
+          if (dreamTextEntryPanel) dreamTextEntryPanel.classList.remove("hidden");
+          if (dreamTextInput) window.setTimeout(() => dreamTextInput.focus(), 0);
+          return;
+        }
+        const original = sourceButton && sourceButton.textContent;
+        if (sourceButton) {
+          sourceButton.disabled = true;
+          sourceButton.textContent = "Building dream map...";
+        }
+        if (dreamRecordStatus) dreamRecordStatus.textContent = "Building your dream map...";
+        const fallbackTitle = cleanPrompt.split(/[,.]/)[0].slice(0, 42) || "Dream Life";
+        try {
+          const data = await apiRequest("/api/dream-life/generate", {
+            method: "POST",
+            body: JSON.stringify({
+              prompt: cleanPrompt,
+              current_items: visionItems,
+              session: getCurrentSession()
+            })
+          });
+          const generatedItems = Array.isArray(data?.items) ? data.items : [];
+          generatedItems.slice(0, visionItems.length).forEach((item, index) => {
+            if (item?.title) visionItems[index].title = String(item.title).slice(0, 34);
+            if (item?.image_url) visionItems[index].url = item.image_url;
+            ["area", "description", "milestone", "next_action", "image_prompt"].forEach((key) => {
+              if (item?.[key]) visionItems[index][key] = String(item[key]).slice(0, key === "title" ? 34 : 220);
+            });
+          });
+        } catch (error) {
+          visionItems[activeDreamIndex].title = fallbackTitle;
+          visionItems[activeDreamIndex].description = "A first version of your dream map. Add more detail to sharpen this area.";
+        } finally {
+          saveDreamVisionItems();
+          if (sourceButton) {
+            sourceButton.disabled = false;
+            if (original) sourceButton.textContent = original;
+          }
+          if (dreamRecordStatus) dreamRecordStatus.textContent = "Your map is ready. Tap any area to open the next move.";
+          renderVisionWorkspace();
+        }
+      }
+
+      function toggleDreamTextEntry() {
+        if (!dreamTextEntryPanel) return;
+        const isHidden = dreamTextEntryPanel.classList.contains("hidden");
+        dreamTextEntryPanel.classList.toggle("hidden", !isHidden);
+        if (dreamTextToggle) dreamTextToggle.textContent = isHidden ? "Hide text option" : "Add text instead";
+        if (isHidden && dreamTextInput) window.setTimeout(() => dreamTextInput.focus(), 0);
+      }
+
+      function toggleDreamRecording() {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) {
+          if (dreamRecordStatus) dreamRecordStatus.textContent = "Voice capture is not available here. Add text instead.";
+          if (dreamTextEntryPanel) dreamTextEntryPanel.classList.remove("hidden");
+          if (dreamTextToggle) dreamTextToggle.textContent = "Hide text option";
+          if (dreamTextInput) window.setTimeout(() => dreamTextInput.focus(), 0);
+          return;
+        }
+        if (dreamRecording && dreamRecognition) {
+          dreamRecognition.stop();
+          return;
+        }
+        dreamRecognition = new SpeechRecognition();
+        dreamRecognition.lang = "en-US";
+        dreamRecognition.interimResults = false;
+        dreamRecognition.continuous = false;
+        dreamRecording = true;
+        if (dreamRecordBtn) dreamRecordBtn.classList.add("is-recording");
+        if (dreamRecordStatus) dreamRecordStatus.textContent = "Listening. Speak the vision, then pause.";
+        dreamRecognition.onresult = (event) => {
+          const transcript = Array.from(event.results || [])
+            .map((result) => result[0] && result[0].transcript)
+            .filter(Boolean)
+            .join(" ");
+          if (dreamTextInput) dreamTextInput.value = transcript;
+          buildDreamMapFromText(transcript, dreamRecordBtn);
+        };
+        dreamRecognition.onerror = () => {
+          if (dreamRecordStatus) dreamRecordStatus.textContent = "Voice capture missed that. Try again or add text instead.";
+        };
+        dreamRecognition.onend = () => {
+          dreamRecording = false;
+          if (dreamRecordBtn) dreamRecordBtn.classList.remove("is-recording");
+        };
+        dreamRecognition.start();
+      }
+
       function setBioEditMode(isEditing) {
         if (!meBioEditor || !meBioInput || !editBioBtn) return;
         const session = getCurrentSession() || { name: "Demo Agent", level: "TA", agent_code: "DEMO" };
@@ -12503,41 +12679,7 @@
         document.querySelectorAll("[data-dream-builder]").forEach((button) => {
           if (button.dataset.dreamBuilderBound === "true") return;
           button.dataset.dreamBuilderBound = "true";
-          button.addEventListener("click", async () => {
-            const prompt = window.prompt("Describe the dream life you want PulseNow to map. Include home, family, money, travel, impact, and how it should feel.");
-            if (!prompt) return;
-            const original = button.textContent;
-            button.disabled = true;
-            if (button.tagName === "BUTTON") button.textContent = "Building dream map...";
-            const fallbackTitle = prompt.trim().split(/[,.]/)[0].slice(0, 42) || "Dream Life";
-            try {
-              const data = await apiRequest("/api/dream-life/generate", {
-                method: "POST",
-                body: JSON.stringify({
-                  prompt,
-                  current_items: visionItems,
-                  session: getCurrentSession()
-                })
-              });
-              const generatedItems = Array.isArray(data?.items) ? data.items : [];
-              generatedItems.slice(0, visionItems.length).forEach((item, index) => {
-                if (item?.title) visionItems[index].title = String(item.title).slice(0, 34);
-                if (item?.image_url) visionItems[index].url = item.image_url;
-                ["area", "description", "milestone", "next_action", "image_prompt"].forEach((key) => {
-                  if (item?.[key]) visionItems[index][key] = String(item[key]).slice(0, key === "title" ? 34 : 220);
-                });
-              });
-              saveDreamVisionItems();
-            } catch (error) {
-              visionItems[activeIndex].title = fallbackTitle;
-              visionItems[activeIndex].description = "A first version of your dream map. Add more detail to sharpen this area.";
-              saveDreamVisionItems();
-            } finally {
-              button.disabled = false;
-              if (original) button.textContent = original;
-              renderVisionWorkspace();
-            }
-          });
+          button.addEventListener("click", openDreamBuilderPanel);
         });
       }
 
@@ -14834,6 +14976,11 @@
       document.querySelectorAll("[data-screen]").forEach((button) => {
         button.addEventListener("click", () => setScreen(button.dataset.screen));
       });
+      if (dreamRecordBtn) dreamRecordBtn.addEventListener("click", toggleDreamRecording);
+      if (dreamTextToggle) dreamTextToggle.addEventListener("click", toggleDreamTextEntry);
+      if (dreamTextSubmit) {
+        dreamTextSubmit.addEventListener("click", () => buildDreamMapFromText(dreamTextInput && dreamTextInput.value, dreamTextSubmit));
+      }
       document.getElementById("refresh-board-btn").addEventListener("click", renderBoard);
       document.querySelectorAll("[data-board-range]").forEach((button) => {
         button.addEventListener("click", () => {
