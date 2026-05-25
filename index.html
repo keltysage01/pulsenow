@@ -8669,33 +8669,88 @@
       .dream-builder-input-panel {
         display: grid;
         justify-items: center;
-        gap: 12px;
-        margin: -4px 0 16px;
-        padding: 16px;
-        border-radius: 24px;
+        gap: 14px;
+        margin: -4px 0 18px;
+        padding: 20px 16px;
+        border-radius: 28px;
         background:
-          radial-gradient(circle at 50% 0%, rgba(72, 199, 217, 0.18), transparent 42%),
-          rgba(255, 255, 255, 0.62);
-        border: 1px solid rgba(255, 255, 255, 0.78);
+          radial-gradient(circle at 50% 0%, rgba(72, 199, 217, 0.2), transparent 44%),
+          linear-gradient(180deg, rgba(255,255,255,0.84), rgba(232,252,247,0.62));
+        border: 1px solid rgba(255, 255, 255, 0.86);
+        box-shadow: 0 18px 44px rgba(31, 65, 85, 0.1);
         text-align: center;
       }
 
       .dream-big-mic {
         display: grid;
-        width: 132px;
-        height: 132px;
-        min-height: 132px !important;
+        width: 148px;
+        height: 148px;
+        min-height: 148px !important;
         place-items: center;
         border: 0 !important;
         border-radius: 999px !important;
-        background: linear-gradient(135deg, var(--pulse-navy, #16466d), var(--pulse-teal, #007c7d), var(--pulse-lime, #86bd4d)) !important;
+        background:
+          radial-gradient(circle at 50% 35%, rgba(255,255,255,0.3), transparent 34%),
+          linear-gradient(135deg, var(--pulse-navy, #16466d), var(--pulse-teal, #007c7d), var(--pulse-lime, #86bd4d)) !important;
         color: #fff !important;
-        box-shadow: 0 22px 46px rgba(22, 70, 109, 0.22), 0 0 0 12px rgba(72, 199, 217, 0.1) !important;
-        font-size: 44px;
+        box-shadow:
+          0 22px 46px rgba(22, 70, 109, 0.24),
+          0 0 0 12px rgba(72, 199, 217, 0.1),
+          inset 0 1px 0 rgba(255,255,255,0.4) !important;
       }
 
       .dream-big-mic.is-recording {
         background: linear-gradient(135deg, #8f1733, #e25757) !important;
+      }
+
+      .dream-mic-icon {
+        position: relative;
+        display: block;
+        width: 54px;
+        height: 72px;
+      }
+
+      .dream-mic-head {
+        position: absolute;
+        left: 12px;
+        top: 0;
+        width: 30px;
+        height: 48px;
+        border: 4px solid rgba(255,255,255,0.94);
+        border-radius: 999px;
+        background: rgba(255,255,255,0.12);
+        box-shadow: inset 0 0 18px rgba(255,255,255,0.16);
+      }
+
+      .dream-mic-stem {
+        position: absolute;
+        left: 25px;
+        top: 50px;
+        width: 4px;
+        height: 14px;
+        border-radius: 999px;
+        background: #fff;
+      }
+
+      .dream-mic-base {
+        position: absolute;
+        left: 15px;
+        bottom: 0;
+        width: 24px;
+        height: 4px;
+        border-radius: 999px;
+        background: #fff;
+      }
+
+      .dream-mic-wave {
+        position: absolute;
+        left: 3px;
+        top: 20px;
+        width: 48px;
+        height: 36px;
+        border: 4px solid rgba(255,255,255,0.72);
+        border-top: 0;
+        border-radius: 0 0 999px 999px;
       }
 
       .dream-builder-input-panel textarea {
@@ -8723,6 +8778,57 @@
         color: var(--muted) !important;
         font-size: 12px !important;
         text-decoration: underline;
+      }
+
+      .dream-map-empty-state,
+      .dream-generating-state {
+        display: grid;
+        min-height: 210px;
+        place-items: center;
+        gap: 10px;
+        border: 1px dashed rgba(22, 90, 128, 0.18);
+        border-radius: 26px;
+        background:
+          radial-gradient(circle at 50% 15%, rgba(72,199,217,0.16), transparent 42%),
+          rgba(255,255,255,0.42);
+        padding: 24px 18px;
+        text-align: center;
+      }
+
+      .dream-map-empty-state strong,
+      .dream-generating-state strong {
+        color: var(--pulse-navy, #16466d);
+        font-size: 20px;
+        line-height: 1.1;
+      }
+
+      .dream-orbit-loader {
+        position: relative;
+        width: 112px;
+        height: 112px;
+        border-radius: 999px;
+        background: linear-gradient(135deg, rgba(22,90,128,0.98), rgba(72,199,217,0.82), rgba(134,189,77,0.9));
+        box-shadow: 0 18px 42px rgba(22,70,109,0.2);
+      }
+
+      .dream-orbit-loader::before,
+      .dream-orbit-loader::after {
+        content: "";
+        position: absolute;
+        inset: 14px;
+        border: 1px solid rgba(255,255,255,0.62);
+        border-radius: 999px;
+      }
+
+      .dream-orbit-loader::after {
+        inset: -8px;
+        border-style: dashed;
+        border-color: rgba(72,199,217,0.54);
+        animation: dreamSpin 1.4s linear infinite;
+      }
+
+      @keyframes dreamSpin {
+        to { transform: rotate(360deg); }
       }
 
       #today-path-card.card.today-path-card {
@@ -10852,7 +10958,7 @@
       .dream-map-actions .ghost-btn { width: 100%; }
 
       .dream-map-panel.is-mindmap {
-        gap: 14px;
+        gap: 16px;
       }
 
       .dream-map-panel.is-mindmap .dream-map-core {
@@ -10882,13 +10988,16 @@
       .dream-map-panel.is-mindmap .dream-map-node-list {
         position: relative;
         display: grid;
-        min-height: 280px;
+        min-height: 330px;
         place-items: center;
         overflow: hidden;
-        border: 1px solid rgba(255,255,255,0.58);
-        border-radius: 24px;
-        background: radial-gradient(circle at center, rgba(72,199,217,0.18), transparent 132px), rgba(255,255,255,0.26);
-        padding: 14px;
+        border: 1px solid rgba(255,255,255,0.72);
+        border-radius: 30px;
+        background:
+          radial-gradient(circle at center, rgba(72,199,217,0.2), transparent 132px),
+          linear-gradient(145deg, rgba(255,255,255,0.72), rgba(232,252,247,0.46));
+        padding: 16px;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.72), 0 20px 50px rgba(31,65,85,0.09);
       }
 
       .dream-map-panel.is-mindmap .dream-map-node-list .dream-map-core {
@@ -10900,12 +11009,14 @@
         position: absolute;
         display: grid;
         grid-template-columns: 1fr;
-        width: min(42%, 168px);
+        width: min(41%, 170px);
         min-height: 62px;
         gap: 2px;
-        padding: 9px 11px;
-        border-radius: 18px;
-        background: rgba(255,255,255,0.72);
+        padding: 10px 12px;
+        border-radius: 20px;
+        border-color: rgba(255,255,255,0.86);
+        background: rgba(255,255,255,0.78);
+        box-shadow: 0 16px 34px rgba(18, 36, 58, 0.1);
       }
 
       .dream-map-panel.is-mindmap .dream-map-node img,
@@ -10941,10 +11052,11 @@
       .dream-map-detail {
         display: grid;
         gap: 12px;
-        border: 1px solid rgba(255,255,255,0.68);
-        border-radius: 22px;
-        background: rgba(255,255,255,0.54);
+        border: 1px solid rgba(255,255,255,0.76);
+        border-radius: 24px;
+        background: linear-gradient(145deg, rgba(255,255,255,0.78), rgba(232,252,247,0.48));
         padding: 12px;
+        box-shadow: 0 16px 36px rgba(31,65,85,0.08);
       }
 
       .dream-map-detail img {
@@ -11528,7 +11640,14 @@
             <button class="ghost-btn" data-dream-builder type="button">Dream Builder</button>
           </div>
           <div id="dream-builder-input-panel" class="dream-builder-input-panel hidden">
-            <button id="dream-record-btn" class="dream-big-mic" type="button" aria-label="Start recording">🎙</button>
+            <button id="dream-record-btn" class="dream-big-mic" type="button" aria-label="Start recording">
+              <span class="dream-mic-icon" aria-hidden="true">
+                <span class="dream-mic-head"></span>
+                <span class="dream-mic-wave"></span>
+                <span class="dream-mic-stem"></span>
+                <span class="dream-mic-base"></span>
+              </span>
+            </button>
             <p id="dream-record-status" class="muted">Tap the mic and speak the dream life you are building.</p>
             <button id="dream-text-toggle" class="dream-text-toggle" type="button">Add text instead</button>
             <div id="dream-text-entry-panel" class="dream-text-entry-panel hidden">
@@ -12223,6 +12342,8 @@
       const dreamVisionStorageKey = "pulsenow_demo_dream_vision_items_v2";
       const profileBioStoragePrefix = "pulsenow_demo_profile_bio_";
       const quizProfileStorageKey = "pulsenow_demo_quiz_profile";
+      let dreamMapReady = false;
+      let dreamMapGenerating = false;
       let substepState = {};
       let quizState = {
         type: "working_genius",
@@ -12627,6 +12748,10 @@
         dreamBuilderInputPanel.scrollIntoView({ behavior: "smooth", block: "center" });
       }
 
+      function delay(ms) {
+        return new Promise((resolve) => window.setTimeout(resolve, ms));
+      }
+
       async function buildDreamMapFromText(prompt, sourceButton) {
         const cleanPrompt = String(prompt || "").trim();
         if (cleanPrompt.length < 8) {
@@ -12635,12 +12760,17 @@
           if (dreamTextInput) window.setTimeout(() => dreamTextInput.focus(), 0);
           return;
         }
-        const original = sourceButton && sourceButton.textContent;
+        const shouldChangeButtonText = sourceButton && sourceButton !== dreamRecordBtn;
+        const original = shouldChangeButtonText && sourceButton.textContent;
+        dreamMapReady = false;
+        dreamMapGenerating = true;
+        renderVisionWorkspace();
         if (sourceButton) {
           sourceButton.disabled = true;
-          sourceButton.textContent = "Building dream map...";
+          if (shouldChangeButtonText) sourceButton.textContent = "Building dream map...";
         }
-        if (dreamRecordStatus) dreamRecordStatus.textContent = "Building your dream map...";
+        if (dreamRecordStatus) dreamRecordStatus.textContent = "Generating your dream life...";
+        await delay(1100);
         const fallbackTitle = cleanPrompt.split(/[,.]/)[0].slice(0, 42) || "Dream Life";
         try {
           const data = await apiRequest("/api/dream-life/generate", {
@@ -12664,9 +12794,11 @@
           visionItems[activeDreamIndex].description = "A first version of your dream map. Add more detail to sharpen this area.";
         } finally {
           saveDreamVisionItems();
+          dreamMapGenerating = false;
+          dreamMapReady = true;
           if (sourceButton) {
             sourceButton.disabled = false;
-            if (original) sourceButton.textContent = original;
+            if (shouldChangeButtonText && original) sourceButton.textContent = original;
           }
           if (dreamRecordStatus) dreamRecordStatus.textContent = "Your map is ready. Tap any area to open the next move.";
           renderVisionWorkspace();
@@ -12782,6 +12914,14 @@
         }
       }
 
+      function bindDreamBuilderButtons() {
+        document.querySelectorAll("[data-dream-builder]").forEach((button) => {
+          if (button.dataset.dreamBuilderBound === "true") return;
+          button.dataset.dreamBuilderBound = "true";
+          button.addEventListener("click", openDreamBuilderPanel);
+        });
+      }
+
       function renderVisionWorkspace() {
         const grid = document.getElementById("vision-board-grid");
         if (!grid) return;
@@ -12789,6 +12929,28 @@
         const active = visionItems[activeIndex];
         const activeDescription = active.next_action || active.milestone || active.description || "Open your map to turn the dream into areas, milestones, and one next move.";
         grid.className = "vision-board-grid dream-map-grid";
+
+        if (dreamMapGenerating) {
+          grid.innerHTML =
+            '<div class="dream-generating-state">' +
+            '<div class="dream-orbit-loader" aria-hidden="true"></div>' +
+            "<strong>Generating your dream life</strong>" +
+            '<p class="muted">Turning your words into areas, milestones, and a next move.</p>' +
+            "</div>";
+          bindDreamBuilderButtons();
+          return;
+        }
+
+        if (!dreamMapReady) {
+          grid.innerHTML =
+            '<div class="dream-map-empty-state">' +
+            "<strong>Your dream map will grow here.</strong>" +
+            '<p class="muted">Press Dream Builder, record your vision, then watch the map appear.</p>' +
+            "</div>";
+          bindDreamBuilderButtons();
+          return;
+        }
+
         grid.innerHTML =
           '<div class="dream-map-panel is-mindmap">' +
           '<div class="dream-map-node-list" aria-label="Dream life areas">' +
@@ -12847,11 +13009,7 @@
           });
         });
 
-        document.querySelectorAll("[data-dream-builder]").forEach((button) => {
-          if (button.dataset.dreamBuilderBound === "true") return;
-          button.dataset.dreamBuilderBound = "true";
-          button.addEventListener("click", openDreamBuilderPanel);
-        });
+        bindDreamBuilderButtons();
       }
 
       function renderImageRevealGoals() {
