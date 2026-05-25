@@ -12629,8 +12629,8 @@
 
           <section id="dl-screen-alignment" class="dl-card dl-hidden">
             <p class="dl-eyebrow">Alignment</p>
-            <h2 class="dl-title">Keep it moving.</h2>
-            <p class="dl-copy">A dream becomes practical when today has one clear next move.</p>
+            <h2 class="dl-title">Make it real this week.</h2>
+            <p class="dl-copy">Rather than scoring the dream, PulseNow turns it into the clearest actions from the vision you submitted.</p>
             <div id="dl-score-wrap" class="dl-score-wrap"></div>
             <div id="dl-align-list" class="dl-align-list"></div>
             <div class="dl-actions">
@@ -12997,7 +12997,7 @@
       const coachIqDismissedStorageKey = "pulsenow_demo_coach_iq_dismissed";
       const activeDreamStorageKey = "pulsenow_demo_active_dream";
       const dreamVisionStorageKey = "pulsenow_demo_dream_vision_items_v2";
-      const dreamLifeStorageKey = "pulsenow_demo_dream_life_vision_v1";
+      const dreamLifeStorageKey = "pulsenow_demo_dream_life_vision_v2";
       const profileBioStoragePrefix = "pulsenow_demo_profile_bio_";
       const quizProfileStorageKey = "pulsenow_demo_quiz_profile";
       let dreamMapReady = false;
@@ -13464,9 +13464,9 @@
         }
       }
 
-      function buildDreamLifeFallback(prompt) {
-        const clean = String(prompt || dreamLifeDemoPrompt).trim();
-        const firstSentence = clean.split(/[.!?]/)[0] || "A life with peace, margin, energy, and people I love";
+      function buildDreamLifeDemoVision() {
+        const clean = dreamLifeDemoPrompt;
+        const firstSentence = clean.split(/[.!?]/)[0];
         const fallbackItems = [
           ["home", "Peaceful Home Base", "A calm, beautiful home that makes the work feel worth it.", "Create one small corner that feels like the future home."],
           ["money", "Financial Breathing Room", "More margin, more options, and less pressure around every decision.", "Connect this week's contact goal to one specific money target."],
@@ -13478,10 +13478,10 @@
         return {
           transcript: clean,
           title: "Future Self",
+          is_demo: true,
           what_i_heard: firstSentence,
           center_declaration: "I am building a life that feels peaceful, free, connected, and fully alive.",
           future_self_statement: "I become this version of myself by taking one aligned action every day.",
-          alignment_score: 72,
           categories: fallbackItems.map(([key, title, statement, action]) => ({
             category_key: key,
             display_name: title,
@@ -13498,36 +13498,49 @@
         };
       }
 
+      function buildDreamLifeEmptyVision(prompt) {
+        const clean = String(prompt || dreamLifeDemoPrompt).trim();
+        const firstSentence = clean.split(/[.!?]/)[0] || "A life with peace, margin, energy, and people I love";
+        return {
+          transcript: clean,
+          title: "Future Self",
+          what_i_heard: firstSentence,
+          center_declaration: "",
+          future_self_statement: "",
+          categories: [],
+          aligned_actions: []
+        };
+      }
+
       function normalizeDreamLifeResponse(data, prompt) {
-        const base = buildDreamLifeFallback(data?.transcript || prompt);
+        const base = buildDreamLifeEmptyVision(data?.transcript || prompt);
         const items = Array.isArray(data?.items) && data.items.length ? data.items : [];
-        if (!items.length) return base;
+        if (!items.length) return null;
         const categories = items.slice(0, 6).map((item, index) => {
           const categoryKey = getDreamLifeCategoryKey(item?.area || item?.title || item?.description);
-          const title = String(item?.title || item?.area || base.categories[index % base.categories.length].display_name).slice(0, 42);
-          const description = String(item?.description || base.categories[index % base.categories.length].distilled_statement).slice(0, 220);
+          const title = String(item?.title || item?.area || "Dream area").slice(0, 42);
+          const description = String(item?.description || "A specific part of the vision you submitted.").slice(0, 220);
           return {
             category_key: categoryKey,
             display_name: title,
             distilled_statement: description,
-            present_tense_declaration: String(item?.next_action || item?.milestone || base.categories[index % base.categories.length].present_tense_declaration).slice(0, 180),
+            present_tense_declaration: String(item?.next_action || item?.milestone || "Clarify one small action for this area.").slice(0, 180),
             image_url: item?.image_url || dreamLifeCategoryImages[categoryKey] || dreamLifeCategoryImages.other,
-            feeling_words: Array.isArray(item?.feeling_words) ? item.feeling_words.slice(0, 3) : base.categories[index % base.categories.length].feeling_words
+            feeling_words: Array.isArray(item?.feeling_words) ? item.feeling_words.slice(0, 3) : []
           };
         });
         return {
           ...base,
           transcript: String(data?.transcript || prompt || base.transcript),
-          what_i_heard: String(data?.summary || data?.what_i_heard || base.what_i_heard),
-          center_declaration: String(data?.center_declaration || base.center_declaration),
-          future_self_statement: String(data?.future_self_statement || base.future_self_statement),
+          what_i_heard: String(data?.summary || data?.what_i_heard || data?.profile?.future_self_summary || base.what_i_heard),
+          center_declaration: String(data?.center_declaration || data?.profile?.center_declaration || ""),
+          future_self_statement: String(data?.future_self_statement || data?.profile?.future_self_summary || ""),
           categories,
           aligned_actions: categories.slice(0, 3).map((category, index) => ({
             day: index + 1,
             title: category.display_name,
             action: category.present_tense_declaration
-          })),
-          alignment_score: Math.max(58, Math.min(94, Number(data?.alignment_score) || 72 + Math.min(12, categories.length * 2)))
+          }))
         };
       }
 
@@ -13576,22 +13589,19 @@
 
       function renderDreamLifeAlignment() {
         if (!dreamLifeVision || !dlScoreWrap || !dlAlignList) return;
-        const score = Math.max(0, Math.min(100, Number(dreamLifeVision.alignment_score) || 72));
-        const circumference = 2 * Math.PI * 84;
-        const offset = circumference - (score / 100) * circumference;
         dlScoreWrap.innerHTML =
-          '<div class="dl-score-ring"><svg width="210" height="210" viewBox="0 0 210 210" aria-hidden="true">' +
-          '<circle cx="105" cy="105" r="84" fill="none" stroke="rgba(22,90,128,0.1)" stroke-width="16"></circle>' +
-          '<circle cx="105" cy="105" r="84" fill="none" stroke="url(#dlScoreGrad)" stroke-width="16" stroke-linecap="round" stroke-dasharray="' + circumference + '" stroke-dashoffset="' + offset + '"></circle>' +
-          '<defs><linearGradient id="dlScoreGrad" x1="0" x2="1"><stop stop-color="#155676"></stop><stop offset="0.55" stop-color="#4dc7d7"></stop><stop offset="1" stop-color="#88c76d"></stop></linearGradient></defs>' +
-          '</svg><div class="dl-score-center"><div><strong>' + score + '</strong><span>Aligned</span></div></div></div>';
-        const actions = Array.isArray(dreamLifeVision.aligned_actions) && dreamLifeVision.aligned_actions.length ? dreamLifeVision.aligned_actions : buildDreamLifeFallback().aligned_actions;
+          '<div class="dl-declaration-card" style="margin-top:0;text-align:left;">' +
+          '<strong>This is your alignment plan.</strong>' +
+          '<p>' +
+          escapeHtml(dreamLifeVision.is_demo ? "Demo actions from the sample vision. Record your own voice to replace these." : "These actions come from the vision you submitted. Complete or edit them as the product grows.") +
+          "</p></div>";
+        const actions = Array.isArray(dreamLifeVision.aligned_actions) ? dreamLifeVision.aligned_actions : [];
         dlAlignList.innerHTML = actions.slice(0, 5).map((action, index) => (
           '<article class="dl-align-card"><span class="dl-week-dot">' + (action.day || index + 1) + '</span><div><strong>' +
-          escapeHtml(action.title || "Aligned move") + "</strong><p>" +
+          escapeHtml(action.title || "Next move") + "</strong><p>" +
           escapeHtml(action.action || "Take one clear action toward the life you described.") +
           "</p></div></article>"
-        )).join("");
+        )).join("") || '<article class="dl-align-card"><span class="dl-week-dot">1</span><div><strong>No actions yet</strong><p>Record or type your dream life first so PulseNow can create real next moves.</p></div></article>';
       }
 
       function openDreamLifeFlow() {
@@ -13605,6 +13615,13 @@
         if (dlTextPanel) dlTextPanel.classList.add("dl-hidden");
         if (dlTextToggle) dlTextToggle.textContent = "Add text instead";
         if (dlRecordStatus) dlRecordStatus.textContent = "Tap the microphone, say what you want your life to look and feel like, then tap again to generate it.";
+        dlShowStep("voice");
+      }
+
+      function showDreamLifeGenerationError(message) {
+        if (dlRecordStatus) dlRecordStatus.textContent = message || "I could not generate from that transcript. Nothing fake was created. Try again or add text instead.";
+        if (dlTextPanel) dlTextPanel.classList.remove("dl-hidden");
+        if (dlTextToggle) dlTextToggle.textContent = "Hide text option";
         dlShowStep("voice");
       }
 
@@ -13628,10 +13645,12 @@
             })
           });
           dreamLifeVision = normalizeDreamLifeResponse(data, cleanPrompt);
+          if (!dreamLifeVision) throw new Error("Dream Life did not return enough real content.");
           applyDreamGeneration(data);
           saveDreamVisionItems();
-        } catch {
-          dreamLifeVision = buildDreamLifeFallback(cleanPrompt);
+        } catch (error) {
+          showDreamLifeGenerationError(error.message || "I could not generate from that text. Nothing fake was created. Try again with more detail.");
+          return;
         }
         saveDreamLifeVision();
         renderDreamLifeReflection();
@@ -13644,11 +13663,13 @@
         try {
           const data = await generateDreamMapFromAudio(audioBlob);
           dreamLifeVision = normalizeDreamLifeResponse(data, data?.transcript || "");
+          if (!dreamLifeVision) throw new Error("Dream Life did not return enough real content.");
           if (dlTextInput && data?.transcript) dlTextInput.value = String(data.transcript);
           applyDreamGeneration(data);
           saveDreamVisionItems();
-        } catch {
-          dreamLifeVision = buildDreamLifeFallback("A peaceful, free, healthy, connected life with more margin, travel, family memories, and meaningful work.");
+        } catch (error) {
+          showDreamLifeGenerationError(error.message || "I could not generate from that recording. Nothing fake was created. Try again or add text instead.");
+          return;
         }
         saveDreamLifeVision();
         renderDreamLifeReflection();
@@ -14070,7 +14091,7 @@
         if (encoded) headers["x-pulsenow-session"] = encoded;
         const response = await fetch(path, Object.assign({}, options || {}, { headers }));
         const data = await response.json().catch(() => ({}));
-        if (!response.ok) throw new Error(data.error || "Request failed");
+        if (!response.ok) throw new Error(data.message || data.error || "Request failed");
         return data;
       }
 
@@ -16446,7 +16467,15 @@
         });
       }
       if (dlTextSubmit) dlTextSubmit.addEventListener("click", () => processDreamLifePrompt(dlTextInput && dlTextInput.value));
-      if (dlDemoBtn) dlDemoBtn.addEventListener("click", () => processDreamLifePrompt(dreamLifeDemoPrompt));
+      if (dlDemoBtn) {
+        dlDemoBtn.addEventListener("click", async () => {
+          dlShowStep("processing");
+          await delay(650);
+          dreamLifeVision = buildDreamLifeDemoVision();
+          renderDreamLifeReflection();
+          dlShowStep("reflection");
+        });
+      }
       if (dlGenerateVisionBtn) {
         dlGenerateVisionBtn.addEventListener("click", () => {
           renderDreamLifeVision();

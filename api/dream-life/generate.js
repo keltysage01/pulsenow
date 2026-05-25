@@ -64,23 +64,27 @@ export default async function handler(req, res) {
     if (prompt.length > 20000) return sendJson(res, 413, { error: 'prompt_too_large' });
 
     const currentItems = Array.isArray(body.current_items) ? body.current_items : [];
-    let mode = process.env.OPENAI_API_KEY ? 'openai' : 'local-preview';
-    let note = process.env.OPENAI_API_KEY
-      ? 'Dream map generated with OpenAI text intelligence. Image generation is handled by the Supabase worker pack when deployed.'
-      : 'OPENAI_API_KEY is not set, so Pulsenow returned a local preview dream map.';
+    if (!process.env.OPENAI_API_KEY) {
+      return sendJson(res, 503, {
+        error: 'generation_not_configured',
+        message: 'Dream Life generation needs OPENAI_API_KEY before it can create an accurate vision from a real transcript.',
+      });
+    }
+
     let profile;
     try {
       profile = await buildDreamProfile(prompt, session, currentItems);
     } catch (error) {
-      mode = 'local-preview';
-      note = 'OpenAI generation was unavailable, so Pulsenow returned a local preview dream map.';
-      profile = buildFallbackProfile(prompt, session, currentItems);
+      return sendJson(res, 502, {
+        error: 'dream_life_generation_unavailable',
+        message: error.message || 'Dream Life generation was unavailable. Nothing was generated from placeholder content.',
+      });
     }
     const items = normalizeDreamItems(profile.items, currentItems);
 
     const response = {
       ok: true,
-      mode,
+      mode: 'openai',
       profile: {
         center_declaration: profile.center_declaration,
         future_self_summary: profile.future_self_summary,
@@ -88,7 +92,7 @@ export default async function handler(req, res) {
       },
       items,
       transcript: transcript || undefined,
-      note,
+      note: 'Dream map generated from the submitted transcript or text. Image generation is handled by the Supabase worker pack when deployed.',
     };
 
     persistDreamPreview({ session, prompt, response }).catch(() => {});
@@ -135,8 +139,6 @@ async function transcribeDreamAudio({ audioBase64, mimeType }) {
 }
 
 async function buildDreamProfile(prompt, session, currentItems) {
-  if (!process.env.OPENAI_API_KEY) return buildFallbackProfile(prompt, session, currentItems);
-
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 30000);
   const system = [
@@ -185,7 +187,11 @@ async function buildDreamProfile(prompt, session, currentItems) {
       throw new Error(data?.error?.message || 'OpenAI dream generation failed');
     }
 
-    return parseDreamJson(extractOutputText(data)) || buildFallbackProfile(prompt, session, currentItems);
+    const parsed = parseDreamJson(extractOutputText(data));
+    if (!parsed || !Array.isArray(parsed.items) || parsed.items.length < 3) {
+      throw new Error('Dream generation returned an incomplete profile.');
+    }
+    return parsed;
   } finally {
     clearTimeout(timeout);
   }
@@ -216,7 +222,7 @@ function parseDreamJson(text) {
 }
 
 function normalizeDreamItems(items, currentItems) {
-  const source = Array.isArray(items) && items.length ? items : buildFallbackProfile('', {}, currentItems).items;
+  const source = Array.isArray(items) ? items : [];
   return source.slice(0, 6).map((item, index) => {
     const title = cleanTitle(item.title || currentItems[index]?.title || `Dream Area ${index + 1}`);
     const area = cleanTitle(item.area || title);
@@ -232,70 +238,6 @@ function normalizeDreamItems(items, currentItems) {
       feeling_words: Array.isArray(item.feeling_words) ? item.feeling_words.slice(0, 5).map(cleanTitle) : [],
     };
   });
-}
-
-function buildFallbackProfile(prompt, session, currentItems) {
-  const lower = prompt.toLowerCase();
-  const wantsTravel = /travel|trip|beach|vacation|world|family trip/.test(lower);
-  const wantsHome = /home|house|space|property|land|kitchen/.test(lower);
-  const wantsMoney = /debt|money|income|freedom|financial|save|wealth/.test(lower);
-
-  const items = [
-    {
-      title: wantsHome ? 'Dream Home' : currentItems[0]?.title || 'Home Base',
-      area: 'Home',
-      description: 'The place that makes your work feel worth it and gives your family room to breathe.',
-      milestone: 'Define the home, location, and monthly number this business needs to support.',
-      next_action: 'Write the exact home vision and attach one real photo that matches it.',
-      image_prompt: 'bright aspirational family home, calm luxury, morning light, realistic photography',
-    },
-    {
-      title: wantsMoney ? 'Debt Free' : currentItems[1]?.title || 'Financial Margin',
-      area: 'Money',
-      description: 'Less pressure, more choices, and a business rhythm that funds peace instead of panic.',
-      milestone: 'Name the first debt or savings target and the weekly activity that supports it.',
-      next_action: 'Pick one financial target and connect it to this week’s contact goal.',
-      image_prompt: 'calm financial freedom desk, organized notes, soft aqua and green light, realistic',
-    },
-    {
-      title: wantsTravel ? 'Family Trip' : currentItems[2]?.title || 'People & Memories',
-      area: 'Relationships',
-      description: 'The people, memories, and experiences this business is meant to protect.',
-      milestone: 'Choose one experience you want to create in the next 12 months.',
-      next_action: 'Save one image of that experience and write why it matters.',
-      image_prompt: 'family travel memory, ocean light, warm connection, aspirational but realistic',
-    },
-    {
-      title: 'Impact Work',
-      area: 'Work',
-      description: 'A business that helps real people and makes outreach feel connected to purpose.',
-      milestone: 'Clarify the type of person you most want to help this quarter.',
-      next_action: 'Add three people to your Power List who match that mission.',
-      image_prompt: 'purposeful coaching conversation, premium CRM workspace, soft glass light',
-    },
-    {
-      title: 'Daily Rhythm',
-      area: 'Rhythm',
-      description: 'The simple daily pattern that keeps the dream moving without making life chaotic.',
-      milestone: 'Build a repeatable morning or evening block for outreach and follow-up.',
-      next_action: 'Schedule one 30-minute contact block for tomorrow.',
-      image_prompt: 'peaceful morning routine, planner, phone, soft blue green sunrise',
-    },
-    {
-      title: 'Future Self',
-      area: 'Identity',
-      description: 'The person you are becoming while you build the dream, not just after you arrive.',
-      milestone: 'Write the identity statement you want to operate from this week.',
-      next_action: 'Add that statement to your profile bio or vision board.',
-      image_prompt: 'confident future self reflection, clean premium light, subtle growth symbolism',
-    },
-  ];
-
-  return {
-    center_declaration: `${session?.name || 'I'} am building a life that feels clear, generous, and free.`,
-    future_self_summary: 'Your dream map connects visible goals to the daily actions that make them real.',
-    items,
-  };
 }
 
 function pickImage(area, title) {
