@@ -8,15 +8,13 @@ if (!existsSync('index.html')) {
 const outDir = 'dist';
 const staticEntries = [
   'index.html',
-  'public',
   'pulsenow_landing_layers',
   'badge-icons',
-  'assets',
-  'backgrounds',
   'pulsenow-logo-transparent-cropped.png',
   'pulsenow-logo-transparent.png',
   'pulsenow-logo.jpeg',
 ];
+const publicEntries = ['design-system', 'backgrounds'];
 
 await rm(outDir, { recursive: true, force: true });
 await mkdir(outDir, { recursive: true });
@@ -26,4 +24,13 @@ for (const entry of staticEntries) {
   await cp(entry, `${outDir}/${entry}`, { recursive: true });
 }
 
-console.log('Pulsenow static build: wrote minimal static app to dist and kept Vercel API functions intact.');
+for (const entry of publicEntries) {
+  const source = `public/${entry}`;
+  if (!existsSync(source)) continue;
+  await mkdir(`${outDir}/public`, { recursive: true });
+  await cp(source, `${outDir}/public/${entry}`, { recursive: true });
+}
+
+await rm(`${outDir}/public/backgrounds/premium_seed_images`, { recursive: true, force: true });
+
+console.log('Pulsenow static build: wrote the static app shell and referenced assets to dist.');
