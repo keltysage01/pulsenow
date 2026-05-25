@@ -10968,6 +10968,84 @@
           font-size: 12px !important;
         }
       }
+
+      /* Final Coach IQ rescue: keep cards readable inside the narrow mobile shell. */
+      #coach-screen .coach-intel-card {
+        overflow: visible !important;
+      }
+
+      #coach-screen .coach-quiz-grid {
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+        width: 100% !important;
+      }
+
+      #coach-screen .coach-quiz-card {
+        width: 100% !important;
+        min-height: 96px !important;
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) auto !important;
+        grid-template-rows: auto auto !important;
+        align-items: center !important;
+        gap: 6px 12px !important;
+        padding: 16px 18px !important;
+        overflow: hidden !important;
+        text-align: left !important;
+        border-radius: 24px !important;
+      }
+
+      #coach-screen .coach-quiz-card span {
+        grid-column: 2 !important;
+        grid-row: 1 !important;
+        align-self: start !important;
+        justify-self: end !important;
+        width: auto !important;
+        min-width: 0 !important;
+        max-width: 86px !important;
+        height: auto !important;
+        min-height: 30px !important;
+        padding: 7px 10px !important;
+        border-radius: 999px !important;
+        writing-mode: horizontal-tb !important;
+        text-orientation: mixed !important;
+        white-space: nowrap !important;
+        text-align: center !important;
+        font-size: 10px !important;
+        line-height: 1 !important;
+        letter-spacing: 0.08em !important;
+      }
+
+      #coach-screen .coach-quiz-card strong {
+        grid-column: 1 !important;
+        grid-row: 1 !important;
+        min-width: 0 !important;
+        color: var(--text) !important;
+        font-size: clamp(19px, 4.8vw, 23px) !important;
+        line-height: 1.08 !important;
+        letter-spacing: -0.035em !important;
+        white-space: normal !important;
+        overflow: visible !important;
+        text-align: left !important;
+      }
+
+      #coach-screen .coach-quiz-card small {
+        grid-column: 1 / -1 !important;
+        grid-row: 2 !important;
+        min-width: 0 !important;
+        color: var(--sub) !important;
+        font-size: 14px !important;
+        line-height: 1.35 !important;
+        white-space: normal !important;
+        overflow: visible !important;
+        text-align: left !important;
+      }
+
+      @media (min-width: 760px) {
+        #coach-screen .coach-quiz-grid {
+          grid-template-columns: 1fr !important;
+        }
+      }
     </style>
   </head>
   <body>
