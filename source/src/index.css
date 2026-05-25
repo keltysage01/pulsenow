@@ -54,6 +54,21 @@ select {
   padding: 0 12px;
 }
 
+textarea {
+  width: 100%;
+  min-height: 138px;
+  resize: vertical;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.62);
+  color: var(--text);
+  padding: 13px 14px;
+  font: inherit;
+  line-height: 1.5;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
 label {
   display: grid;
   gap: 8px;
@@ -357,6 +372,124 @@ a {
 .coach-input {
   display: grid;
   grid-template-columns: 1fr auto;
+  gap: 8px;
+}
+
+.dream-builder-panel {
+  display: grid;
+  gap: 12px;
+}
+
+.dream-record-panel {
+  gap: 18px;
+}
+
+.dream-mic-wrap {
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  text-align: center;
+}
+
+.dream-mic-button {
+  display: grid;
+  width: 132px;
+  height: 132px;
+  min-height: 132px;
+  place-items: center;
+  border: 0;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--primary), var(--aqua), var(--green));
+  color: #fff;
+  box-shadow:
+    0 22px 46px rgba(22, 70, 109, 0.22),
+    0 0 0 12px rgba(85, 182, 197, 0.1);
+}
+
+.dream-mic-button.is-recording {
+  background: linear-gradient(135deg, #8f1733, #e25757);
+  box-shadow:
+    0 22px 46px rgba(143, 23, 51, 0.2),
+    0 0 0 12px rgba(226, 87, 87, 0.12);
+}
+
+.dream-text-fallback {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+}
+
+.dream-text-fallback > button {
+  min-height: 32px;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font-size: 12px;
+  text-decoration: underline;
+}
+
+.dream-text-entry {
+  display: grid;
+  width: 100%;
+  gap: 10px;
+}
+
+.dream-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.dream-progress {
+  margin-top: 12px;
+}
+
+.dream-status {
+  margin-top: 12px;
+  line-height: 1.55;
+}
+
+.dream-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.dream-tile {
+  display: grid;
+  gap: 10px;
+}
+
+.dream-tile img {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  border-radius: 18px;
+}
+
+.dream-tile button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.dream-tile strong {
+  color: var(--primary);
+  line-height: 1.45;
+}
+
+.dream-sheet-frame {
+  width: 100%;
+  min-height: 520px;
+  margin-top: 12px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: #fff;
+}
+
+.dream-summary {
+  display: grid;
   gap: 8px;
 }
 

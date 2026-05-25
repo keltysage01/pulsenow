@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { PulseBackground } from "./components/ui/PulseBackground";
 import { QuizScreen } from "./features/quiz/QuizScreen";
+import { DreamBuilder } from "./screens/DreamBuilder";
 
-type Screen = "home" | "log" | "board" | "pipeline" | "me" | "contacts" | "coach" | "quiz";
+type Screen = "home" | "log" | "board" | "pipeline" | "me" | "contacts" | "coach" | "quiz" | "dream";
 type ContactType = "prospect" | "recruit" | "client";
 
 type Session = {
@@ -226,7 +227,7 @@ function App() {
           <button className="drawer-bg" onClick={() => setDrawer(false)} />
           <nav className="drawer-panel">
             <img src={logo} alt="Pulsenow" />
-            {(["contacts", "coach", "quiz"] as Screen[]).map((item) => (
+            {(["contacts", "coach", "quiz", "dream"] as Screen[]).map((item) => (
               <button key={item} onClick={() => { setScreen(item); setDrawer(false); }}>{item}</button>
             ))}
             <button onClick={logout}>Sign out</button>
@@ -254,6 +255,7 @@ function App() {
         {screen === "contacts" ? <ContactsScreen contacts={contacts} setContacts={setContacts} /> : null}
         {screen === "coach" ? <CoachScreen messages={coach} sendCoach={sendCoach} /> : null}
         {screen === "quiz" ? <QuizScreen session={session} /> : null}
+        {screen === "dream" ? <DreamBuilder session={session} /> : null}
       </main>
 
       <nav className="bottom-nav">
@@ -292,6 +294,10 @@ function Home(props: { session: Session; log: LogFields; points: number; tier: s
       <section className="card">
         <div className="section-head"><h2>Personal Profile</h2><button onClick={() => props.setScreen("quiz")}>Open</button></div>
         <p className="muted">Complete Working Genius and Four Tendencies to unlock coaching that fits your style.</p>
+      </section>
+      <section className="card accent">
+        <div className="section-head"><h2>Dream Life Builder</h2><button onClick={() => props.setScreen("dream")}>Open</button></div>
+        <p className="muted">Turn typed text, audio, or a Wispr transcript into a printable Dream Life Map.</p>
       </section>
       <section className="card">
         <div className="section-head"><h2>Power List</h2><button onClick={() => props.setScreen("contacts")}>Open CRM</button></div>

@@ -1,10 +1,44 @@
-# Codex Master Prompt For Dream Life Builder
+# Codex Master Prompt For PulseNow Dream Life Builder
 
-You are working in the user's GitHub repository. Build the Dream Life Builder feature end to end using Supabase, OpenAI, and optional Wispr Flow.
+You are working in the current PulseNow GitHub repository:
+
+- Local clean repo: `/tmp/pulsenow-git`
+- GitHub remote: `https://github.com/keltysage01/pulsenow.git`
+- Default branch: `main`
+- App name/package: `pulsenow`
+
+Before editing, run:
+
+```bash
+git status --short
+npm run build
+```
+
+Build the Dream Life Builder feature end to end using Supabase, OpenAI, and optional Wispr Flow.
+
+Do not rebuild the PulseNow UI from scratch. Preserve the existing PulseNow design, navigation, assets, root static app behavior, and React/Vite source structure. Add backend functionality and integrate only the screens/components needed for Dream Life Builder.
+
+If files from this backend pack are already present in the repo, diff them and update in place instead of copying duplicate files.
 
 ## Product goal
 
 Build a feature where a user can speak, paste, or type their dream life. The app turns the input into a structured dream profile, generates images for each category, and creates a printable Dream Life Map.
+
+## PulseNow repo constraints
+
+1. Treat `/tmp/pulsenow-git` as the source of truth.
+2. Keep the repo connected to `origin https://github.com/keltysage01/pulsenow.git`.
+3. Do not replace `index.html`, the current PulseNow visual design, or the existing landing/app screens.
+4. Prefer small, additive changes in these existing areas:
+   1. `supabase/migrations`
+   2. `supabase/functions`
+   3. `source/src`
+   4. `api`
+   5. `docs/dream-life-builder`
+5. Use the existing `source/src/lib/supabase.ts` Supabase client pattern when wiring frontend calls.
+6. Keep backend secrets server-side only. Never expose the Supabase service role key, OpenAI key, Dream worker secret, or Wispr key to browser code.
+7. Verify with `npm run build` after changes. Run `npm run typecheck` when TypeScript files change.
+8. Preserve any unrelated dirty work in the tree. If `git status --short` shows existing changes, do not revert or overwrite them.
 
 ## Required architecture
 
@@ -32,9 +66,9 @@ Build a feature where a user can speak, paste, or type their dream life. The app
 
 ## Build steps
 
-### Step 1: Add Supabase migration
+### Step 1: Add or verify Supabase migration
 
-Add the SQL migration in `supabase/migrations/202605230001_dream_life_builder.sql`.
+Add or verify the SQL migration in `supabase/migrations/202605230001_dream_life_builder.sql`.
 
 Verify that these tables exist:
 
@@ -53,9 +87,9 @@ Verify that `dream_life_assets` private storage bucket exists.
 
 Verify that RLS policies allow a user to read and update only their own rows.
 
-### Step 2: Add Edge Functions
+### Step 2: Add or verify Edge Functions
 
-Add these functions under `supabase/functions`:
+Add or verify these functions under `supabase/functions`:
 
 1. `dream_create_session`
 2. `dream_create_upload_url`
@@ -83,7 +117,7 @@ The worker endpoint must require `x-dream-worker-secret`.
 
 ### Step 4: Add frontend calls
 
-Add `frontend/lib/dreamApi.ts` or adapt these methods into the existing app service layer.
+Adapt the backend pack's frontend helper methods into the existing PulseNow frontend service layer. Do not add a separate `frontend/` app. Use `source/src/lib` and the current Supabase client pattern unless the repo already has a better local convention.
 
 Required frontend actions:
 
@@ -99,6 +133,8 @@ Required frontend actions:
 ### Step 5: Add UI
 
 Add a page or route called Dream Life Builder.
+
+The UI must match the current PulseNow product style. Reuse existing PulseNow components, tokens, backgrounds, navigation, buttons, cards, and spacing. Do not introduce a new visual system or landing page.
 
 Screens:
 

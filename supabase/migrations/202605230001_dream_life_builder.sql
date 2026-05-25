@@ -416,6 +416,24 @@ alter table public.dream_jobs enable row level security;
 alter table public.dream_job_events enable row level security;
 alter table public.dream_usage_events enable row level security;
 
+drop policy if exists "profiles_select_own" on public.user_profiles;
+drop policy if exists "profiles_update_own" on public.user_profiles;
+drop policy if exists "profiles_insert_own" on public.user_profiles;
+drop policy if exists "dream_sessions_select_own" on public.dream_sessions;
+drop policy if exists "dream_sessions_insert_own" on public.dream_sessions;
+drop policy if exists "dream_sessions_update_own_safe" on public.dream_sessions;
+drop policy if exists "dream_inputs_select_own" on public.dream_inputs;
+drop policy if exists "dream_inputs_insert_own" on public.dream_inputs;
+drop policy if exists "dream_inputs_update_own" on public.dream_inputs;
+drop policy if exists "dream_profiles_select_own" on public.dream_profiles;
+drop policy if exists "dream_categories_select_own" on public.dream_categories;
+drop policy if exists "dream_categories_update_own" on public.dream_categories;
+drop policy if exists "dream_assets_select_own" on public.dream_assets;
+drop policy if exists "dream_sheets_select_own" on public.dream_sheets;
+drop policy if exists "dream_jobs_select_own" on public.dream_jobs;
+drop policy if exists "dream_events_select_own" on public.dream_job_events;
+drop policy if exists "dream_usage_select_own" on public.dream_usage_events;
+
 create policy "profiles_select_own" on public.user_profiles for select to authenticated using (id = auth.uid());
 create policy "profiles_update_own" on public.user_profiles for update to authenticated using (id = auth.uid()) with check (id = auth.uid());
 create policy "profiles_insert_own" on public.user_profiles for insert to authenticated with check (id = auth.uid());
@@ -438,6 +456,11 @@ create policy "dream_events_select_own" on public.dream_job_events for select to
 create policy "dream_usage_select_own" on public.dream_usage_events for select to authenticated using (user_id = auth.uid());
 
 -- Storage RLS. Paths must be user_id/session_id/filename.ext.
+drop policy if exists "dream_assets_storage_read_own" on storage.objects;
+drop policy if exists "dream_assets_storage_insert_own" on storage.objects;
+drop policy if exists "dream_assets_storage_update_own" on storage.objects;
+drop policy if exists "dream_assets_storage_delete_own" on storage.objects;
+
 create policy "dream_assets_storage_read_own"
 on storage.objects for select to authenticated
 using (
