@@ -1,10 +1,11 @@
 import { Mic, RefreshCw, Send, Sparkles, Square } from 'lucide-react';
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useDreamSession } from '../hooks/useDreamSession';
 import {
   canUseDreamBackend,
   createDreamSession,
   createDreamUploadUrl,
+  buildLocalDreamPreviewItems,
   generateDreamPreview,
   regenerateDreamImage,
   startDreamBuild,
@@ -23,14 +24,24 @@ type DreamBuilderProps = {
   session: PulseSession;
 };
 
-const previewStorageKey = 'pulsenow_dream_builder_preview';
+type DreamMapItem = {
+  key: string;
+  area: string;
+  title: string;
+  description: string;
+  nextAction: string;
+  imageUrl: string;
+  canRegenerate: boolean;
+};
+
+const previewStorageKey = 'pulsenow_dream_builder_preview_v2';
 
 function loadPreview(): DreamPreviewItem[] {
   try {
     const parsed = JSON.parse(localStorage.getItem(previewStorageKey) || '[]') as DreamPreviewItem[];
-    return Array.isArray(parsed) ? parsed : [];
+    return Array.isArray(parsed) && parsed.length >= 6 ? parsed : buildLocalDreamPreviewItems('');
   } catch {
-    return [];
+    return buildLocalDreamPreviewItems('');
   }
 }
 
@@ -49,6 +60,7 @@ export function DreamBuilder({ session }: DreamBuilderProps) {
   const [busy, setBusy] = useState(false);
   const [recording, setRecording] = useState(false);
   const [showTextEntry, setShowTextEntry] = useState(false);
+  const [selectedMapKey, setSelectedMapKey] = useState('');
   const recorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
   const { bundle, error: bundleError } = useDreamSession(activeSessionId, mode === 'backend');
@@ -59,6 +71,40 @@ export function DreamBuilder({ session }: DreamBuilderProps) {
   const statusMessage = bundle?.session?.current_message || message || (mode === 'preview' ? 'Preview mode uses the existing PulseNow API until Supabase Auth is connected.' : 'Ready to build.');
   const categories = bundle?.categories || [];
   const visiblePreview = useMemo(() => previewItems.slice(0, 6), [previewItems]);
+  const mapItems = useMemo<DreamMapItem[]>(() => {
+    if (categories.length) {
+      return categories.map((category) => ({
+        key: category.category_key,
+        area: category.category_key,
+        title: category.display_name,
+        description: category.present_tense_declaration || category.desire_statement || 'A focused part of the life you are building.',
+        nextAction: Array.isArray(category.aligned_actions) && category.aligned_actions[0] ? category.aligned_actions[0] : 'Choose one aligned action for this area.',
+        imageUrl: imageForAsset(assets, category.category_key),
+        canRegenerate: true,
+      }));
+    }
+
+    return visiblePreview.map((item) => ({
+      key: item.id,
+      area: item.area,
+      title: item.title,
+      description: item.description,
+      nextAction: item.next_action,
+      imageUrl: item.image_url,
+      canRegenerate: false,
+    }));
+  }, [assets, categories, visiblePreview]);
+  const selectedMapItem = mapItems.find((item) => item.key === selectedMapKey) || mapItems[0] || null;
+
+  useEffect(() => {
+    if (!mapItems.length) {
+      setSelectedMapKey('');
+      return;
+    }
+    if (!mapItems.some((item) => item.key === selectedMapKey)) {
+      setSelectedMapKey(mapItems[0].key);
+    }
+  }, [mapItems, selectedMapKey]);
 
   async function buildWithPrompt(prompt: string, inputType: 'text' | 'wispr_transcript' = 'text') {
     const cleanPrompt = prompt.trim();
@@ -174,7 +220,7 @@ export function DreamBuilder({ session }: DreamBuilderProps) {
         <div>
           <p className="eyebrow">Dream Life Builder</p>
           <h2>Map the life you are building</h2>
-          <p className="muted">Speak the vision first. Text stays available as a quiet fallback.</p>
+          <p className="muted">Speak the vision. Watch it grow into a map you can move toward.</p>
         </div>
       </section>
 
@@ -229,34 +275,52 @@ export function DreamBuilder({ session }: DreamBuilderProps) {
         </section>
       ) : null}
 
-      {categories.length ? (
-        <section className="dream-grid">
-          {categories.map((category) => (
-            <article className="card dream-tile" key={category.category_key}>
-              {imageForAsset(assets, category.category_key) ? <img src={imageForAsset(assets, category.category_key)} alt="" /> : null}
-              <p className="eyebrow">{category.category_key}</p>
-              <h2>{category.display_name}</h2>
-              <p className="muted">{category.present_tense_declaration || category.desire_statement}</p>
-              <button type="button" disabled={busy} onClick={() => regenerate(category.category_key)}>
-                <RefreshCw size={16} /> Regenerate
-              </button>
-            </article>
-          ))}
-        </section>
-      ) : null}
+      {mapItems.length && selectedMapItem ? (
+        <section className="card dream-map-card">
+          <div className="section-head">
+            <div>
+              <p className="eyebrow">Dream map</p>
+              <h2>Tap an area to open it</h2>
+            </div>
+          </div>
 
-      {visiblePreview.length ? (
-        <section className="dream-grid">
-          {visiblePreview.map((item) => (
-            <article className="card dream-tile" key={item.id}>
-              <img src={item.image_url} alt="" />
-              <p className="eyebrow">{item.area}</p>
-              <h2>{item.title}</h2>
-              <p className="muted">{item.description}</p>
-              <strong>{item.next_action}</strong>
-            </article>
-          ))}
-          <section className="card dream-summary">
+          <div className="dream-mindmap">
+            <button className="dream-map-core" type="button" onClick={() => setSelectedMapKey(selectedMapItem.key)}>
+              <Sparkles size={24} />
+              <strong>Future Self</strong>
+              <span>{mapItems.length} areas</span>
+            </button>
+            <div className="dream-map-nodes">
+              {mapItems.map((item, index) => (
+                <button
+                  className={'dream-map-node node-' + index + (selectedMapItem.key === item.key ? ' active' : '')}
+                  key={item.key}
+                  type="button"
+                  onClick={() => setSelectedMapKey(item.key)}
+                >
+                  <span>{item.area}</span>
+                  <strong>{item.title}</strong>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <article className="dream-map-detail">
+            {selectedMapItem.imageUrl ? <img src={selectedMapItem.imageUrl} alt="" /> : null}
+            <div>
+              <p className="eyebrow">{selectedMapItem.area}</p>
+              <h2>{selectedMapItem.title}</h2>
+              <p className="muted">{selectedMapItem.description}</p>
+              <strong>{selectedMapItem.nextAction}</strong>
+              {selectedMapItem.canRegenerate ? (
+                <button type="button" disabled={busy} onClick={() => regenerate(selectedMapItem.key)}>
+                  <RefreshCw size={16} /> Regenerate image
+                </button>
+              ) : null}
+            </div>
+          </article>
+
+          <section className="dream-summary">
             <p className="eyebrow">Future self</p>
             <h2>{previewSummary}</h2>
           </section>

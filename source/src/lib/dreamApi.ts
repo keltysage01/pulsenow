@@ -190,11 +190,27 @@ export function canUseDreamBackend() {
 }
 
 function buildLocalDreamPreview(prompt: string): DreamPreview {
+  const items = buildLocalDreamPreviewItems(prompt);
+
+  return {
+    ok: true,
+    mode: 'local-preview',
+    note: 'Local preview generated in the browser. Deploy Supabase Auth and Edge Functions for generated images and private sheet assets.',
+    profile: {
+      center_declaration: 'I build a life that feels peaceful, generous, and free.',
+      future_self_summary: 'Your dream map connects visible goals to repeatable weekly action.',
+      categories: items,
+    },
+    items,
+  };
+}
+
+export function buildLocalDreamPreviewItems(prompt: string): DreamPreviewItem[] {
   const lower = prompt.toLowerCase();
   const wantsTravel = /travel|trip|beach|vacation|world|family trip/.test(lower);
   const wantsHome = /home|house|space|property|land|kitchen/.test(lower);
   const wantsMoney = /debt|money|income|freedom|financial|save|wealth/.test(lower);
-  const items: DreamPreviewItem[] = [
+  return [
     {
       id: 'dream-home',
       title: wantsHome ? 'Dream Home' : 'Peaceful Home Base',
@@ -219,7 +235,7 @@ function buildLocalDreamPreview(prompt: string): DreamPreview {
     },
     {
       id: 'dream-relationships',
-      title: wantsTravel ? 'Family Trip' : 'People And Memories',
+      title: 'People And Memories',
       area: 'Relationships',
       description: 'The people and experiences this work is meant to protect.',
       milestone: 'Choose one experience to create in the next 12 months.',
@@ -227,6 +243,28 @@ function buildLocalDreamPreview(prompt: string): DreamPreview {
       image_prompt: 'family travel memory, ocean light, warm connection',
       image_url: 'https://images.unsplash.com/photo-1511895426328-dc8714191300?auto=format&fit=crop&w=900&q=80',
       feeling_words: ['connected', 'present'],
+    },
+    {
+      id: 'dream-health',
+      title: 'Strong And Clear',
+      area: 'Health',
+      description: 'A body and nervous system with enough energy to enjoy what you are building.',
+      milestone: 'Choose one health rhythm that supports your future self.',
+      next_action: 'Schedule one walk, workout, or recovery block this week.',
+      image_prompt: 'peaceful wellness routine, morning light, calm strength, realistic lifestyle photography',
+      image_url: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=900&q=80',
+      feeling_words: ['strong', 'regulated'],
+    },
+    {
+      id: 'dream-travel',
+      title: wantsTravel ? 'Dream Trip' : 'Adventure Fund',
+      area: 'Travel',
+      description: 'The places, memories, and open-air moments that remind you why freedom matters.',
+      milestone: 'Pick one destination or experience and give it a real number.',
+      next_action: 'Save one travel image and connect it to a weekly business activity.',
+      image_prompt: 'luxury family travel, ocean light, spacious freedom, realistic aspirational photography',
+      image_url: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=900&q=80',
+      feeling_words: ['free', 'alive'],
     },
     {
       id: 'dream-impact',
@@ -240,16 +278,4 @@ function buildLocalDreamPreview(prompt: string): DreamPreview {
       feeling_words: ['useful', 'strong'],
     },
   ];
-
-  return {
-    ok: true,
-    mode: 'local-preview',
-    note: 'Local preview generated in the browser. Deploy Supabase Auth and Edge Functions for generated images and private sheet assets.',
-    profile: {
-      center_declaration: 'I build a life that feels peaceful, generous, and free.',
-      future_self_summary: 'Your dream map connects visible goals to repeatable weekly action.',
-      categories: items,
-    },
-    items,
-  };
 }
