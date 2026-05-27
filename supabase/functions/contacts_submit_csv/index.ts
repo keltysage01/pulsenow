@@ -104,7 +104,11 @@ Deno.serve(async (req) => {
       });
     });
 
-    // Clear prior rows if this import is being re submitted.
+    // Clear prior generated data if this import is being re-submitted.
+    await admin.from("contact_social_profiles").delete().eq("import_id", importId).eq("user_id", auth.user.id);
+    await admin.from("contact_enrichment_sources").delete().eq("import_id", importId).eq("user_id", auth.user.id);
+    await admin.from("contact_ai_assessments").delete().eq("import_id", importId).eq("user_id", auth.user.id);
+    await admin.from("contact_jobs").delete().eq("import_id", importId).eq("user_id", auth.user.id);
     await admin.from("contact_records").delete().eq("import_id", importId).eq("user_id", auth.user.id);
 
     const batchSize = 500;

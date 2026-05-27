@@ -133,15 +133,37 @@ async function assessImportContacts(admin: any, job: any) {
     .select("id", { count: "exact", head: true })
     .eq("import_id", job.import_id);
 
+  const { count: remainingCount } = await admin
+    .from("contact_records")
+    .select("id", { count: "exact", head: true })
+    .eq("import_id", job.import_id)
+    .eq("user_id", job.user_id)
+    .neq("parse_status", "duplicate")
+    .in("assessment_status", ["queued", "not_started", "failed"]);
+
+  if ((remainingCount || 0) > 0) {
+    const { error: nextJobError } = await admin
+      .from("contact_jobs")
+      .insert({
+        user_id: job.user_id,
+        import_id: job.import_id,
+        job_type: "assess_import_contacts",
+        status: "queued",
+        priority: job.priority,
+        payload: job.payload || {},
+      });
+    if (nextJobError) throw nextJobError;
+  }
+
   await admin
     .from("contact_imports")
     .update({
-      status: "ready",
+      status: (remainingCount || 0) > 0 ? "assessing" : "ready",
       assessment_count: assessmentCount || assessed,
     })
     .eq("id", job.import_id);
 
-  await logEvent(admin, job, "assess_complete", "Assessment complete", { assessed, failed });
+  await logEvent(admin, job, "assess_complete", "Assessment batch complete", { assessed, failed, remaining: remainingCount || 0 });
 }
 
 function platformFromUrl(url?: string | null): string | null {
