@@ -1,5 +1,5 @@
 import { handleOptions } from "../_shared/cors.ts";
-import { json, notFound, serverError, unauthorized } from "../_shared/respond.ts";
+import { badRequest, json, notFound, serverError, unauthorized } from "../_shared/respond.ts";
 import { requireUser } from "../_shared/auth.ts";
 import { contactCategoryDefinitions, displayNameForContact, missingInfoFor, prospectStatusFor, whyThisCategory } from "../_shared/contactPresentation.ts";
 
@@ -26,12 +26,16 @@ Deno.serve(async (req) => {
 
     const url = new URL(req.url);
     const importId = url.searchParams.get("import_id");
-    const page = Number(url.searchParams.get("page") || "1");
-    const pageSize = Math.min(Number(url.searchParams.get("page_size") || "100"), 500);
+    const requestedPage = Number(url.searchParams.get("page") || "1");
+    const requestedPageSize = Number(url.searchParams.get("page_size") || "100");
+    const page = Number.isFinite(requestedPage) && requestedPage > 0 ? Math.floor(requestedPage) : 1;
+    const pageSize = Number.isFinite(requestedPageSize) && requestedPageSize > 0
+      ? Math.min(Math.floor(requestedPageSize), 500)
+      : 100;
     const from = (page - 1) * pageSize;
     const to = from + pageSize - 1;
 
-    if (!importId) return new Response(JSON.stringify({ error: "Missing import_id" }), { status: 400 });
+    if (!importId) return badRequest("Missing import_id");
 
     const { data: importRow, error: importError } = await auth.supabase
       .from("contact_imports")

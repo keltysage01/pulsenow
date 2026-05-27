@@ -342,7 +342,7 @@ Deno.serve(async (req) => {
       return json({ claimed: true, job_id: job.id, status: "complete" });
     } catch (jobError) {
       const message = jobError instanceof Error ? jobError.message : String(jobError);
-      const retry = job.attempts + 1 < job.max_attempts;
+      const retry = job.attempts < job.max_attempts;
       await logEvent(admin, job, retry ? "job_retry" : "job_failed", message);
       await completeJob(admin, job, retry ? "retry" : "failed", message);
       return json({ claimed: true, job_id: job.id, status: retry ? "retry" : "failed", error: message }, retry ? 200 : 500);

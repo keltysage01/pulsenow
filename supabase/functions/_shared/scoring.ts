@@ -154,9 +154,13 @@ export function seedScores(contact: ContactForScoring): SeedScores {
   if (contact.email_opt_out) compliance_flags.push("email_opt_out");
   if (contact.sms_opt_out) compliance_flags.push("sms_opt_out");
 
-  // Client prospect score should not be treated as suitability. It is only a follow up organization score.
-  if (contact.married_status === "yes") client += 5;
-  if (contact.homeowner_status === "yes") client += 5;
+  // Marital and homeowner status are display-only. They must not influence scores.
+  if (contact.married_status && !["unknown", "not_provided"].includes(contact.married_status)) {
+    compliance_flags.push("marital_status_display_only_not_scored");
+  }
+  if (contact.homeowner_status && !["unknown", "not_provided"].includes(contact.homeowner_status)) {
+    compliance_flags.push("homeowner_status_display_only_not_scored");
+  }
   if (contact.contact_type && /client|lead|prospect|family|friend/i.test(contact.contact_type)) client += 10;
 
   return {
