@@ -16,6 +16,29 @@ export function createAdminClient() {
   });
 }
 
+export function getSupabaseAdmin() {
+  return createAdminClient();
+}
+
+export function getSupabaseForUser(authHeader: string | null) {
+  const url = Deno.env.get('SUPABASE_URL');
+  const anon = Deno.env.get('SUPABASE_ANON_KEY');
+
+  if (!url || !anon) {
+    throw new Error('Missing SUPABASE_URL or SUPABASE_ANON_KEY');
+  }
+
+  return createClient(url, anon, {
+    global: {
+      headers: authHeader ? { Authorization: authHeader } : {},
+    },
+    auth: {
+      persistSession: false,
+      autoRefreshToken: false,
+    },
+  });
+}
+
 export async function getUserFromRequest(req: Request) {
   const url = Deno.env.get('SUPABASE_URL');
   const anon = Deno.env.get('SUPABASE_ANON_KEY');
