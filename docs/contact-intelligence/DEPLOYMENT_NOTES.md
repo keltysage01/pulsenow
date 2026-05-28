@@ -54,4 +54,4 @@ CONTACT_WORKER_SECRET
 CRON_SECRET
 ```
 
-The Vercel cron endpoint `/api/cron/contact-intelligence-worker` invokes the Supabase `contacts_worker` function daily. Vercel Hobby accounts only allow daily cron schedules; use a Pro plan before increasing this to an hourly or minute-based cadence. The worker must be deployed with Supabase gateway JWT verification disabled because it uses `x-contact-worker-secret` instead of a user JWT. That header value must match `CONTACT_WORKER_SECRET`.
+The existing Vercel cron endpoint `/api/cron/social-research-daily` also invokes the Supabase `contacts_worker` function daily. Vercel Hobby accounts only allow daily cron schedules and no more than 12 Serverless Functions, so Contact Intelligence reuses that existing cron route instead of adding a new one. The worker must be deployed with Supabase gateway JWT verification disabled because it uses `x-contact-worker-secret` instead of a user JWT. That header value must match `CONTACT_WORKER_SECRET`.

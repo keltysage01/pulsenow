@@ -10,10 +10,6 @@
     {
       "path": "/api/cron/social-research-daily",
       "schedule": "0 8 * * *"
-    },
-    {
-      "path": "/api/cron/contact-intelligence-worker",
-      "schedule": "10 8 * * *"
     }
   ]
 }
