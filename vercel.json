@@ -13,7 +13,7 @@
     },
     {
       "path": "/api/cron/contact-intelligence-worker",
-      "schedule": "*/10 * * * *"
+      "schedule": "10 8 * * *"
     }
   ]
 }
