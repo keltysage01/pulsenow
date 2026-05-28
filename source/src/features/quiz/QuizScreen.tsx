@@ -12,7 +12,7 @@ type QuizScreenProps = {
 const quizMeta: Record<QuizType, { label: string; total: number; intro: string }> = {
   working_genius: {
     label: 'Working Genius',
-    total: 36,
+    total: 24,
     intro: 'Rate each prompt from 1 to 5. The result shows your two strongest lanes, two competencies, and two frustration zones.',
   },
   four_tendencies: {

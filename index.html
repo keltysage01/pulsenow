@@ -13118,12 +13118,12 @@
       };
       const workingGeniusTypes = ["wonder", "invention", "discernment", "galvanizing", "enablement", "tenacity"];
       const workingGeniusQuestionText = {
-        wonder: ["I naturally ask whether we are solving the right problem before we rush into action.", "I enjoy spotting opportunities that other people have not named yet.", "I get energy from asking deeper questions about people, goals, and patterns.", "I often sense when a team needs to pause and clarify what matters most.", "I like opening up possibilities before a plan gets too locked in.", "I am comfortable sitting with uncertainty long enough to find a better question."],
-        invention: ["I enjoy creating a fresh plan when the current approach is not working.", "I can quickly generate several ways to reach the same goal.", "I feel energized when a blank page needs a practical idea.", "I naturally connect unrelated details into a new solution.", "People often ask me to help design a better process, script, or campaign.", "I would rather build a new option than complain about a blocked one."],
-        discernment: ["I can usually feel which option has the best chance of working.", "I notice weak assumptions before a plan gets expensive.", "People rely on me to give an honest read on an idea.", "I can separate a promising signal from noise without overcomplicating it.", "I like pressure-testing a decision before the team commits.", "My judgment gets sharper when I can compare real options side by side."],
-        galvanizing: ["I like rallying people around the next move.", "I can turn a quiet room into one with energy and direction.", "I enjoy inviting people into action after a decision is made.", "When momentum drops, I naturally push the team to re-engage.", "I am comfortable making the ask and creating urgency.", "People count on me to help a plan feel alive and worth acting on."],
-        enablement: ["I get energy from helping someone else move faster.", "I notice where support is needed and step in without making it about me.", "I like being the person who removes friction for the team.", "I am comfortable taking a piece of the work so someone else can win.", "People feel more confident when I am in the work with them.", "I enjoy translating a goal into helpful next steps for someone else."],
-        tenacity: ["I like finishing work cleanly and checking it off.", "Deadlines help me focus and push through the last mile.", "I notice loose ends and want them closed.", "I feel responsible for making sure the promised outcome actually happens.", "I would rather ship a useful finished result than keep tweaking ideas forever.", "People trust me to drive tasks to completion."]
+        wonder: ["I naturally ask whether we are solving the right problem before we rush into action.", "I enjoy spotting opportunities that other people have not named yet.", "I get energy from asking deeper questions about people, goals, and patterns.", "I often sense when a team needs to pause and clarify what matters most."],
+        invention: ["I enjoy creating a fresh plan when the current approach is not working.", "I can quickly generate several ways to reach the same goal.", "I feel energized when a blank page needs a practical idea.", "I naturally connect unrelated details into a new solution."],
+        discernment: ["I can usually feel which option has the best chance of working.", "I notice weak assumptions before a plan gets expensive.", "People rely on me to give an honest read on an idea.", "I can separate a promising signal from noise without overcomplicating it."],
+        galvanizing: ["I like rallying people around the next move.", "I can turn a quiet room into one with energy and direction.", "I enjoy inviting people into action after a decision is made.", "When momentum drops, I naturally push the team to re-engage."],
+        enablement: ["I get energy from helping someone else move faster.", "I notice where support is needed and step in without making it about me.", "I like being the person who removes friction for the team.", "I am comfortable taking a piece of the work so someone else can win."],
+        tenacity: ["I like finishing work cleanly and checking it off.", "Deadlines help me focus and push through the last mile.", "I notice loose ends and want them closed.", "I feel responsible for making sure the promised outcome actually happens."]
       };
       const workingGeniusQuestions = workingGeniusTypes.flatMap((type) => workingGeniusQuestionText[type].map((prompt, index) => ({
         id: "WG_" + type.slice(0, 3).toUpperCase() + "_" + String(index + 1).padStart(2, "0"),
@@ -13280,6 +13280,204 @@
           seven: "Make it exciting and full of options.",
           eight: "Make it direct and powerful.",
           nine: "Make it steady and peaceful."
+        }],
+        ["EN_10", "When you receive blunt feedback, what do you listen for first?", {
+          one: "What needs to be corrected.",
+          two: "Whether the relationship is still okay.",
+          three: "How to turn it into better performance.",
+          four: "Whether they understand what I meant.",
+          five: "The facts I can verify.",
+          six: "What risk or expectation I missed.",
+          seven: "How to move on without getting stuck.",
+          eight: "Whether the feedback is honest and useful.",
+          nine: "How to keep the conversation from escalating."
+        }],
+        ["EN_11", "A plan changes at the last minute. What is your first concern?", {
+          one: "Keeping quality from slipping.",
+          two: "Making sure people are supported.",
+          three: "Protecting the result.",
+          four: "Not losing the meaning behind the work.",
+          five: "Getting enough information to adjust.",
+          six: "Knowing what is safe and reliable now.",
+          seven: "Finding the opportunity in the change.",
+          eight: "Deciding who is in charge and moving.",
+          nine: "Keeping everyone steady."
+        }],
+        ["EN_12", "Which compliment would feel most accurate?", {
+          one: "You make things better.",
+          two: "You make people feel cared for.",
+          three: "You make goals happen.",
+          four: "You make the work feel real.",
+          five: "You make complex things clear.",
+          six: "You make the team prepared.",
+          seven: "You make possibility feel available.",
+          eight: "You make hard decisions easier.",
+          nine: "You make the room calmer."
+        }],
+        ["EN_13", "When you avoid a task, what is usually underneath?", {
+          one: "It may not meet the standard.",
+          two: "Someone else needs me first.",
+          three: "It could expose a weakness.",
+          four: "It feels disconnected from me.",
+          five: "It may cost more energy than I have.",
+          six: "The unknowns feel unresolved.",
+          seven: "It feels limiting or dull.",
+          eight: "It feels like someone is forcing me.",
+          nine: "It may create tension."
+        }],
+        ["EN_14", "In a team conflict, what role do you fall into?", {
+          one: "Clarifying what is fair and correct.",
+          two: "Checking how everyone is feeling.",
+          three: "Refocusing people on the goal.",
+          four: "Naming what is emotionally true.",
+          five: "Stepping back to analyze.",
+          six: "Testing which path is safest.",
+          seven: "Lightening the mood and opening options.",
+          eight: "Confronting the issue directly.",
+          nine: "Smoothing the tension so people can continue."
+        }],
+        ["EN_15", "What kind of weekly review is most useful?", {
+          one: "What improved and what needs tightening.",
+          two: "Who was helped and who needs attention.",
+          three: "What results moved and what did not.",
+          four: "What felt aligned and what felt false.",
+          five: "What data changed my understanding.",
+          six: "What risks showed up and how prepared I was.",
+          seven: "What created energy and what new options appeared.",
+          eight: "What decisions were made and what got handled.",
+          nine: "What stayed balanced and what needs a next step."
+        }],
+        ["EN_16", "When a prospect says no, what do you tend to do internally?", {
+          one: "Review what I should have done better.",
+          two: "Wonder whether I connected well enough.",
+          three: "Move quickly toward the next win.",
+          four: "Feel the disappointment personally.",
+          five: "Analyze what information was missing.",
+          six: "Look for the signal I should have anticipated.",
+          seven: "Reframe it and look for another possibility.",
+          eight: "Accept it directly and keep control.",
+          nine: "Try not to let it disrupt my mood."
+        }],
+        ["EN_17", "What drains your energy fastest?", {
+          one: "Sloppy work and avoidable mistakes.",
+          two: "Feeling unappreciated or disconnected.",
+          three: "Wasted effort with no visible progress.",
+          four: "Shallow work that ignores what matters.",
+          five: "Too much demand with too little space.",
+          six: "Unclear expectations and hidden risks.",
+          seven: "Restriction, boredom, and heavy negativity.",
+          eight: "Indecision and passive resistance.",
+          nine: "Pressure, conflict, and too many demands."
+        }],
+        ["EN_18", "What does trust look like from a leader?", {
+          one: "They hold a clear and fair standard.",
+          two: "They notice people and show care.",
+          three: "They value results and competence.",
+          four: "They are authentic and see the person.",
+          five: "They give context and respect boundaries.",
+          six: "They are consistent and prepared.",
+          seven: "They bring optimism and room to adapt.",
+          eight: "They are direct and do what they say.",
+          nine: "They are patient, stable, and inclusive."
+        }],
+        ["EN_19", "Which inner message is most familiar?", {
+          one: "I need to make this right.",
+          two: "I need to be needed.",
+          three: "I need to succeed.",
+          four: "I need to be understood.",
+          five: "I need to be capable.",
+          six: "I need to be prepared.",
+          seven: "I need to stay free and upbeat.",
+          eight: "I need to stay strong.",
+          nine: "I need to keep peace."
+        }],
+        ["EN_20", "When the day is unstructured, what do you naturally create?", {
+          one: "Standards and priorities.",
+          two: "Connection points with people.",
+          three: "Targets and visible wins.",
+          four: "Meaningful focus.",
+          five: "Quiet space to think.",
+          six: "A plan and backup plan.",
+          seven: "Options and variety.",
+          eight: "A direct path to action.",
+          nine: "A comfortable rhythm."
+        }],
+        ["EN_21", "What is hardest to admit when you are stressed?", {
+          one: "I am being too critical.",
+          two: "I need something too.",
+          three: "I am afraid of failing.",
+          four: "I may be intensifying the feeling.",
+          five: "I am withdrawing too much.",
+          six: "I am looking for too much certainty.",
+          seven: "I am avoiding discomfort.",
+          eight: "I am coming on too strong.",
+          nine: "I am avoiding my own priority."
+        }],
+        ["EN_22", "What helps you restart after losing momentum?", {
+          one: "A clear next improvement.",
+          two: "A person I can help or report back to.",
+          three: "A visible target and quick win.",
+          four: "A reason that feels personally true.",
+          five: "A defined scope and enough information.",
+          six: "A dependable plan with the first step named.",
+          seven: "A fresh challenge with energy.",
+          eight: "A direct decision and ownership.",
+          nine: "A calm, simple action that lowers resistance."
+        }],
+        ["EN_23", "What do you most want your work to prove?", {
+          one: "That I acted with integrity.",
+          two: "That I made a real difference for people.",
+          three: "That I can achieve what I set out to do.",
+          four: "That my contribution is authentic.",
+          five: "That I understand and can handle complexity.",
+          six: "That I am reliable and ready.",
+          seven: "That there is always another possibility.",
+          eight: "That I can protect and lead well.",
+          nine: "That progress can happen without losing peace."
+        }],
+        ["EN_24", "Which mistake are you most likely to overcorrect?", {
+          one: "Doing something imperfectly.",
+          two: "Disappointing someone.",
+          three: "Looking unsuccessful.",
+          four: "Being ordinary or misunderstood.",
+          five: "Being unprepared.",
+          six: "Trusting too quickly.",
+          seven: "Feeling trapped.",
+          eight: "Being controlled.",
+          nine: "Creating conflict."
+        }],
+        ["EN_25", "What kind of next action is easiest to accept?", {
+          one: "The right action with a clear standard.",
+          two: "The helpful action tied to a person.",
+          three: "The high-impact action tied to a result.",
+          four: "The meaningful action I can stand behind.",
+          five: "The informed action with a contained scope.",
+          six: "The prepared action with a backup.",
+          seven: "The energizing action with room to adapt.",
+          eight: "The decisive action I can own.",
+          nine: "The manageable action that keeps things steady."
+        }],
+        ["EN_26", "When people misunderstand you, what hurts most?", {
+          one: "They miss my intent to improve things.",
+          two: "They miss how much I care.",
+          three: "They miss how hard I am working.",
+          four: "They miss who I really am.",
+          five: "They miss the thought behind my position.",
+          six: "They miss my loyalty and caution.",
+          seven: "They miss my optimism and flexibility.",
+          eight: "They miss that I am trying to protect what matters.",
+          nine: "They miss that I have a point of view too."
+        }],
+        ["EN_27", "What should the coach challenge most carefully?", {
+          one: "My need to perfect it before acting.",
+          two: "My habit of earning approval by helping.",
+          three: "My tendency to chase the visible win.",
+          four: "My pull toward intensity before action.",
+          five: "My desire to keep researching.",
+          six: "My loop of checking every risk.",
+          seven: "My habit of escaping to the next option.",
+          eight: "My instinct to overpower the moment.",
+          nine: "My comfort with postponing tension."
         }]
       ];
       const enneagramQuestions = enneagramScenarios.map(([id, prompt, labels]) => ({
@@ -15170,9 +15368,9 @@
           myers_briggs: "Myers-Briggs"
         };
         const intros = {
-          working_genius: "Rate each prompt from 1 to 5. This is 36 questions, six for each Working Genius type.",
+          working_genius: "Rate each prompt from 1 to 5. This is 24 questions, four for each Working Genius type.",
           four_tendencies: "Choose the response that sounds most like you. This is 16 scenario questions.",
-          enneagram: "Choose the response that sounds most like your default motivation. This is 9 scenario questions.",
+          enneagram: "Choose the response that sounds most like your default motivation. This is 27 scenario questions.",
           myers_briggs: "Choose the response that feels more natural. This is 12 questions across the four preference pairs."
         };
         document.getElementById("quiz-title").textContent = labels[type] || "Personal profile";

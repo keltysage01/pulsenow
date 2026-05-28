@@ -126,7 +126,7 @@ export function composeQuizProfile(workingGenius: WorkingGeniusResult | null, fo
 
 function validateWorkingGeniusAnswers(answers: WorkingGeniusAnswers) {
   const ids = new Set(workingGeniusQuestions.map((question) => question.id));
-  if (Object.keys(answers).length !== workingGeniusQuestions.length) throw new Error('Answer all 36 Working Genius questions.');
+  if (Object.keys(answers).length !== workingGeniusQuestions.length) throw new Error('Answer all 24 Working Genius questions.');
   for (const id of ids) {
     const value = answers[id];
     if (![1, 2, 3, 4, 5].includes(value)) throw new Error('Working Genius answers must be Likert values from 1 to 5.');
