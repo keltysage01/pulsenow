@@ -5070,12 +5070,52 @@
         line-height: 1.38 !important;
       }
 
+      .contact-info-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+        margin-top: 12px;
+      }
+
+      .contact-info-item {
+        min-width: 0;
+        border-radius: 16px;
+        padding: 10px 12px;
+        background: rgba(255, 255, 255, 0.62);
+        border: 1px solid rgba(15, 23, 42, 0.07);
+      }
+
+      .contact-info-item span {
+        display: block;
+        color: rgba(71, 85, 105, 0.78);
+        font-size: 11px;
+        font-weight: 720;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .contact-info-item strong {
+        display: block;
+        overflow-wrap: anywhere;
+        margin-top: 4px;
+        color: #172033;
+        font-size: 14px;
+        font-weight: 760;
+      }
+
+      .contact-actions .disabled {
+        pointer-events: none;
+        opacity: 0.46;
+      }
+
       html[data-theme="dark"] .crm-group-head h3,
-      html[data-theme="dark"] .contact-insight strong {
+      html[data-theme="dark"] .contact-insight strong,
+      html[data-theme="dark"] .contact-info-item strong {
         color: #f7fbff;
       }
 
-      html[data-theme="dark"] .contact-insight {
+      html[data-theme="dark"] .contact-insight,
+      html[data-theme="dark"] .contact-info-item {
         background: rgba(255, 255, 255, 0.07);
         border-color: rgba(255, 255, 255, 0.1);
       }
@@ -15985,6 +16025,11 @@
             : "";
           const phoneHref = safePhoneUri("tel:", contact.phone);
           const smsHref = safePhoneUri("sms:", contact.phone);
+          const safePhone = escapeHtml(contact.phone || contact.phone_e164 || "Not found");
+          const safeEmail = escapeHtml(contact.email || "Not found");
+          const callAction = contact.phone || contact.phone_e164
+            ? '<a href="' + escapeHtml(phoneHref) + '">Call</a><a href="' + escapeHtml(smsHref) + '">Text</a>'
+            : '<a class="disabled" href="#" aria-disabled="true">Call</a><a class="disabled" href="#" aria-disabled="true">Text</a>';
           card.innerHTML =
             '<div class="contact-main"><div><h3>' +
             contactName +
@@ -16004,15 +16049,18 @@
             '</span><span class="category-pill secondary">' +
             safeSource +
             '</span></div>' +
+            '<div class="contact-info-grid"><div class="contact-info-item"><span>Phone</span><strong>' +
+            safePhone +
+            '</strong></div><div class="contact-info-item"><span>Email</span><strong>' +
+            safeEmail +
+            '</strong></div></div>' +
             why +
             next +
             sources +
             missing +
-            '<div class="contact-actions"><a href="tel:' +
-            phoneHref.slice(4) +
-            '">Call</a><a href="sms:' +
-            smsHref.slice(4) +
-            '">Text</a><button type="button" data-detail-id="' +
+            '<div class="contact-actions">' +
+            callAction +
+            '<button type="button" data-detail-id="' +
             contactId +
             '">Details</button></div>';
           return card;
@@ -16388,6 +16436,7 @@
           backend_import_id: row.import_id,
           name: row.display_name || row.full_name || row.email || row.phone || "Imported Contact",
           phone: row.phone || row.phone_e164 || "",
+          phone_e164: row.phone_e164 || "",
           email: row.email || "",
           type: candidateType === "client_prospect" ? "client" : "prospect",
           stage: row.do_not_contact ? "Do Not Call" : crmArea.label,
