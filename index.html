@@ -12441,8 +12441,8 @@
           <div class="section-head">
             <div>
               <p class="eyebrow">Import</p>
-              <h2>Upload CSV</h2>
-              <p class="muted section-subcopy">Choose a spreadsheet export. PulseNow will clean the list locally, then send it through Contact Intelligence when the CRM scan is available.</p>
+              <h2>Import to CRM</h2>
+              <p class="muted section-subcopy">Choose a spreadsheet export. PulseNow will clean, categorize, and place each contact into a CRM area.</p>
             </div>
           </div>
           <label class="csv-drop" for="csv-file-input">
@@ -12464,7 +12464,7 @@
               <span class="scan-avatar">P</span>
               <div>
                 <strong>Waiting for file</strong>
-                <p>Upload a CSV and PulseNow will organize, score, and prepare social research.</p>
+                <p>Upload a CSV and PulseNow will organize the list into CRM areas.</p>
               </div>
             </div>
           </div>
@@ -15684,6 +15684,14 @@
         return contact.type === contactFilter;
       }
 
+      function setContactFilter(filter) {
+        contactFilter = filter;
+        document.querySelectorAll("[data-contact-filter]").forEach((button) => {
+          button.classList.toggle("active", button.dataset.contactFilter === filter);
+        });
+        renderContacts();
+      }
+
       function activeContactFilterLabel() {
         const active = document.querySelector('[data-contact-filter="' + contactFilter + '"]');
         return active ? active.textContent.trim() : "contacts";
@@ -15921,7 +15929,7 @@
         else if (contact.company) role = contact.company;
 
         const captive = lower.includes("state farm") || lower.includes("farmers") || lower.includes("allstate") || lower.includes("captive");
-        const socialText = socialNames.length ? "Found on " + socialNames.join(", ") + "." : "Social targets are queued for research.";
+        const socialText = socialNames.length ? "Found on " + socialNames.join(", ") + "." : "Ready for CRM review.";
         const captiveText = captive ? " May be in a captive company, but still worth a careful relationship-first reach out." : " No captive-company conflict detected from the current data.";
         return "This is " + contact.name + ". " + (contact.company ? "Looks connected to " + role + ". " : "Looks like a " + role + ". ") + socialText + captiveText;
       }
@@ -16014,6 +16022,53 @@
             socials: { linkedin, facebook, instagram, tiktok }
           } : null
         };
+      }
+
+      function localCrmAreaForContact(contact) {
+        const search = contactSearchText(contact);
+        if (!contact.phone && !contact.email) return { key: "needs_review", label: "Needs review" };
+        if (contact.is_business && !/\b(owner|advisor|agent|realtor|teacher|coach|referral|insurance|financial)\b/.test(search)) {
+          return { key: "nurture", label: "Nurture" };
+        }
+        if (contact.licensed || contact.is_licensed || /\b(state farm|farmers|allstate|captive)\b/.test(search)) {
+          return { key: "needs_review", label: "Needs review" };
+        }
+        return { key: "potential_prospect", label: "Potential prospects" };
+      }
+
+      function prepareLocalCrmPreview(imported) {
+        return imported.map((contact) => {
+          const area = localCrmAreaForContact(contact);
+          const missing = [];
+          if (!contact.phone) missing.push("phone");
+          if (!contact.email) missing.push("email");
+          if (!contact.company && !contact.notes) missing.push("context");
+          const categoryLabel = area.key === "needs_review" ? "Needs manual review" : area.key === "nurture" ? "Nurture" : "Potential prospect";
+          const why = area.key === "needs_review"
+            ? "The CSV has enough data to save this contact, but not enough to safely choose an outreach path without review."
+            : area.key === "nurture"
+              ? "This contact looks worth keeping, but the CSV signals do not make it a primary outreach target yet."
+              : "The CSV has usable contact information and no obvious do-not-contact or captive-company conflict from the available fields.";
+          const next = area.key === "needs_review"
+            ? "Fill in the missing fields, then choose whether to move this contact into outreach."
+            : area.key === "nurture"
+              ? "Keep this contact in CRM and add context before starting an automation."
+              : "Start a relationship-first outreach sequence or add this contact to the next call block.";
+          return Object.assign({}, contact, {
+            stage: area.label,
+            crm_area: area.key,
+            crm_area_label: area.label,
+            category: area.key,
+            category_label: categoryLabel,
+            prospect_status: categoryLabel,
+            why_this_category: why,
+            what_to_do_next: next,
+            missing_info: missing,
+            automation_category: area.key,
+            automation_status: area.key === "needs_review" ? "manual_review" : area.key === "nurture" ? "nurture" : "ready_for_outreach",
+            automation_next_step: next,
+          });
+        });
       }
 
       function mergeImportedContacts(imported) {
@@ -16186,6 +16241,7 @@
         const stats = data && data.stats ? data.stats : {};
         const definitions = data && data.category_definitions ? data.category_definitions : {};
         const rows = Array.isArray(data && data.rows) ? data.rows : [];
+        const mappedRows = rows.map(contactFromIntelRow);
         const areaCounts = rows.reduce((acc, row) => {
           const area = crmAreaForContact({
             backend_import_id: row.import_id,
@@ -16203,6 +16259,21 @@
             }).join("") +
             '</div>'
           : "";
+        const groupedContacts = mappedRows.reduce((acc, contact) => {
+          const area = crmAreaForContact(contact);
+          if (!acc[area.key]) acc[area.key] = { area, contacts: [] };
+          acc[area.key].contacts.push(contact);
+          return acc;
+        }, {});
+        const contactPreview = Object.values(groupedContacts).length
+          ? '<div class="session-feed" style="margin-top:12px;">' +
+            Object.values(groupedContacts).sort((a, b) => a.area.order - b.area.order).map((group) => {
+              const names = group.contacts.slice(0, 6).map((contact) => escapeHtml(contact.name)).join(", ");
+              const more = group.contacts.length > 6 ? " +" + (group.contacts.length - 6) + " more" : "";
+              return '<div class="session-item"><strong>' + escapeHtml(group.area.label) + '</strong><p class="muted" style="margin-top:4px;">' + names + more + '</p></div>';
+            }).join("") +
+            '</div>'
+          : "";
         const topDefs = Object.keys(definitions).slice(0, 5).map((key) => {
           return '<div class="session-item"><strong>' + escapeHtml(key.replace(/_/g, " ")) + '</strong><p class="muted" style="margin-top:4px;">' + escapeHtml(definitions[key]) + '</p></div>';
         }).join("");
@@ -16212,7 +16283,33 @@
           '<p class="muted" style="line-height:1.55;">' + escapeHtml(data.prospect_note || "These contacts are potential prospects until reviewed.") + '</p>' +
           '<div class="clarity-grid" style="margin-top:10px;"><div><strong>' + Number(stats.total_contacts || data.total || 0) + '</strong><span>contacts</span></div><div><strong>' + Number(stats.total_potential_prospects || 0) + '</strong><span>potential prospects</span></div><div><strong>' + Number(stats.manual_review || 0) + '</strong><span>needs review</span></div></div>' +
           areaSummary +
+          contactPreview +
           (topDefs ? '<div class="session-feed" style="margin-top:12px;">' + topDefs + '</div>' : "");
+      }
+
+      function renderLocalCrmSummary(imported, status) {
+        if (!contactIntelligenceSummary) return;
+        const grouped = imported.reduce((acc, contact) => {
+          const area = crmAreaForContact(contact);
+          if (!acc[area.key]) acc[area.key] = { area, contacts: [] };
+          acc[area.key].contacts.push(contact);
+          return acc;
+        }, {});
+        const groups = Object.values(grouped).sort((a, b) => a.area.order - b.area.order);
+        const total = imported.length;
+        const potential = grouped.potential_prospect ? grouped.potential_prospect.contacts.length : 0;
+        const review = grouped.needs_review ? grouped.needs_review.contacts.length : 0;
+        const groupHtml = groups.map((group) => {
+          const names = group.contacts.slice(0, 6).map((contact) => escapeHtml(contact.name)).join(", ");
+          const more = group.contacts.length > 6 ? " +" + (group.contacts.length - 6) + " more" : "";
+          return '<div class="session-item"><strong>' + escapeHtml(group.area.label) + '</strong><p class="muted" style="margin-top:4px;">' + group.contacts.length + ' contacts: ' + names + more + '</p></div>';
+        }).join("");
+        contactIntelligenceSummary.classList.remove("hidden");
+        contactIntelligenceSummary.innerHTML =
+          '<div class="csv-scan-head"><strong>' + (status === "complete" ? "CRM list ready" : "CRM preview ready") + '</strong><span class="scan-pill">' + (status === "complete" ? "Added" : "Preview") + '</span></div>' +
+          '<p class="muted" style="line-height:1.55;">' + (status === "complete" ? "These contacts were categorized by Contact Intelligence and added to the CRM list below." : "The CRM list below is organized from the CSV now. Contact Intelligence will replace this preview with deeper categories when it completes.") + '</p>' +
+          '<div class="clarity-grid" style="margin-top:10px;"><div><strong>' + total + '</strong><span>contacts</span></div><div><strong>' + potential + '</strong><span>potential prospects</span></div><div><strong>' + review + '</strong><span>needs review</span></div></div>' +
+          (groupHtml ? '<div class="session-feed" style="margin-top:12px;">' + groupHtml + '</div>' : "");
       }
 
       async function fetchContactIntelImport(client, importId) {
@@ -16289,16 +16386,20 @@
       async function handleCsvImport(file) {
         if (!file) return;
         csvImportStatus.textContent = "Reading " + file.name + "...";
-        renderCsvScan(null, "scanning", "Reading columns and preparing the CRM categorization.");
+        if (contactIntelligenceStatus) contactIntelligenceStatus.classList.add("hidden");
+        if (contactIntelligenceSummary) contactIntelligenceSummary.classList.add("hidden");
+        renderCsvScan(null, "scanning", "Reading columns and preparing CRM areas.");
         const text = await file.text();
         const rows = parseCsvText(text);
-        const imported = rows.map(csvRowToContact).filter((contact) => contact.name || contact.phone || contact.email);
+        const imported = prepareLocalCrmPreview(rows.map(csvRowToContact).filter((contact) => contact.name || contact.phone || contact.email));
         const added = mergeImportedContacts(imported);
         lastImportedContacts = imported.slice(0, 50);
         const businessCount = imported.filter((contact) => contact.is_business).length;
-        const topCount = imported.filter((contact) => contact.is_top_100).length;
-        renderCsvScan(imported[0], "scanning", "Local preview is ready. Contact Intelligence is categorizing the list into CRM areas now.");
-        csvImportStatus.textContent = "Previewed " + added + " contacts · " + topCount + " high-qualifier candidates · " + businessCount + " possible business records flagged.";
+        const reviewCount = imported.filter((contact) => crmAreaForContact(contact).key === "needs_review").length;
+        setContactFilter("all");
+        renderLocalCrmSummary(imported, "preview");
+        renderCsvScan(null, "scanning", "CRM preview is ready below. Contact Intelligence is checking the CSV now.");
+        csvImportStatus.textContent = "Added " + added + " contacts to the CRM preview · " + reviewCount + " need review · " + businessCount + " possible business records flagged.";
         researchSocialsBtn.classList.add("hidden");
         exportContactsBtn.classList.toggle("hidden", contacts.length === 0);
 
@@ -16306,13 +16407,17 @@
           const data = await runContactIntelligenceImport(file, text);
           const backendRows = data && Array.isArray(data.rows) ? data.rows : [];
           const total = Number((data && data.total) || backendRows.length || 0);
-          const first = lastImportedContacts[0] || imported[0] || null;
-          renderCsvScan(first, "done", total + " contacts were categorized and added to CRM areas. Use the filters below to work Potential prospects, Needs review, Nurture, and Do not contact separately.");
+          setContactFilter("all");
+          renderCsvScan(null, "done", total + " contacts were categorized and added to CRM areas. The list below is ready for outreach and automation setup.");
           csvImportStatus.textContent = "Contact Intelligence complete · " + total + " contacts organized into CRM categories.";
+          setTimeout(() => contactList.scrollIntoView({ behavior: "smooth", block: "start" }), 250);
         } catch (error) {
-          renderCsvScan(imported[0], "error", "Local preview is available, but the CRM categorization could not finish yet. Try the scan again after the worker is available.");
-          setContactIntelStatus("Local preview is ready, but Contact Intelligence could not run yet: " + (error.message || "service unavailable"), "error");
+          renderLocalCrmSummary(imported, "preview");
+          renderCsvScan(null, "error", "The CRM preview is ready below, but Contact Intelligence could not finish the deeper scan yet.");
+          setContactIntelStatus("CRM preview is ready. Contact Intelligence could not finish yet: " + (error.message || "service unavailable"), "error");
           researchSocialsBtn.classList.add("hidden");
+          setContactFilter("all");
+          setTimeout(() => contactList.scrollIntoView({ behavior: "smooth", block: "start" }), 250);
         }
 
         try {
@@ -17205,9 +17310,7 @@
       document.getElementById("contact-filters").addEventListener("click", (event) => {
         const button = event.target.closest("[data-contact-filter]");
         if (!button) return;
-        contactFilter = button.dataset.contactFilter;
-        document.querySelectorAll("[data-contact-filter]").forEach((item) => item.classList.toggle("active", item === button));
-        renderContacts();
+        setContactFilter(button.dataset.contactFilter);
       });
       document.getElementById("qualifier-buttons").addEventListener("click", (event) => {
         const button = event.target.closest("[data-qualifier]");
