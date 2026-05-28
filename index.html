@@ -4871,6 +4871,11 @@
         justify-content: center !important;
       }
 
+      #csv-import-panel #research-socials-btn.hidden,
+      #csv-import-panel #export-contacts-btn.hidden {
+        display: none !important;
+      }
+
       #csv-import-panel #research-socials-btn + #export-contacts-btn {
         margin-top: 14px !important;
       }
@@ -5005,6 +5010,72 @@
       html[data-theme="dark"] .category-pill.secondary {
         background: rgba(255, 255, 255, 0.08);
         color: rgba(235, 245, 255, 0.68);
+      }
+
+      .crm-group {
+        display: grid;
+        gap: 12px;
+        margin-bottom: 18px;
+      }
+
+      .crm-group-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 0 2px;
+      }
+
+      .crm-group-head h3 {
+        margin: 0;
+        color: #162033;
+        font-size: 18px;
+        font-weight: 720;
+        letter-spacing: -0.02em;
+      }
+
+      .crm-group-head span {
+        flex: 0 0 auto;
+        min-width: 34px;
+        border-radius: 999px;
+        background: rgba(7, 138, 120, 0.1);
+        color: #087d70;
+        padding: 5px 10px;
+        text-align: center;
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .contact-insight {
+        display: grid;
+        gap: 5px;
+        margin-top: 12px;
+        padding: 12px;
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.56);
+        border: 1px solid rgba(15, 23, 42, 0.07);
+      }
+
+      .contact-insight strong {
+        color: #172033;
+        font-size: 13px !important;
+        font-weight: 720 !important;
+      }
+
+      .contact-insight p {
+        color: rgba(71, 85, 105, 0.88) !important;
+        font-size: 13px !important;
+        line-height: 1.38 !important;
+      }
+
+      html[data-theme="dark"] .crm-group-head h3,
+      html[data-theme="dark"] .contact-insight strong {
+        color: #f7fbff;
+      }
+
+      html[data-theme="dark"] .contact-insight {
+        background: rgba(255, 255, 255, 0.07);
+        border-color: rgba(255, 255, 255, 0.1);
       }
 
       /* Login tabs: remove heavy grey border and keep it clean */
@@ -12343,6 +12414,10 @@
             <input id="contact-search" placeholder="Search contacts" />
             <div class="filter-row" id="contact-filters">
               <button class="filter-btn active" data-contact-filter="attention" type="button">Attention</button>
+              <button class="filter-btn" data-contact-filter="potential_prospect" type="button">Potential prospects</button>
+              <button class="filter-btn" data-contact-filter="needs_review" type="button">Needs review</button>
+              <button class="filter-btn" data-contact-filter="nurture" type="button">Nurture</button>
+              <button class="filter-btn" data-contact-filter="do_not_contact" type="button">Do not contact</button>
               <button class="filter-btn" data-contact-filter="top100" type="button">Top 100</button>
               <button class="filter-btn" data-contact-filter="all" type="button">All</button>
               <button class="filter-btn" data-contact-filter="women" type="button">Women</button>
@@ -12367,7 +12442,7 @@
             <div>
               <p class="eyebrow">Import</p>
               <h2>Upload CSV</h2>
-              <p class="muted section-subcopy">Choose a spreadsheet export. PulseNow will clean the list locally, then send it through Contact Intelligence when the backend session is available.</p>
+              <p class="muted section-subcopy">Choose a spreadsheet export. PulseNow will clean the list locally, then send it through Contact Intelligence when the CRM scan is available.</p>
             </div>
           </div>
           <label class="csv-drop" for="csv-file-input">
@@ -15294,6 +15369,16 @@
         return score;
       }
 
+      function contactScoreLabel(contact) {
+        const score = scoreContact(contact);
+        if (contact.backend_import_id) {
+          if (score > 0) return Math.round(score) + "%";
+          if (contact.confidence) return String(contact.confidence).replace(/_/g, " ");
+          return "Scanned";
+        }
+        return score + "/7";
+      }
+
       function isOverdue(contact) {
         if (!contact.next_followup_date) return false;
         return contact.next_followup_date <= todayKey();
@@ -15417,7 +15502,7 @@
               const compactMeta =
                 pipelineType === "recruit"
                   ? getCompletedSubstepCount(contact) + "/" + getRecruitSubsteps(contact).length + " substeps"
-                  : score + "/7 qualifiers" + (contact.last_contact_date ? " · Last: " + contact.last_contact_date : " · No contact yet");
+                  : (contact.backend_import_id ? contactScoreLabel(contact) + " scan" : score + "/7 qualifiers") + (contact.last_contact_date ? " · Last: " + contact.last_contact_date : " · No contact yet");
               const detailButton =
                 pipelineType === "recruit"
                   ? '<button class="ghost-btn" type="button" data-recruit-detail-id="' + contactId + '">Detail</button>'
@@ -15557,11 +15642,39 @@
       }
 
       function contactNeedsAttention(contact) {
+        const area = contact.crm_area || "";
+        if (area === "potential_prospect" || area === "needs_review") return true;
         return isOverdue(contact) || contact.is_top_100 === true || scoreContact(contact) >= 6;
+      }
+
+      function crmAreaForContact(contact) {
+        if (contact.crm_area && contact.crm_area_label) {
+          const orders = { attention: 0, potential_prospect: 1, needs_review: 2, nurture: 3, do_not_contact: 4, uncategorized: 5 };
+          return { key: contact.crm_area, label: contact.crm_area_label, order: orders[contact.crm_area] ?? 5 };
+        }
+        const status = String(contact.prospect_status || "").toLowerCase();
+        const category = String(contact.category || "").toLowerCase();
+        if (status.includes("do not") || status.includes("not a fit") || category === "do_not_contact" || category === "not_a_fit" || contact.do_not_contact) {
+          return { key: "do_not_contact", label: "Do not contact", order: 4 };
+        }
+        if (status.includes("review") || category === "manual_review") {
+          return { key: "needs_review", label: "Needs review", order: 2 };
+        }
+        if (status.includes("nurture") || category === "nurture") {
+          return { key: "nurture", label: "Nurture", order: 3 };
+        }
+        if (contact.backend_import_id || status.includes("potential")) {
+          return { key: "potential_prospect", label: "Potential prospects", order: 1 };
+        }
+        if (contactNeedsAttention(contact)) return { key: "attention", label: "Needs attention", order: 0 };
+        return { key: "uncategorized", label: "Other CRM contacts", order: 5 };
       }
 
       function contactMatchesFilter(contact) {
         if (contactFilter === "all" || contactFilter === "az") return true;
+        if (["potential_prospect", "needs_review", "nurture", "do_not_contact"].includes(contactFilter)) {
+          return crmAreaForContact(contact).key === contactFilter;
+        }
         if (contactFilter === "attention") return contactNeedsAttention(contact);
         if (contactFilter === "top100") return contact.is_top_100 === true || scoreContact(contact) >= 5;
         if (contactFilter === "overdue") return isOverdue(contact);
@@ -15612,8 +15725,28 @@
           return;
         }
 
+        const grouped = new Map();
         list.forEach((contact) => {
-          const score = scoreContact(contact);
+          const area = crmAreaForContact(contact);
+          if (!grouped.has(area.key)) grouped.set(area.key, { area, contacts: [] });
+          grouped.get(area.key).contacts.push(contact);
+        });
+
+        Array.from(grouped.values()).sort((a, b) => a.area.order - b.area.order).forEach((group) => {
+          if (contactFilter === "az") {
+            group.contacts.forEach((contact) => contactList.appendChild(renderContactCard(contact)));
+            return;
+          }
+          const section = document.createElement("section");
+          section.className = "crm-group";
+          section.innerHTML = '<div class="crm-group-head"><h3>' + escapeHtml(group.area.label) + '</h3><span>' + group.contacts.length + '</span></div>';
+          group.contacts.forEach((contact) => section.appendChild(renderContactCard(contact)));
+          contactList.appendChild(section);
+        });
+        updateTodayPath();
+      }
+
+      function renderContactCard(contact) {
           const card = document.createElement("div");
           card.className = "contact-card";
           card.setAttribute("role", "button");
@@ -15621,13 +15754,18 @@
           card.dataset.contactId = contact.id;
           const category = contactCategory(contact);
           const status = researchStatus(contact);
-          const source = contact.id.indexOf("csv") === 0 ? "CSV import" : "Manual";
+          const source = contact.backend_import_id ? "CRM scan" : contact.id.indexOf("csv") === 0 ? "CSV import" : "Manual";
           const contactId = escapeHtml(contact.id);
           const contactName = escapeHtml(contact.name);
           const contactStage = escapeHtml(contact.stage || "Uncontacted");
           const safeCategory = escapeHtml(category);
           const safeStatus = escapeHtml(status);
           const safeSource = escapeHtml(source);
+          const why = contact.why_this_category ? '<div class="contact-insight"><strong>Why this category</strong><p>' + escapeHtml(contact.why_this_category) + '</p></div>' : "";
+          const next = contact.what_to_do_next ? '<div class="contact-insight"><strong>What to do next</strong><p>' + escapeHtml(contact.what_to_do_next) + '</p></div>' : "";
+          const missing = Array.isArray(contact.missing_info) && contact.missing_info.length
+            ? '<div class="contact-insight"><strong>Missing info</strong><p>' + escapeHtml(contact.missing_info.join(", ")) + '</p></div>'
+            : "";
           const phoneHref = safePhoneUri("tel:", contact.phone);
           const smsHref = safePhoneUri("sms:", contact.phone);
           card.innerHTML =
@@ -15636,8 +15774,8 @@
             '</h3><p class="muted" style="margin-top:5px;">' +
             (contact.last_contact_date ? "Last contact: " + escapeHtml(contact.last_contact_date) : "Not contacted yet") +
             '</p></div><span class="score-pill">' +
-            score +
-            '/7</span></div><div class="contact-meta"><span class="stage-pill">' +
+            escapeHtml(contactScoreLabel(contact)) +
+            '</span></div><div class="contact-meta"><span class="stage-pill">' +
             contactStage +
             '</span>' +
             (isOverdue(contact) ? '<span class="overdue-pill">Overdue</span>' : "") +
@@ -15648,16 +15786,18 @@
             safeStatus +
             '</span><span class="category-pill secondary">' +
             safeSource +
-            '</span></div><div class="contact-actions"><a href="tel:' +
+            '</span></div>' +
+            why +
+            next +
+            missing +
+            '<div class="contact-actions"><a href="tel:' +
             phoneHref.slice(4) +
             '">Call</a><a href="sms:' +
             smsHref.slice(4) +
             '">Text</a><button type="button" data-detail-id="' +
             contactId +
             '">Details</button></div>';
-          contactList.appendChild(card);
-        });
-        updateTodayPath();
+          return card;
       }
 
       function resetAddContactForm() {
@@ -15745,8 +15885,9 @@
       }
 
       function contactCategory(contact) {
-        if (contact.prospect_status) return contact.prospect_status;
+        if (contact.category_label) return contact.category_label;
         if (contact.category) return String(contact.category).replace(/_/g, " ");
+        if (contact.prospect_status) return contact.prospect_status;
         if (contact.is_business) return "Business record";
         if (contact.type === "client") return "Client";
         if (contact.type === "recruit") return "Recruit";
@@ -15756,7 +15897,7 @@
       }
 
       function researchStatus(contact) {
-        if (contact.backend_import_id) return contact.assessment_status || "Contact Intelligence";
+        if (contact.backend_import_id) return contact.assessment_status === "complete" ? "Scan complete" : "Scan pending";
         const socials = contact.socials || {};
         const hasSocial = socials.linkedin || socials.facebook || socials.instagram || socials.tiktok;
         if (hasSocial) return "Socials found";
@@ -15789,12 +15930,12 @@
         if (!csvScanPanel || !csvScanTitle || !csvScanPill || !csvScanProfile) return;
         csvScanPanel.classList.remove("hidden");
         csvScanPanel.classList.toggle("scanning", state === "scanning");
-        csvScanTitle.textContent = state === "done" ? "Contact scan complete" : state === "error" ? "Scan needs setup" : "Scanning contacts";
-        csvScanPill.textContent = state === "done" ? "Organized" : state === "error" ? "Paused" : "Scanning";
+        csvScanTitle.textContent = state === "done" ? "Contact Intelligence complete" : state === "error" ? "CRM scan needs attention" : "Scanning contacts";
+        csvScanPill.textContent = state === "done" ? "Added to CRM" : state === "error" ? "Paused" : "Scanning";
 
         const displayContact = contact || { name: "Imported contacts" };
         const initial = (displayContact.name || "P").trim().charAt(0).toUpperCase() || "P";
-        const summary = message || (contact ? inferContactProfile(contact) : "Upload a CSV and PulseNow will organize, score, and prepare social research.");
+        const summary = message || (contact ? inferContactProfile(contact) : "Upload a CSV and PulseNow will organize, categorize, and add the list to your CRM.");
         csvScanProfile.innerHTML =
           '<span class="scan-avatar">' +
           escapeHtml(initial) +
@@ -15890,6 +16031,23 @@
         return clean.length;
       }
 
+      function normalizedContactName(contact) {
+        return String(contact.name || "").trim().toLowerCase().replace(/\s+/g, " ");
+      }
+
+      function contactDedupeKeys(contact) {
+        const keys = [];
+        const phone = String(contact.phone || "").replace(/[^0-9]/g, "");
+        const email = String(contact.email || "").trim().toLowerCase();
+        const name = normalizedContactName(contact);
+        const company = String(contact.company || "").trim().toLowerCase();
+        if (phone) keys.push("phone:" + phone);
+        if (email) keys.push("email:" + email);
+        if (name && company) keys.push("name-company:" + name + "::" + company);
+        if (name && !phone && !email) keys.push("name-only:" + name);
+        return keys;
+      }
+
       function setContactIntelStatus(message, kind) {
         if (!contactIntelligenceStatus) return;
         contactIntelligenceStatus.classList.remove("hidden");
@@ -15931,6 +16089,21 @@
         });
         const missing = Array.isArray(row.missing_info) ? row.missing_info : [];
         const candidateType = assessment.candidate_type || row.prospect_status || "potential_prospect";
+        const categoryLabel = candidateType === "life_insurance_partner" ? "Life insurance partner"
+          : candidateType === "financial_educator" ? "Financial educator"
+          : candidateType === "referral_partner" ? "Referral partner"
+          : candidateType === "client_prospect" ? "Client prospect"
+          : candidateType === "manual_review" ? "Manual review"
+          : candidateType === "not_a_fit" ? "Not a fit"
+          : candidateType === "nurture" ? "Nurture"
+          : String(candidateType || "Potential prospect").replace(/_/g, " ");
+        const prospectStatus = row.prospect_status || "Potential prospect";
+        const crmArea = crmAreaForContact({
+          backend_import_id: row.import_id,
+          prospect_status: prospectStatus,
+          category: candidateType,
+          do_not_contact: row.do_not_contact,
+        });
         return {
           id: "ci-" + row.id,
           backend_contact_id: row.id,
@@ -15939,7 +16112,7 @@
           phone: row.phone || row.phone_e164 || "",
           email: row.email || "",
           type: candidateType === "client_prospect" ? "client" : "prospect",
-          stage: row.do_not_contact ? "Do Not Call" : "Uncontacted Team Prospects",
+          stage: row.do_not_contact ? "Do Not Call" : crmArea.label,
           next_followup_date: row.follow_up_date || "",
           last_contact_date: "",
           last_contact_outcome: "",
@@ -15949,8 +16122,12 @@
             Number(assessment.client_prospect_score || 0),
             Number(assessment.referral_partner_score || 0)
           ),
-          prospect_status: row.prospect_status || "Potential prospect",
+          prospect_status: prospectStatus,
           category: candidateType,
+          category_label: categoryLabel,
+          crm_area: crmArea.key,
+          crm_area_label: crmArea.label,
+          assessment_status: row.assessment_status,
           why_this_category: row.why_this_category || "Assessment has not run yet.",
           what_to_do_next: row.what_to_do_next || "Review this contact before outreach.",
           missing_info: missing,
@@ -15966,6 +16143,9 @@
           license_status: assessment.captive_status || "",
           socials,
           notes: [row.why_this_category, row.what_to_do_next, missing.length ? "Missing: " + missing.join(", ") : ""].filter(Boolean).join(" "),
+          automation_category: crmArea.key,
+          automation_status: crmArea.key === "do_not_contact" ? "suppressed" : crmArea.key === "needs_review" ? "manual_review" : crmArea.key === "nurture" ? "nurture" : "ready_for_outreach",
+          automation_next_step: row.what_to_do_next || "Review this contact before outreach.",
           qualifiers: {},
           research: {
             source: "contact_intelligence",
@@ -15978,10 +16158,15 @@
       function mergeContactIntelRows(rows) {
         if (!Array.isArray(rows) || rows.length === 0) return 0;
         const mapped = rows.map(contactFromIntelRow);
-        const existing = new Map(contacts.map((contact) => [contact.backend_contact_id || contact.id, contact]));
-        mapped.forEach((contact) => existing.set(contact.backend_contact_id, contact));
         const backendIds = new Set(mapped.map((contact) => contact.backend_contact_id));
-        contacts = mapped.concat(contacts.filter((contact) => !backendIds.has(contact.backend_contact_id)));
+        const backendKeys = new Set();
+        mapped.forEach((contact) => contactDedupeKeys(contact).forEach((key) => backendKeys.add(key)));
+        contacts = mapped.concat(contacts.filter((contact) => {
+          if (backendIds.has(contact.backend_contact_id)) return false;
+          const keys = contactDedupeKeys(contact);
+          if (keys.some((key) => backendKeys.has(key))) return false;
+          return true;
+        }));
         saveContacts();
         renderContacts();
         lastImportedContacts = mapped.slice(0, 50);
@@ -15992,14 +16177,33 @@
         if (!contactIntelligenceSummary) return;
         const stats = data && data.stats ? data.stats : {};
         const definitions = data && data.category_definitions ? data.category_definitions : {};
+        const rows = Array.isArray(data && data.rows) ? data.rows : [];
+        const areaCounts = rows.reduce((acc, row) => {
+          const area = crmAreaForContact({
+            backend_import_id: row.import_id,
+            prospect_status: row.prospect_status,
+            category: row.assessment && row.assessment.candidate_type,
+            do_not_contact: row.do_not_contact,
+          });
+          acc[area.key] = { label: area.label, count: (acc[area.key]?.count || 0) + 1, order: area.order };
+          return acc;
+        }, {});
+        const areaSummary = Object.keys(areaCounts).length
+          ? '<div class="session-feed" style="margin-top:12px;">' +
+            Object.values(areaCounts).sort((a, b) => a.order - b.order).map((area) => {
+              return '<div class="session-item"><strong>' + escapeHtml(area.label) + '</strong><p class="muted" style="margin-top:4px;">' + area.count + ' added to this CRM area.</p></div>';
+            }).join("") +
+            '</div>'
+          : "";
         const topDefs = Object.keys(definitions).slice(0, 5).map((key) => {
           return '<div class="session-item"><strong>' + escapeHtml(key.replace(/_/g, " ")) + '</strong><p class="muted" style="margin-top:4px;">' + escapeHtml(definitions[key]) + '</p></div>';
         }).join("");
         contactIntelligenceSummary.classList.remove("hidden");
         contactIntelligenceSummary.innerHTML =
-          '<div class="csv-scan-head"><strong>' + escapeHtml(data.heading || "Potential Prospects From This CSV") + '</strong><span class="scan-pill">Backend</span></div>' +
+          '<div class="csv-scan-head"><strong>' + escapeHtml(data.heading || "Potential Prospects From This CSV") + '</strong><span class="scan-pill">CRM scan</span></div>' +
           '<p class="muted" style="line-height:1.55;">' + escapeHtml(data.prospect_note || "These contacts are potential prospects until reviewed.") + '</p>' +
           '<div class="clarity-grid" style="margin-top:10px;"><div><strong>' + Number(stats.total_contacts || data.total || 0) + '</strong><span>contacts</span></div><div><strong>' + Number(stats.total_potential_prospects || 0) + '</strong><span>potential prospects</span></div><div><strong>' + Number(stats.manual_review || 0) + '</strong><span>needs review</span></div></div>' +
+          areaSummary +
           (topDefs ? '<div class="session-feed" style="margin-top:12px;">' + topDefs + '</div>' : "");
       }
 
@@ -16017,7 +16221,7 @@
       }
 
       async function runContactIntelligenceImport(file, rawCsvText) {
-        setContactIntelStatus("Starting Contact Intelligence backend import...", "working");
+        setContactIntelStatus("Starting Contact Intelligence import...", "working");
         const client = await getContactIntelClient();
         const title = file && file.name ? file.name.replace(/\.[^.]+$/, "") : "Contact Import";
         const created = await client.functions.invoke("contacts_create_import", {
@@ -16043,8 +16247,8 @@
         if (submitted.error) throw submitted.error;
 
         let data = null;
-        for (let attempt = 1; attempt <= 8; attempt += 1) {
-          setContactIntelStatus("Running backend assessment worker batch " + attempt + "...", "working");
+        for (let attempt = 1; attempt <= 20; attempt += 1) {
+          setContactIntelStatus("Running Contact Intelligence batch " + attempt + "...", "working");
           const workerResponse = await fetch("/api/contacts/upload?action=run-contact-worker", {
             method: "POST",
             headers: { "content-type": "application/json" },
@@ -16064,14 +16268,15 @@
         const rows = Array.isArray(data.rows) ? data.rows.length : 0;
         const total = Number(data.total || rows || 0);
         const suffix = total > rows ? " · showing first " + rows + " of " + total + " on this screen" : "";
-        setContactIntelStatus("Contact Intelligence complete · " + total + " contacts organized from the backend" + suffix + ".", "done");
+        setContactIntelStatus("Contact Intelligence complete · " + total + " contacts added to CRM categories" + suffix + ".", "done");
         exportContactsBtn.classList.toggle("hidden", rows === 0 && contacts.length === 0);
+        return data;
       }
 
       async function handleCsvImport(file) {
         if (!file) return;
         csvImportStatus.textContent = "Reading " + file.name + "...";
-        renderCsvScan(null, "scanning", "Reading columns, cleaning phones, detecting businesses, and scoring qualifiers.");
+        renderCsvScan(null, "scanning", "Reading columns and preparing the CRM categorization.");
         const text = await file.text();
         const rows = parseCsvText(text);
         const imported = rows.map(csvRowToContact).filter((contact) => contact.name || contact.phone || contact.email);
@@ -16079,15 +16284,22 @@
         lastImportedContacts = imported.slice(0, 50);
         const businessCount = imported.filter((contact) => contact.is_business).length;
         const topCount = imported.filter((contact) => contact.is_top_100).length;
-        renderCsvScan(imported[0], "done", imported[0] ? inferContactProfile(imported[0]) : "Contacts are organized and ready for social research.");
-        csvImportStatus.textContent = "Imported " + added + " contacts · " + topCount + " Top 100 candidates · " + businessCount + " possible business records flagged.";
-        researchSocialsBtn.classList.toggle("hidden", imported.length === 0);
+        renderCsvScan(imported[0], "scanning", "Local preview is ready. Contact Intelligence is categorizing the list into CRM areas now.");
+        csvImportStatus.textContent = "Previewed " + added + " contacts · " + topCount + " high-qualifier candidates · " + businessCount + " possible business records flagged.";
+        researchSocialsBtn.classList.add("hidden");
         exportContactsBtn.classList.toggle("hidden", contacts.length === 0);
 
         try {
-          await runContactIntelligenceImport(file, text);
+          const data = await runContactIntelligenceImport(file, text);
+          const backendRows = data && Array.isArray(data.rows) ? data.rows : [];
+          const total = Number((data && data.total) || backendRows.length || 0);
+          const first = lastImportedContacts[0] || imported[0] || null;
+          renderCsvScan(first, "done", total + " contacts were categorized and added to CRM areas. Use the filters below to work Potential prospects, Needs review, Nurture, and Do not contact separately.");
+          csvImportStatus.textContent = "Contact Intelligence complete · " + total + " contacts organized into CRM categories.";
         } catch (error) {
-          setContactIntelStatus("Local import is ready, but Contact Intelligence could not run yet: " + (error.message || "backend unavailable"), "error");
+          renderCsvScan(imported[0], "error", "Local preview is available, but the CRM categorization could not finish yet. Try the scan again after the worker is available.");
+          setContactIntelStatus("Local preview is ready, but Contact Intelligence could not run yet: " + (error.message || "service unavailable"), "error");
+          researchSocialsBtn.classList.toggle("hidden", imported.length === 0);
         }
 
         try {
@@ -16161,7 +16373,7 @@
         if (lastContactIntelImportId) {
           try {
             exportContactsBtn.disabled = true;
-            exportContactsBtn.textContent = "Preparing backend CSV...";
+            exportContactsBtn.textContent = "Preparing organized CSV...";
             const client = await getContactIntelClient();
             const { data, error } = await client.functions.invoke("contacts_export_csv", {
               body: { import_id: lastContactIntelImportId, export_type: "organized_csv" },
@@ -16169,24 +16381,27 @@
             if (error) throw error;
             if (data && data.signed_url) {
               window.open(data.signed_url, "_blank", "noopener,noreferrer");
-              csvImportStatus.textContent = "Downloaded backend organized CSV with prospect status, category explanations, next actions, and missing info.";
+              csvImportStatus.textContent = "Downloaded organized CSV with prospect status, category explanations, next actions, and missing info.";
               return;
             }
           } catch (error) {
-            csvImportStatus.textContent = "Backend export was not available, so PulseNow downloaded the local organized CSV. " + (error.message || "");
+            csvImportStatus.textContent = "Contact Intelligence export was not available, so PulseNow downloaded the local organized CSV. " + (error.message || "");
           } finally {
             exportContactsBtn.disabled = false;
             exportContactsBtn.textContent = "Download organized CSV";
           }
         }
-        const headers = ["name", "category", "research_status", "score", "phone", "email", "type", "stage", "followup", "linkedin", "facebook", "instagram", "tiktok", "company", "city", "state", "gender", "licensed", "license_status", "notes"];
+        const headers = ["name", "crm_area", "category", "research_status", "automation_status", "automation_next_step", "score", "phone", "email", "type", "stage", "followup", "linkedin", "facebook", "instagram", "tiktok", "company", "city", "state", "gender", "licensed", "license_status", "notes"];
         const rows = contacts.map((contact) => {
           const socials = contact.socials || {};
           return [
             contact.name,
+            contact.crm_area_label || crmAreaForContact(contact).label,
             contact.prospect_status || contactCategory(contact),
             researchStatus(contact),
-            scoreContact(contact) + "/7",
+            contact.automation_status || "",
+            contact.automation_next_step || contact.what_to_do_next || "",
+            contactScoreLabel(contact),
             contact.phone,
             contact.email,
             contact.type,
@@ -16223,7 +16438,7 @@
         if (!contact) return;
         selectedContactId = contactId;
         document.getElementById("detail-name").textContent = contact.name;
-        document.getElementById("detail-score").textContent = scoreContact(contact) + "/7";
+        document.getElementById("detail-score").textContent = contactScoreLabel(contact);
         document.getElementById("detail-phone").textContent = contact.phone || "None";
         document.getElementById("detail-email").textContent = contact.email || "None";
         document.getElementById("detail-followup").textContent = contact.next_followup_date || "None";
