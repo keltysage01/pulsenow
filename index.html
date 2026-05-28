@@ -12367,12 +12367,12 @@
             <div>
               <p class="eyebrow">Import</p>
               <h2>Upload CSV</h2>
-              <p class="muted section-subcopy">Choose a spreadsheet export. Pulsenow will clean names, phones, emails, type, follow-up dates, and qualifier columns on-device.</p>
+              <p class="muted section-subcopy">Choose a spreadsheet export. PulseNow will clean the list locally, then send it through Contact Intelligence when the backend session is available.</p>
             </div>
           </div>
           <label class="csv-drop" for="csv-file-input">
             <span>Import contact CSV</span>
-            <small>Works with columns like name, first_name, last_name, phone, email, type, followup, married, homeowner.</small>
+            <small>Works with columns like name, first_name, last_name, phone, email, type, followup, company, LinkedIn, and notes.</small>
             <input id="csv-file-input" type="file" accept=".csv,.tsv,.txt,text/csv,text/tab-separated-values,text/plain" />
           </label>
           <div id="csv-scan-panel" class="csv-scan-panel hidden" aria-live="polite">
@@ -12394,6 +12394,8 @@
             </div>
           </div>
           <div id="csv-import-status" class="session-item">No file selected yet.</div>
+          <div id="contact-intelligence-status" class="session-item hidden">Contact Intelligence is ready.</div>
+          <div id="contact-intelligence-summary" class="csv-scan-panel hidden" aria-live="polite"></div>
           <button id="research-socials-btn" class="ghost-btn hidden" type="button">Research socials + LinkedIn</button>
           <button id="export-contacts-btn" class="ghost-btn hidden" type="button">Download organized CSV</button>
         </section>
@@ -12904,6 +12906,8 @@
       const csvScanTitle = document.getElementById("csv-scan-title");
       const csvScanPill = document.getElementById("csv-scan-pill");
       const csvScanProfile = document.getElementById("csv-scan-profile");
+      const contactIntelligenceStatus = document.getElementById("contact-intelligence-status");
+      const contactIntelligenceSummary = document.getElementById("contact-intelligence-summary");
       const researchSocialsBtn = document.getElementById("research-socials-btn");
       const exportContactsBtn = document.getElementById("export-contacts-btn");
       const profilePhotoInput = document.getElementById("profile-photo-input");
@@ -12961,6 +12965,7 @@
       let coachMessages = [];
       let apiPowerPicks = null;
       let lastImportedContacts = [];
+      let contactIntelClientPromise = null;
       let dreamMediaRecorder = null;
       let dreamAudioChunks = [];
       let dreamAudioStream = null;
@@ -13011,8 +13016,10 @@
       const activeDreamStorageKey = "pulsenow_demo_active_dream";
       const dreamVisionStorageKey = "pulsenow_demo_dream_vision_items_v2";
       const dreamLifeStorageKey = "pulsenow_demo_dream_life_vision_v2";
+      const contactIntelImportStorageKey = "pulsenow_contact_intelligence_import";
       const profileBioStoragePrefix = "pulsenow_demo_profile_bio_";
       const quizProfileStorageKey = "pulsenow_demo_quiz_profile";
+      let lastContactIntelImportId = sessionStorage.getItem(contactIntelImportStorageKey) || "";
       let dreamMapReady = false;
       let dreamMapGenerating = false;
       let dreamLifeVision = null;
@@ -15738,6 +15745,8 @@
       }
 
       function contactCategory(contact) {
+        if (contact.prospect_status) return contact.prospect_status;
+        if (contact.category) return String(contact.category).replace(/_/g, " ");
         if (contact.is_business) return "Business record";
         if (contact.type === "client") return "Client";
         if (contact.type === "recruit") return "Recruit";
@@ -15747,6 +15756,7 @@
       }
 
       function researchStatus(contact) {
+        if (contact.backend_import_id) return contact.assessment_status || "Contact Intelligence";
         const socials = contact.socials || {};
         const hasSocial = socials.linkedin || socials.facebook || socials.instagram || socials.tiktok;
         if (hasSocial) return "Socials found";
@@ -15755,6 +15765,10 @@
       }
 
       function inferContactProfile(contact) {
+        if (contact.why_this_category || contact.what_to_do_next) {
+          const missing = Array.isArray(contact.missing_info) && contact.missing_info.length ? " Missing info: " + contact.missing_info.join(", ") + "." : "";
+          return [contact.why_this_category, contact.what_to_do_next, missing].filter(Boolean).join(" ");
+        }
         const socials = contact.socials || {};
         const socialNames = Object.keys(socials).filter((key) => socials[key]).map((key) => key.charAt(0).toUpperCase() + key.slice(1));
         const companyText = contact.company || contact.notes || "";
@@ -15876,6 +15890,171 @@
         return clean.length;
       }
 
+      function setContactIntelStatus(message, kind) {
+        if (!contactIntelligenceStatus) return;
+        contactIntelligenceStatus.classList.remove("hidden");
+        contactIntelligenceStatus.textContent = message;
+        contactIntelligenceStatus.dataset.kind = kind || "info";
+      }
+
+      async function getContactIntelClient() {
+        if (contactIntelClientPromise) return contactIntelClientPromise;
+        contactIntelClientPromise = (async () => {
+          const configResponse = await fetch("/api/contact-intelligence?action=config");
+          const config = await configResponse.json().catch(() => ({}));
+          if (!configResponse.ok || !config.configured || !config.supabaseUrl || !config.anonKey) {
+            throw new Error("Contact Intelligence needs SUPABASE_URL and SUPABASE_ANON_KEY configured in Vercel.");
+          }
+          const module = await import("https://esm.sh/@supabase/supabase-js@2.106.1");
+          const client = module.createClient(config.supabaseUrl, config.anonKey, {
+            auth: {
+              autoRefreshToken: true,
+              persistSession: true,
+              storageKey: "pulsenow_contact_intelligence_auth",
+            },
+          });
+          const current = await client.auth.getSession();
+          if (!current.data.session) {
+            const anon = await client.auth.signInAnonymously();
+            if (anon.error) throw anon.error;
+          }
+          return client;
+        })();
+        return contactIntelClientPromise;
+      }
+
+      function contactFromIntelRow(row) {
+        const assessment = row.assessment || {};
+        const socials = {};
+        (row.social_profiles || []).forEach((profile) => {
+          if (profile.platform && profile.profile_url) socials[profile.platform] = profile.profile_url;
+        });
+        const missing = Array.isArray(row.missing_info) ? row.missing_info : [];
+        const candidateType = assessment.candidate_type || row.prospect_status || "potential_prospect";
+        return {
+          id: "ci-" + row.id,
+          backend_contact_id: row.id,
+          backend_import_id: row.import_id,
+          name: row.display_name || row.full_name || row.email || row.phone || "Imported Contact",
+          phone: row.phone || row.phone_e164 || "",
+          email: row.email || "",
+          type: candidateType === "client_prospect" ? "client" : "prospect",
+          stage: row.do_not_contact ? "Do Not Call" : "Uncontacted Team Prospects",
+          next_followup_date: row.follow_up_date || "",
+          last_contact_date: "",
+          last_contact_outcome: "",
+          qualifier_score: Math.max(
+            Number(assessment.life_insurance_partner_score || 0),
+            Number(assessment.financial_educator_score || 0),
+            Number(assessment.client_prospect_score || 0),
+            Number(assessment.referral_partner_score || 0)
+          ),
+          prospect_status: row.prospect_status || "Potential prospect",
+          category: candidateType,
+          why_this_category: row.why_this_category || "Assessment has not run yet.",
+          what_to_do_next: row.what_to_do_next || "Review this contact before outreach.",
+          missing_info: missing,
+          confidence: assessment.confidence || "",
+          is_top_100: row.prospect_status === "Potential prospect",
+          is_business: Boolean(row.company),
+          city: row.city || "",
+          state: row.state || "",
+          company: row.company || "",
+          gender: row.gender_label || "",
+          licensed: assessment.captive_status === "captive_agent" || assessment.captive_status === "non_captive_independent",
+          is_licensed: assessment.captive_status === "captive_agent" || assessment.captive_status === "non_captive_independent",
+          license_status: assessment.captive_status || "",
+          socials,
+          notes: [row.why_this_category, row.what_to_do_next, missing.length ? "Missing: " + missing.join(", ") : ""].filter(Boolean).join(" "),
+          qualifiers: {},
+          research: {
+            source: "contact_intelligence",
+            profile: row.why_this_category || "Contact Intelligence assessment",
+            socials,
+          },
+        };
+      }
+
+      function mergeContactIntelRows(rows) {
+        if (!Array.isArray(rows) || rows.length === 0) return 0;
+        const mapped = rows.map(contactFromIntelRow);
+        const existing = new Map(contacts.map((contact) => [contact.backend_contact_id || contact.id, contact]));
+        mapped.forEach((contact) => existing.set(contact.backend_contact_id, contact));
+        const backendIds = new Set(mapped.map((contact) => contact.backend_contact_id));
+        contacts = mapped.concat(contacts.filter((contact) => !backendIds.has(contact.backend_contact_id)));
+        saveContacts();
+        renderContacts();
+        lastImportedContacts = mapped.slice(0, 50);
+        return mapped.length;
+      }
+
+      function renderContactIntelSummary(data) {
+        if (!contactIntelligenceSummary) return;
+        const stats = data && data.stats ? data.stats : {};
+        const definitions = data && data.category_definitions ? data.category_definitions : {};
+        const topDefs = Object.keys(definitions).slice(0, 5).map((key) => {
+          return '<div class="session-item"><strong>' + escapeHtml(key.replace(/_/g, " ")) + '</strong><p class="muted" style="margin-top:4px;">' + escapeHtml(definitions[key]) + '</p></div>';
+        }).join("");
+        contactIntelligenceSummary.classList.remove("hidden");
+        contactIntelligenceSummary.innerHTML =
+          '<div class="csv-scan-head"><strong>' + escapeHtml(data.heading || "Potential Prospects From This CSV") + '</strong><span class="scan-pill">Backend</span></div>' +
+          '<p class="muted" style="line-height:1.55;">' + escapeHtml(data.prospect_note || "These contacts are potential prospects until reviewed.") + '</p>' +
+          '<div class="clarity-grid" style="margin-top:10px;"><div><strong>' + Number(stats.total_contacts || data.total || 0) + '</strong><span>contacts</span></div><div><strong>' + Number(stats.total_potential_prospects || 0) + '</strong><span>potential prospects</span></div><div><strong>' + Number(stats.manual_review || 0) + '</strong><span>needs review</span></div></div>' +
+          (topDefs ? '<div class="session-feed" style="margin-top:12px;">' + topDefs + '</div>' : "");
+      }
+
+      async function fetchContactIntelImport(client, importId) {
+        const { data, error } = await client.functions.invoke("contacts_get_import?import_id=" + encodeURIComponent(importId) + "&page_size=200", {
+          method: "GET",
+        });
+        if (error) throw error;
+        renderContactIntelSummary(data);
+        mergeContactIntelRows(data.rows || []);
+        return data;
+      }
+
+      async function runContactIntelligenceImport(file, rawCsvText) {
+        setContactIntelStatus("Starting Contact Intelligence backend import...", "working");
+        const client = await getContactIntelClient();
+        const title = file && file.name ? file.name.replace(/\.[^.]+$/, "") : "Contact Import";
+        const created = await client.functions.invoke("contacts_create_import", {
+          body: {
+            title,
+            default_goal: "life_insurance_partner",
+            metadata: { source: "pulsenow_contacts_screen" },
+          },
+        });
+        if (created.error) throw created.error;
+        const importId = created.data && created.data.import && created.data.import.id;
+        if (!importId) throw new Error("Contact import was not created.");
+        lastContactIntelImportId = importId;
+        sessionStorage.setItem(contactIntelImportStorageKey, importId);
+
+        setContactIntelStatus("Submitting CSV to Contact Intelligence...", "working");
+        const submitted = await client.functions.invoke("contacts_submit_csv", {
+          body: {
+            import_id: importId,
+            raw_csv_text: rawCsvText,
+          },
+        });
+        if (submitted.error) throw submitted.error;
+
+        setContactIntelStatus("Running backend assessment worker...", "working");
+        const workerResponse = await fetch("/api/contact-intelligence?action=run-worker", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ import_id: importId, limit: 500 }),
+        });
+        const workerData = await workerResponse.json().catch(() => ({}));
+        if (!workerResponse.ok) throw new Error(workerData.message || workerData.error || "Contact worker failed.");
+
+        setContactIntelStatus("Fetching organized potential-prospect list...", "working");
+        const data = await fetchContactIntelImport(client, importId);
+        const rows = Array.isArray(data.rows) ? data.rows.length : 0;
+        setContactIntelStatus("Contact Intelligence complete · " + rows + " contacts organized from the backend.", "done");
+        exportContactsBtn.classList.toggle("hidden", rows === 0 && contacts.length === 0);
+      }
+
       async function handleCsvImport(file) {
         if (!file) return;
         csvImportStatus.textContent = "Reading " + file.name + "...";
@@ -15891,6 +16070,12 @@
         csvImportStatus.textContent = "Imported " + added + " contacts · " + topCount + " Top 100 candidates · " + businessCount + " possible business records flagged.";
         researchSocialsBtn.classList.toggle("hidden", imported.length === 0);
         exportContactsBtn.classList.toggle("hidden", contacts.length === 0);
+
+        try {
+          await runContactIntelligenceImport(file, text);
+        } catch (error) {
+          setContactIntelStatus("Local import is ready, but Contact Intelligence could not run yet: " + (error.message || "backend unavailable"), "error");
+        }
 
         try {
           const body = new FormData();
@@ -15959,13 +16144,34 @@
         return /[",\n]/.test(text) ? '"' + text.replace(/"/g, '""') + '"' : text;
       }
 
-      function exportContactsCsv() {
+      async function exportContactsCsv() {
+        if (lastContactIntelImportId) {
+          try {
+            exportContactsBtn.disabled = true;
+            exportContactsBtn.textContent = "Preparing backend CSV...";
+            const client = await getContactIntelClient();
+            const { data, error } = await client.functions.invoke("contacts_export_csv", {
+              body: { import_id: lastContactIntelImportId, export_type: "organized_csv" },
+            });
+            if (error) throw error;
+            if (data && data.signed_url) {
+              window.open(data.signed_url, "_blank", "noopener,noreferrer");
+              csvImportStatus.textContent = "Downloaded backend organized CSV with prospect status, category explanations, next actions, and missing info.";
+              return;
+            }
+          } catch (error) {
+            csvImportStatus.textContent = "Backend export was not available, so PulseNow downloaded the local organized CSV. " + (error.message || "");
+          } finally {
+            exportContactsBtn.disabled = false;
+            exportContactsBtn.textContent = "Download organized CSV";
+          }
+        }
         const headers = ["name", "category", "research_status", "score", "phone", "email", "type", "stage", "followup", "linkedin", "facebook", "instagram", "tiktok", "company", "city", "state", "gender", "licensed", "license_status", "notes"];
         const rows = contacts.map((contact) => {
           const socials = contact.socials || {};
           return [
             contact.name,
-            contactCategory(contact),
+            contact.prospect_status || contactCategory(contact),
             researchStatus(contact),
             scoreContact(contact) + "/7",
             contact.phone,
@@ -15983,7 +16189,7 @@
             contact.gender,
             contact.licensed || contact.is_licensed ? "yes" : "",
             contact.license_status,
-            contact.notes
+            contact.notes || contact.why_this_category
           ].map(csvCell).join(",");
         });
         const csv = headers.join(",") + "\n" + rows.join("\n");
