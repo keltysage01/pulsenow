@@ -16004,8 +16004,11 @@
       }
 
       async function fetchContactIntelImport(client, importId) {
-        const { data, error } = await client.functions.invoke("contacts_get_import?import_id=" + encodeURIComponent(importId) + "&page_size=200", {
-          method: "GET",
+        const { data, error } = await client.functions.invoke("contacts_get_import", {
+          body: {
+            import_id: importId,
+            page_size: 500,
+          },
         });
         if (error) throw error;
         renderContactIntelSummary(data);
@@ -16039,19 +16042,29 @@
         });
         if (submitted.error) throw submitted.error;
 
-        setContactIntelStatus("Running backend assessment worker...", "working");
-        const workerResponse = await fetch("/api/contacts/upload?action=run-contact-worker", {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify({ import_id: importId, limit: 500 }),
-        });
-        const workerData = await workerResponse.json().catch(() => ({}));
-        if (!workerResponse.ok) throw new Error(workerData.message || workerData.error || "Contact worker failed.");
+        let data = null;
+        for (let attempt = 1; attempt <= 8; attempt += 1) {
+          setContactIntelStatus("Running backend assessment worker batch " + attempt + "...", "working");
+          const workerResponse = await fetch("/api/contacts/upload?action=run-contact-worker", {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ import_id: importId, limit: 5 }),
+          });
+          const workerData = await workerResponse.json().catch(() => ({}));
+          if (!workerResponse.ok) throw new Error(workerData.message || workerData.error || "Contact worker failed.");
 
-        setContactIntelStatus("Fetching organized potential-prospect list...", "working");
-        const data = await fetchContactIntelImport(client, importId);
+          setContactIntelStatus("Fetching organized potential-prospect list...", "working");
+          data = await fetchContactIntelImport(client, importId);
+          const status = data && data.import ? data.import.status : "";
+          if (status === "ready" || workerData.claimed === false) break;
+          await delay(700);
+        }
+
+        if (!data) data = await fetchContactIntelImport(client, importId);
         const rows = Array.isArray(data.rows) ? data.rows.length : 0;
-        setContactIntelStatus("Contact Intelligence complete · " + rows + " contacts organized from the backend.", "done");
+        const total = Number(data.total || rows || 0);
+        const suffix = total > rows ? " · showing first " + rows + " of " + total + " on this screen" : "";
+        setContactIntelStatus("Contact Intelligence complete · " + total + " contacts organized from the backend" + suffix + ".", "done");
         exportContactsBtn.classList.toggle("hidden", rows === 0 && contacts.length === 0);
       }
 

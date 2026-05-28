@@ -25,9 +25,10 @@ Deno.serve(async (req) => {
     }
 
     const url = new URL(req.url);
-    const importId = url.searchParams.get("import_id");
-    const requestedPage = Number(url.searchParams.get("page") || "1");
-    const requestedPageSize = Number(url.searchParams.get("page_size") || "100");
+    const body = req.method === "GET" ? {} : await req.json().catch(() => ({}));
+    const importId = url.searchParams.get("import_id") || body.import_id;
+    const requestedPage = Number(url.searchParams.get("page") || body.page || "1");
+    const requestedPageSize = Number(url.searchParams.get("page_size") || body.page_size || "100");
     const page = Number.isFinite(requestedPage) && requestedPage > 0 ? Math.floor(requestedPage) : 1;
     const pageSize = Number.isFinite(requestedPageSize) && requestedPageSize > 0
       ? Math.min(Math.floor(requestedPageSize), 500)

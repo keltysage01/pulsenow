@@ -96,7 +96,7 @@ async function runContactWorker(req, res) {
   const raw = await readBody(req);
   const body = raw ? JSON.parse(raw) : {};
   const importId = body.import_id || body.importId || null;
-  const limit = Number(body.limit || 500);
+  const limit = Number(body.limit || 5);
 
   const response = await fetch(`${supabaseUrl.replace(/\/$/, '')}/functions/v1/contacts_worker`, {
     method: 'POST',
@@ -106,7 +106,7 @@ async function runContactWorker(req, res) {
     },
     body: JSON.stringify({
       import_id: importId,
-      limit: Number.isFinite(limit) && limit > 0 ? Math.min(limit, 1000) : 500,
+      limit: Number.isFinite(limit) && limit > 0 ? Math.min(limit, 50) : 5,
     }),
   });
   const data = await response.json().catch(() => ({}));

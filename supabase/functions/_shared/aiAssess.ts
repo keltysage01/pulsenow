@@ -81,7 +81,8 @@ export function deterministicAssessment(input: AssessmentInput): ContactAssessme
 export async function buildContactAssessment(input: AssessmentInput): Promise<ContactAssessment> {
   const aiEnabled = Deno.env.get("AI_ENABLED") !== "false";
   const apiKey = Deno.env.get("OPENAI_API_KEY");
-  const model = Deno.env.get("OPENAI_SMALL_MODEL") || Deno.env.get("OPENAI_TEXT_MODEL") || "gpt-5.5-mini";
+  const model = Deno.env.get("OPENAI_SMALL_MODEL") || Deno.env.get("OPENAI_TEXT_MODEL") || "gpt-4.1-mini";
+  const timeoutMs = Number(Deno.env.get("OPENAI_ASSESSMENT_TIMEOUT_MS") || "12000");
 
   const deterministic = deterministicAssessment(input);
 
@@ -116,28 +117,41 @@ Hard rules:
     evidence_sources: input.evidenceSources || [],
   };
 
-  const response = await fetch("https://api.openai.com/v1/responses", {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      model,
-      input: [
-        { role: "system", content: system },
-        { role: "user", content: JSON.stringify(promptPayload) },
-      ],
-      text: {
-        format: {
-          type: "json_schema",
-          name: "contact_assessment",
-          strict: true,
-          schema: contactAssessmentJsonSchema,
-        },
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), Number.isFinite(timeoutMs) && timeoutMs > 0 ? timeoutMs : 12000);
+
+  let response: Response;
+  try {
+    response = await fetch("https://api.openai.com/v1/responses", {
+      signal: controller.signal,
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
       },
-    }),
-  });
+      body: JSON.stringify({
+        model,
+        input: [
+          { role: "system", content: system },
+          { role: "user", content: JSON.stringify(promptPayload) },
+        ],
+        text: {
+          format: {
+            type: "json_schema",
+            name: "contact_assessment",
+            strict: true,
+            schema: contactAssessmentJsonSchema,
+          },
+        },
+        max_output_tokens: 700,
+      }),
+    });
+  } catch (error) {
+    console.error("OpenAI assessment request failed", error);
+    return deterministic;
+  } finally {
+    clearTimeout(timeout);
+  }
 
   if (!response.ok) {
     const errorText = await response.text();

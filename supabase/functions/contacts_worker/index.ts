@@ -72,7 +72,12 @@ async function upsertAssessment(admin: any, contact: any, assessment: any, model
 }
 
 async function assessImportContacts(admin: any, job: any) {
-  const limit = Number(job.payload?.limit || Deno.env.get("CONTACT_MAX_ROWS_PER_JOB") || "500");
+  const requestedLimit = Number(job.payload?.limit || Deno.env.get("CONTACT_MAX_ROWS_PER_JOB") || "500");
+  const aiEnabled = Deno.env.get("AI_ENABLED") !== "false" && Boolean(Deno.env.get("OPENAI_API_KEY"));
+  const aiBatchLimit = Number(Deno.env.get("CONTACT_AI_BATCH_LIMIT") || "5");
+  const limit = aiEnabled
+    ? Math.min(requestedLimit, Number.isFinite(aiBatchLimit) && aiBatchLimit > 0 ? aiBatchLimit : 5)
+    : requestedLimit;
   const modelName = Deno.env.get("OPENAI_SMALL_MODEL") || Deno.env.get("OPENAI_TEXT_MODEL") || "deterministic";
 
   await logEvent(admin, job, "assess_started", "Assessing contacts", { limit });
@@ -179,7 +184,12 @@ function platformFromUrl(url?: string | null): string | null {
 }
 
 async function researchContacts(admin: any, job: any) {
-  const max = Number(job.payload?.limit || Deno.env.get("CONTACT_MAX_RESEARCH_PER_JOB") || "25");
+  const requestedMax = Number(job.payload?.limit || Deno.env.get("CONTACT_MAX_RESEARCH_PER_JOB") || "25");
+  const aiEnabled = Deno.env.get("AI_ENABLED") !== "false" && Boolean(Deno.env.get("OPENAI_API_KEY"));
+  const aiBatchLimit = Number(Deno.env.get("CONTACT_AI_BATCH_LIMIT") || "5");
+  const max = aiEnabled
+    ? Math.min(requestedMax, Number.isFinite(aiBatchLimit) && aiBatchLimit > 0 ? aiBatchLimit : 5)
+    : requestedMax;
   const contactIds: string[] | undefined = job.payload?.contact_ids;
   const modelName = Deno.env.get("OPENAI_SMALL_MODEL") || Deno.env.get("OPENAI_TEXT_MODEL") || "deterministic";
 
@@ -317,9 +327,13 @@ Deno.serve(async (req) => {
 
   try {
     assertWorkerSecret(req);
+    const body = req.method === "GET" ? {} : await req.json().catch(() => ({}));
+    const importId = body.import_id || body.importId || null;
     const admin = getSupabaseAdmin();
 
-    const { data: jobs, error } = await admin.rpc("claim_next_contact_job", { worker_name: workerName });
+    const { data: jobs, error } = importId
+      ? await admin.rpc("claim_next_contact_job_for_import", { worker_name: workerName, target_import_id: importId })
+      : await admin.rpc("claim_next_contact_job", { worker_name: workerName });
     if (error) throw error;
 
     const job = jobs?.[0];
