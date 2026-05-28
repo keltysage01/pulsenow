@@ -75,6 +75,16 @@ export function detectColumnMapping(headers: string[]): { mapping: ColumnMapping
       usedHeaders.add(h.original);
       continue;
     }
+    if (!mapping.company && (h.normalized.includes("company") || h.normalized.includes("employer") || h.normalized.includes("business") || (h.normalized.includes("organization") && !h.normalized.includes("title")))) {
+      mapping.company = h.original;
+      usedHeaders.add(h.original);
+      continue;
+    }
+    if (!mapping.job_title && (h.normalized.includes("job_title") || h.normalized.includes("occupation") || h.normalized.includes("position") || h.normalized.includes("profession") || (h.normalized.includes("organization") && h.normalized.includes("title")))) {
+      mapping.job_title = h.original;
+      usedHeaders.add(h.original);
+      continue;
+    }
   }
 
   const unmappedHeaders = headers.filter((h) => !usedHeaders.has(h));
