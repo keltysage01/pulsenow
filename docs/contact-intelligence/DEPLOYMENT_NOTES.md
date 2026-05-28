@@ -14,7 +14,7 @@ Deploy these Edge Functions:
 supabase functions deploy contacts_create_import
 supabase functions deploy contacts_create_upload_url
 supabase functions deploy contacts_submit_csv
-supabase functions deploy contacts_worker
+supabase functions deploy contacts_worker --no-verify-jwt
 supabase functions deploy contacts_get_import
 supabase functions deploy contacts_research_batch
 supabase functions deploy contacts_export_csv
@@ -54,4 +54,4 @@ CONTACT_WORKER_SECRET
 CRON_SECRET
 ```
 
-The Vercel cron endpoint `/api/cron/contact-intelligence-worker` invokes the Supabase `contacts_worker` function every 10 minutes. The worker requires `x-contact-worker-secret`, and that value must match `CONTACT_WORKER_SECRET`.
+The Vercel cron endpoint `/api/cron/contact-intelligence-worker` invokes the Supabase `contacts_worker` function every 10 minutes. The worker must be deployed with Supabase gateway JWT verification disabled because it uses `x-contact-worker-secret` instead of a user JWT. That header value must match `CONTACT_WORKER_SECRET`.
