@@ -11,6 +11,13 @@ const ALLOWED_FIELDS = new Set([
   "email_opt_out", "sms_opt_out", "do_not_contact", "consent_source",
 ]);
 
+const ENUM_FIELDS: Record<string, Set<string>> = {
+  gender_label: new Set(["man", "woman", "nonbinary", "other", "unknown", "not_provided"]),
+  gender_source: new Set(["manual", "self_stated_note", "not_provided"]),
+  married_status: new Set(["yes", "no", "unknown", "not_provided"]),
+  homeowner_status: new Set(["yes", "no", "unknown", "not_provided"]),
+};
+
 Deno.serve(async (req) => {
   const options = handleOptions(req);
   if (options) return options;
@@ -47,7 +54,18 @@ Deno.serve(async (req) => {
 
     if (Object.keys(cleanPatch).length === 0) return badRequest("No allowed fields in patch");
 
-    if (cleanPatch.gender_label && !cleanPatch.gender_source) {
+    for (const [key, allowed] of Object.entries(ENUM_FIELDS)) {
+      const value = cleanPatch[key];
+      if (value !== undefined && value !== null && !allowed.has(String(value))) {
+        return badRequest(`Invalid ${key}`);
+      }
+    }
+
+    if (cleanPatch.gender_label || cleanPatch.original_gender_label) {
+      cleanPatch.gender_source = cleanPatch.gender_source === "self_stated_note" ? "self_stated_note" : "manual";
+    } else if (cleanPatch.gender_source === "self_stated_note" && !cleanPatch.notes && !before.notes) {
+      return badRequest("gender_source self_stated_note requires notes");
+    } else if (cleanPatch.gender_source && cleanPatch.gender_source !== "not_provided") {
       cleanPatch.gender_source = "manual";
     }
 
