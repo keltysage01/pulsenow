@@ -16072,7 +16072,15 @@
             },
           });
           const current = await client.auth.getSession();
-          if (!current.data.session) {
+          let session = current.data && current.data.session ? current.data.session : null;
+          if (session) {
+            const verified = await client.auth.getUser();
+            if (verified.error || !verified.data.user) {
+              await client.auth.signOut();
+              session = null;
+            }
+          }
+          if (!session) {
             const anon = await client.auth.signInAnonymously();
             if (anon.error) throw anon.error;
           }
@@ -16224,13 +16232,18 @@
         setContactIntelStatus("Starting Contact Intelligence import...", "working");
         const client = await getContactIntelClient();
         const title = file && file.name ? file.name.replace(/\.[^.]+$/, "") : "Contact Import";
-        const created = await client.functions.invoke("contacts_create_import", {
-          body: {
-            title,
-            default_goal: "life_insurance_partner",
-            metadata: { source: "pulsenow_contacts_screen" },
-          },
-        });
+        const createBody = {
+          title,
+          default_goal: "life_insurance_partner",
+          metadata: { source: "pulsenow_contacts_screen" },
+        };
+        let created = await client.functions.invoke("contacts_create_import", { body: createBody });
+        if (created.error) {
+          await client.auth.signOut();
+          const anon = await client.auth.signInAnonymously();
+          if (anon.error) throw anon.error;
+          created = await client.functions.invoke("contacts_create_import", { body: createBody });
+        }
         if (created.error) throw created.error;
         const importId = created.data && created.data.import && created.data.import.id;
         if (!importId) throw new Error("Contact import was not created.");
@@ -16299,7 +16312,7 @@
         } catch (error) {
           renderCsvScan(imported[0], "error", "Local preview is available, but the CRM categorization could not finish yet. Try the scan again after the worker is available.");
           setContactIntelStatus("Local preview is ready, but Contact Intelligence could not run yet: " + (error.message || "service unavailable"), "error");
-          researchSocialsBtn.classList.toggle("hidden", imported.length === 0);
+          researchSocialsBtn.classList.add("hidden");
         }
 
         try {
