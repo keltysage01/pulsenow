@@ -183,6 +183,84 @@ function platformFromUrl(url?: string | null): string | null {
   return null;
 }
 
+function sourceText(source: any): string {
+  return [
+    source.title,
+    source.snippet,
+    source.url,
+    source.raw_result?.output_text,
+    typeof source.raw_result === "string" ? source.raw_result : JSON.stringify(source.raw_result || {}),
+  ].filter(Boolean).join(" ");
+}
+
+function extractEmail(text: string): string | null {
+  const match = text.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i);
+  if (!match) return null;
+  return match[0].replace(/[).,;:]+$/g, "").toLowerCase();
+}
+
+function normalizePublicPhone(value: string): { phone: string | null; phone_e164: string | null } {
+  const digits = value.replace(/\D/g, "");
+  if (!digits) return { phone: null, phone_e164: null };
+  const normalized = digits.length === 11 && digits.startsWith("1") ? digits.slice(1) : digits;
+  if (normalized.length !== 10) return { phone: null, phone_e164: null };
+  return {
+    phone: `(${normalized.slice(0, 3)}) ${normalized.slice(3, 6)}-${normalized.slice(6)}`,
+    phone_e164: `+1${normalized}`,
+  };
+}
+
+function extractPhone(text: string): { phone: string | null; phone_e164: string | null } {
+  const candidates = text.match(/(?:\+?1[\s.-]?)?(?:\([2-9]\d{2}\)|[2-9]\d{2})[\s.-]?\d{3}[\s.-]?\d{4}/g) || [];
+  for (const candidate of candidates) {
+    const normalized = normalizePublicPhone(candidate);
+    if (normalized.phone_e164) return normalized;
+  }
+  return { phone: null, phone_e164: null };
+}
+
+function extractPublicContactInfo(sources: any[]) {
+  const combined = sources.map(sourceText).join(" ");
+  const email = extractEmail(combined);
+  const phone = extractPhone(combined);
+  return {
+    email,
+    phone: phone.phone,
+    phone_e164: phone.phone_e164,
+  };
+}
+
+async function fillMissingPublicContactInfo(admin: any, contact: any, sources: any[]) {
+  if (contact.email && (contact.phone || contact.phone_e164)) return contact;
+  const found = extractPublicContactInfo(sources);
+  const patch: Record<string, string> = {};
+
+  if (!contact.email && found.email) patch.email = found.email;
+  if (!contact.phone && found.phone) patch.phone = found.phone;
+  if (!contact.phone_e164 && found.phone_e164) patch.phone_e164 = found.phone_e164;
+
+  if (!Object.keys(patch).length) return contact;
+
+  const existingNotes = String(contact.notes || "").trim();
+  const noteBits = [
+    patch.email ? `public email ${patch.email}` : "",
+    patch.phone ? `public phone ${patch.phone}` : "",
+  ].filter(Boolean);
+  patch.notes = [existingNotes, `Contact Intelligence found ${noteBits.join(" and ")} from public search evidence; verify before outreach.`]
+    .filter(Boolean)
+    .join("\n");
+
+  const { data, error } = await admin
+    .from("contact_records")
+    .update(patch)
+    .eq("id", contact.id)
+    .select("*")
+    .single();
+  if (error) throw error;
+
+  return data || { ...contact, ...patch };
+}
+
 async function researchContacts(admin: any, job: any) {
   const requestedMax = Number(job.payload?.limit || Deno.env.get("CONTACT_MAX_RESEARCH_PER_JOB") || "25");
   const aiEnabled = Deno.env.get("AI_ENABLED") !== "false" && Boolean(Deno.env.get("OPENAI_API_KEY"));
@@ -270,16 +348,22 @@ async function researchContacts(admin: any, job: any) {
         }
       }
 
+      const enrichedContact = await fillMissingPublicContactInfo(admin, contact, sources);
+
       await admin.from("contact_records").update({ research_status: "complete", assessment_status: "queued" }).eq("id", contact.id);
 
       const assessment = await buildContactAssessment({
-        contact,
+        contact: enrichedContact,
         evidenceSources: sources.map((s) => ({ title: s.title, snippet: s.snippet, url: s.url, source_type: s.source_type })),
       });
-      await upsertAssessment(admin, contact, assessment, modelName);
+      await upsertAssessment(admin, enrichedContact, assessment, modelName);
 
       researched++;
-      await logEvent(admin, job, "research_contact_complete", "Research complete for contact", { sources: sources.length }, contact.id);
+      await logEvent(admin, job, "research_contact_complete", "Research complete for contact", {
+        sources: sources.length,
+        enriched_email: Boolean(enrichedContact.email && !contact.email),
+        enriched_phone: Boolean((enrichedContact.phone || enrichedContact.phone_e164) && !(contact.phone || contact.phone_e164)),
+      }, contact.id);
     } catch (contactError) {
       failed++;
       await admin.from("contact_records").update({ research_status: "failed" }).eq("id", contact.id);

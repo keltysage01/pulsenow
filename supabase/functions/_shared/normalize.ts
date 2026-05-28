@@ -54,6 +54,21 @@ function cleanText(v: string | null): string | null {
   return cleaned || null;
 }
 
+function rowText(row: Record<string, string>): string {
+  return Object.values(row).filter(Boolean).join(" ");
+}
+
+function extractEmail(v: string): string | null {
+  const match = v.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i);
+  if (!match) return null;
+  return match[0].replace(/[).,;:]+$/g, "").toLowerCase();
+}
+
+function extractPhone(v: string): string | null {
+  const candidates = v.match(/(?:\+?1[\s.-]?)?(?:\([2-9]\d{2}\)|[2-9]\d{2})[\s.-]?\d{3}[\s.-]?\d{4}/g) || [];
+  return candidates[0] || null;
+}
+
 function titleCaseName(v: string | null): string | null {
   if (!v) return null;
   return v
@@ -161,11 +176,12 @@ function normalizeBool(v: string | null): boolean {
 
 export function normalizeContact(row: Record<string, string>, mapping: ColumnMapping): NormalizedContact {
   const errors: string[] = [];
+  const fallbackText = rowText(row);
   const rawFirst = cleanText(value(row, mapping, "first_name"));
   const rawLast = cleanText(value(row, mapping, "last_name"));
   const rawFull = cleanText(value(row, mapping, "full_name"));
-  const rawPhone = cleanText(value(row, mapping, "phone"));
-  const rawEmail = cleanText(value(row, mapping, "email"));
+  const rawPhone = cleanText(value(row, mapping, "phone")) || cleanText(extractPhone(fallbackText));
+  const rawEmail = cleanText(value(row, mapping, "email")) || cleanText(extractEmail(fallbackText));
   const rawCompany = cleanText(value(row, mapping, "company"));
   const rawJobTitle = cleanText(value(row, mapping, "job_title"));
   const rawNotes = cleanText(value(row, mapping, "notes"));

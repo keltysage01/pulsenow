@@ -11,7 +11,7 @@ const FIELD_ALIASES: Record<string, string[]> = {
   last_name: ["last", "last_name", "lname", "surname", "family_name", "family"],
   full_name: ["name", "full_name", "contact_name", "customer_name", "prospect_name", "person"],
   phone: ["phone", "mobile", "cell", "number", "phone_number", "primary_phone", "telephone", "tel"],
-  email: ["email", "email_address", "e_mail", "primary_email"],
+  email: ["email", "email_address", "e_mail", "primary_email", "mail", "primary_mail"],
   contact_type: ["type", "contact_type", "lead_type", "category", "relationship", "source_type"],
   follow_up_date: ["followup", "follow_up", "follow_up_date", "next_followup", "next_follow_up", "follow_up_on", "callback_date"],
   married: ["married", "spouse", "relationship_status", "marital_status"],
@@ -70,7 +70,7 @@ export function detectColumnMapping(headers: string[]): { mapping: ColumnMapping
       usedHeaders.add(h.original);
       continue;
     }
-    if (!mapping.email && h.normalized.includes("email")) {
+    if (!mapping.email && (h.normalized.includes("email") || h.normalized.includes("e_mail") || h.normalized.includes("mail"))) {
       mapping.email = h.original;
       usedHeaders.add(h.original);
       continue;

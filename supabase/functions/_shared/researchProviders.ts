@@ -119,7 +119,7 @@ async function openAiWebSearch(query: string): Promise<ResearchSource[]> {
         tool_choice: "auto",
         include: ["web_search_call.action.sources"],
         max_output_tokens: 700,
-        input: `Search public web results for this contact. Look for LinkedIn public profile pages, public Facebook/Instagram/TikTok/profile pages, Google-visible professional profiles, company pages, and public role context. Do not scrape logged-in pages or claim certainty from protected traits. Return concise sourced evidence and URLs that help categorize the contact and decide how to contact them. Query: ${query}`,
+        input: `Search public web results for this contact. Look for LinkedIn public profile pages, public Facebook/Instagram/TikTok/profile pages, Google-visible professional profiles, company pages, public business/contact pages, and public role context. If a public business email or phone number is visible in search results or source snippets, include it verbatim in the sourced summary so it can be verified before outreach. Do not scrape logged-in pages or claim certainty from protected traits. Return concise sourced evidence and URLs that help categorize the contact and decide how to contact them. Query: ${query}`,
       }),
     });
   } catch (error) {
