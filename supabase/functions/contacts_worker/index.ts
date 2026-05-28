@@ -208,7 +208,7 @@ async function researchContacts(admin: any, job: any) {
   if (contactIds?.length) {
     query = query.in("id", contactIds);
   } else {
-    query = query.in("research_status", ["not_started", "failed"]);
+    query = query.in("research_status", ["not_started", "queued", "failed"]);
   }
 
   const { data: contacts, error } = await query;

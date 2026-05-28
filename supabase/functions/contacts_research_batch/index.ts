@@ -34,6 +34,8 @@ Deno.serve(async (req) => {
 
     const admin = getSupabaseAdmin();
 
+    let queuedIds: string[] = [];
+
     if (contactIds?.length) {
       await admin
         .from("contact_records")
@@ -41,6 +43,7 @@ Deno.serve(async (req) => {
         .eq("import_id", importId)
         .eq("user_id", auth.user.id)
         .in("id", contactIds);
+      queuedIds = contactIds;
     } else {
       // Queue a limited set only. Avoid accidentally researching thousands from one button click.
       const { data: contacts } = await admin
@@ -56,6 +59,7 @@ Deno.serve(async (req) => {
       if (ids.length) {
         await admin.from("contact_records").update({ research_status: "queued" }).in("id", ids);
       }
+      queuedIds = ids;
     }
 
     const { data: job, error: jobError } = await admin
@@ -66,7 +70,7 @@ Deno.serve(async (req) => {
         job_type: "research_contacts",
         status: "queued",
         priority: 20,
-        payload: { contact_ids: contactIds, limit },
+        payload: { contact_ids: queuedIds, limit },
       })
       .select("*")
       .single();

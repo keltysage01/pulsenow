@@ -35,14 +35,15 @@ export function buildSearchQueries(contact: ResearchQuery): string[] {
 
   if (contact.linkedin_url) queries.add(contact.linkedin_url);
   if (base) {
-    queries.add(`${base} LinkedIn`);
-    queries.add(`${base} insurance financial educator`);
-    queries.add(`${base} business owner professional`);
+    queries.add(`"${name}" ${company} ${title} LinkedIn Facebook Instagram`);
+    queries.add(`site:linkedin.com/in "${name}" ${company || loc}`);
+    queries.add(`"${name}" ${company || loc} insurance financial educator referral partner`);
+    queries.add(`"${name}" ${company || loc} business owner professional profile`);
   }
   if (name && loc) queries.add(`${name} ${loc} LinkedIn`);
   if (name && company) queries.add(`${name} ${company}`);
 
-  return Array.from(queries).slice(0, 4);
+  return Array.from(queries).slice(0, Number(Deno.env.get("CONTACT_SEARCH_QUERIES_PER_CONTACT") || "3"));
 }
 
 export function buildManualSearchSources(contact: ResearchQuery): ResearchSource[] {
@@ -98,20 +99,35 @@ async function openAiWebSearch(query: string): Promise<ResearchSource[]> {
   const apiKey = Deno.env.get("OPENAI_API_KEY");
   if (!apiKey) return [];
 
-  const model = Deno.env.get("OPENAI_TEXT_MODEL") || "gpt-5.5";
+  const model = Deno.env.get("OPENAI_SEARCH_MODEL") || Deno.env.get("OPENAI_TEXT_MODEL") || "gpt-4.1-mini";
+  const timeoutMs = Number(Deno.env.get("OPENAI_SEARCH_TIMEOUT_MS") || "18000");
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), Number.isFinite(timeoutMs) && timeoutMs > 0 ? timeoutMs : 18000);
 
-  const res = await fetch("https://api.openai.com/v1/responses", {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      model,
-      tools: [{ type: "web_search" }],
-      input: `Find public professional search results for this contact query. Do not scrape LinkedIn or access logged in pages. Return a concise sourced summary and include URLs. Query: ${query}`,
-    }),
-  });
+  let res: Response;
+  try {
+    res = await fetch("https://api.openai.com/v1/responses", {
+      signal: controller.signal,
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model,
+        tools: [{ type: "web_search" }],
+        tool_choice: "auto",
+        include: ["web_search_call.action.sources"],
+        max_output_tokens: 700,
+        input: `Search public web results for this contact. Look for LinkedIn public profile pages, public Facebook/Instagram/TikTok/profile pages, Google-visible professional profiles, company pages, and public role context. Do not scrape logged-in pages or claim certainty from protected traits. Return concise sourced evidence and URLs that help categorize the contact and decide how to contact them. Query: ${query}`,
+      }),
+    });
+  } catch (error) {
+    console.error("OpenAI web search request failed", error);
+    return [];
+  } finally {
+    clearTimeout(timeout);
+  }
 
   if (!res.ok) {
     console.error("OpenAI web search failed", await res.text());
@@ -121,8 +137,12 @@ async function openAiWebSearch(query: string): Promise<ResearchSource[]> {
   const data = await res.json();
   const outputText = data.output_text || "";
   const annotations: any[] = [];
+  const consultedSources: any[] = [];
 
   for (const item of data.output || []) {
+    if (item.type === "web_search_call" && item.action?.sources) {
+      consultedSources.push(...item.action.sources);
+    }
     for (const content of item.content || []) {
       if (content.annotations) annotations.push(...content.annotations);
     }
@@ -142,6 +162,21 @@ async function openAiWebSearch(query: string): Promise<ResearchSource[]> {
     }));
 
   if (urlSources.length) return urlSources.slice(0, 5);
+
+  const sourceRows = consultedSources
+    .filter((source) => source.url)
+    .map((source) => ({
+      provider: "openai_web_search",
+      source_type: "openai_web_search" as const,
+      query,
+      title: source.title || source.url,
+      snippet: outputText.slice(0, 500),
+      url: source.url,
+      confidence: 0.62,
+      raw_result: source,
+    }));
+
+  if (sourceRows.length) return sourceRows.slice(0, 5);
 
   return [{
     provider: "openai_web_search",

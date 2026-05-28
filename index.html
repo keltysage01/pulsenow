@@ -4862,6 +4862,7 @@
       }
 
       #csv-import-panel #research-socials-btn,
+      #csv-import-panel #deep-research-btn,
       #csv-import-panel #export-contacts-btn {
         width: 100% !important;
         min-height: 46px !important;
@@ -4872,6 +4873,7 @@
       }
 
       #csv-import-panel #research-socials-btn.hidden,
+      #csv-import-panel #deep-research-btn.hidden,
       #csv-import-panel #export-contacts-btn.hidden {
         display: none !important;
       }
@@ -12471,6 +12473,7 @@
           <div id="csv-import-status" class="session-item">No file selected yet.</div>
           <div id="contact-intelligence-status" class="session-item hidden">Contact Intelligence is ready.</div>
           <div id="contact-intelligence-summary" class="csv-scan-panel hidden" aria-live="polite"></div>
+          <button id="deep-research-btn" class="ghost-btn hidden" type="button">Run LinkedIn + social research</button>
           <button id="research-socials-btn" class="ghost-btn hidden" type="button">Research socials + LinkedIn</button>
           <button id="export-contacts-btn" class="ghost-btn hidden" type="button">Download organized CSV</button>
         </section>
@@ -12983,6 +12986,7 @@
       const csvScanProfile = document.getElementById("csv-scan-profile");
       const contactIntelligenceStatus = document.getElementById("contact-intelligence-status");
       const contactIntelligenceSummary = document.getElementById("contact-intelligence-summary");
+      const deepResearchBtn = document.getElementById("deep-research-btn");
       const researchSocialsBtn = document.getElementById("research-socials-btn");
       const exportContactsBtn = document.getElementById("export-contacts-btn");
       const profilePhotoInput = document.getElementById("profile-photo-input");
@@ -15638,7 +15642,7 @@
       }
 
       function contactNeedsResearch(contact) {
-        return researchStatus(contact) === "Needs research";
+        return researchStatus(contact) === "Needs research" || researchStatus(contact) === "Research queued" || researchStatus(contact) === "Research failed";
       }
 
       function contactNeedsAttention(contact) {
@@ -15771,6 +15775,13 @@
           const safeSource = escapeHtml(source);
           const why = contact.why_this_category ? '<div class="contact-insight"><strong>Why this category</strong><p>' + escapeHtml(contact.why_this_category) + '</p></div>' : "";
           const next = contact.what_to_do_next ? '<div class="contact-insight"><strong>What to do next</strong><p>' + escapeHtml(contact.what_to_do_next) + '</p></div>' : "";
+          const sources = Array.isArray(contact.research_sources) && contact.research_sources.length
+            ? '<div class="contact-insight"><strong>Found profiles</strong><p>' + contact.research_sources.slice(0, 4).map((source) => {
+                const href = safeExternalUrl(source.url);
+                const label = escapeHtml(source.title || source.platform || source.url || "Source");
+                return href ? '<a href="' + escapeHtml(href) + '" target="_blank" rel="noopener noreferrer">' + label + '</a>' : label;
+              }).join(" · ") + '</p></div>'
+            : "";
           const missing = Array.isArray(contact.missing_info) && contact.missing_info.length
             ? '<div class="contact-insight"><strong>Missing info</strong><p>' + escapeHtml(contact.missing_info.join(", ")) + '</p></div>'
             : "";
@@ -15797,6 +15808,7 @@
             '</span></div>' +
             why +
             next +
+            sources +
             missing +
             '<div class="contact-actions"><a href="tel:' +
             phoneHref.slice(4) +
@@ -15905,7 +15917,12 @@
       }
 
       function researchStatus(contact) {
-        if (contact.backend_import_id) return contact.assessment_status === "complete" ? "Scan complete" : "Scan pending";
+        if (contact.backend_import_id) {
+          if (contact.research_status === "complete") return "Research complete";
+          if (contact.research_status === "queued" || contact.research_status === "researching") return "Research queued";
+          if (contact.research_status === "failed") return "Research failed";
+          return contact.assessment_status === "complete" ? "Needs research" : "Scan pending";
+        }
         const socials = contact.socials || {};
         const hasSocial = socials.linkedin || socials.facebook || socials.instagram || socials.tiktok;
         if (hasSocial) return "Socials found";
@@ -16191,8 +16208,10 @@
           crm_area: crmArea.key,
           crm_area_label: crmArea.label,
           assessment_status: row.assessment_status,
+          research_status: row.research_status,
           why_this_category: row.why_this_category || "Assessment has not run yet.",
           what_to_do_next: row.what_to_do_next || "Review this contact before outreach.",
+          suggested_message_angle: assessment.suggested_message_angle || "",
           missing_info: missing,
           confidence: assessment.confidence || "",
           is_top_100: row.prospect_status === "Potential prospect",
@@ -16205,6 +16224,12 @@
           is_licensed: assessment.captive_status === "captive_agent" || assessment.captive_status === "non_captive_independent",
           license_status: assessment.captive_status || "",
           socials,
+          research_sources: (row.sources || []).concat(row.social_profiles || []).map((source) => ({
+            title: source.title || source.display_name || source.platform || source.profile_url || source.url,
+            url: source.url || source.profile_url,
+            platform: source.platform || "",
+            snippet: source.snippet || source.headline || "",
+          })).filter((source) => source.url || source.title),
           notes: [row.why_this_category, row.what_to_do_next, missing.length ? "Missing: " + missing.join(", ") : ""].filter(Boolean).join(" "),
           automation_category: crmArea.key,
           automation_status: crmArea.key === "do_not_contact" ? "suppressed" : crmArea.key === "needs_review" ? "manual_review" : crmArea.key === "nurture" ? "nurture" : "ready_for_outreach",
@@ -16325,6 +16350,63 @@
         return data;
       }
 
+      function researchRemainingCount(data) {
+        const researchStats = data && data.stats && data.stats.research_status ? data.stats.research_status : {};
+        return Number(researchStats.not_started || 0) + Number(researchStats.queued || 0) + Number(researchStats.researching || 0) + Number(researchStats.failed || 0);
+      }
+
+      async function runDeepContactResearch(client, importId, options = {}) {
+        if (!importId) throw new Error("Import a CSV before running research.");
+        const limit = Number(options.limit || 25);
+        let latest = await fetchContactIntelImport(client, importId);
+        let remaining = researchRemainingCount(latest);
+        if (remaining === 0 && options.force !== true) return latest;
+
+        if (deepResearchBtn) {
+          deepResearchBtn.classList.remove("hidden");
+          deepResearchBtn.disabled = true;
+          deepResearchBtn.textContent = "Researching public profiles...";
+        }
+
+        for (let pass = 1; pass <= 12; pass += 1) {
+          remaining = researchRemainingCount(latest);
+          if (remaining === 0) break;
+          setContactIntelStatus("Searching public LinkedIn, social, Google, and company signals for " + remaining + " contacts...", "working");
+          const queued = await client.functions.invoke("contacts_research_batch", {
+            body: {
+              import_id: importId,
+              limit,
+            },
+          });
+          if (queued.error) throw queued.error;
+
+          for (let attempt = 1; attempt <= 8; attempt += 1) {
+            const workerResponse = await fetch("/api/contacts/upload?action=run-contact-worker", {
+              method: "POST",
+              headers: { "content-type": "application/json" },
+              body: JSON.stringify({ import_id: importId, limit: Math.min(limit, 25) }),
+            });
+            const workerData = await workerResponse.json().catch(() => ({}));
+            if (!workerResponse.ok) throw new Error(workerData.message || workerData.error || "Research worker failed.");
+            latest = await fetchContactIntelImport(client, importId);
+            if (researchRemainingCount(latest) < remaining || workerData.claimed === false) break;
+            await delay(700);
+          }
+        }
+
+        latest = await fetchContactIntelImport(client, importId);
+        const researched = Number(latest?.stats?.research_status?.complete || 0);
+        const stillRemaining = researchRemainingCount(latest);
+        setContactFilter("all");
+        setContactIntelStatus("Deep research complete · " + researched + " contacts researched" + (stillRemaining ? " · " + stillRemaining + " still need review" : "") + ".", stillRemaining ? "info" : "done");
+        if (deepResearchBtn) {
+          deepResearchBtn.disabled = false;
+          deepResearchBtn.textContent = stillRemaining ? "Continue LinkedIn + social research" : "Refresh LinkedIn + social research";
+          deepResearchBtn.classList.remove("hidden");
+        }
+        return latest;
+      }
+
       async function runContactIntelligenceImport(file, rawCsvText) {
         setContactIntelStatus("Starting Contact Intelligence import...", "working");
         const client = await getContactIntelClient();
@@ -16379,6 +16461,11 @@
         const total = Number(data.total || rows || 0);
         const suffix = total > rows ? " · showing first " + rows + " of " + total + " on this screen" : "";
         setContactIntelStatus("Contact Intelligence complete · " + total + " contacts added to CRM categories" + suffix + ".", "done");
+        if (deepResearchBtn) {
+          deepResearchBtn.classList.remove("hidden");
+          deepResearchBtn.disabled = false;
+          deepResearchBtn.textContent = "Run LinkedIn + social research";
+        }
         exportContactsBtn.classList.toggle("hidden", rows === 0 && contacts.length === 0);
         return data;
       }
@@ -16410,12 +16497,25 @@
           setContactFilter("all");
           renderCsvScan(null, "done", total + " contacts were categorized and added to CRM areas. The list below is ready for outreach and automation setup.");
           csvImportStatus.textContent = "Contact Intelligence complete · " + total + " contacts organized into CRM categories.";
+          try {
+            await runDeepContactResearch(await getContactIntelClient(), lastContactIntelImportId, { limit: 25 });
+            renderCsvScan(null, "done", "LinkedIn, social, Google, and company signals were checked where public results were available. Use the categorized CRM list below for outreach.");
+            csvImportStatus.textContent = "Deep research complete · contacts updated with public profile signals and next actions.";
+          } catch (researchError) {
+            setContactIntelStatus("CRM categories are ready, but public profile research could not finish yet: " + (researchError.message || "research unavailable"), "error");
+            if (deepResearchBtn) {
+              deepResearchBtn.classList.remove("hidden");
+              deepResearchBtn.disabled = false;
+              deepResearchBtn.textContent = "Retry LinkedIn + social research";
+            }
+          }
           setTimeout(() => contactList.scrollIntoView({ behavior: "smooth", block: "start" }), 250);
         } catch (error) {
           renderLocalCrmSummary(imported, "preview");
           renderCsvScan(null, "error", "The CRM preview is ready below, but Contact Intelligence could not finish the deeper scan yet.");
           setContactIntelStatus("CRM preview is ready. Contact Intelligence could not finish yet: " + (error.message || "service unavailable"), "error");
           researchSocialsBtn.classList.add("hidden");
+          if (deepResearchBtn) deepResearchBtn.classList.add("hidden");
           setContactFilter("all");
           setTimeout(() => contactList.scrollIntoView({ behavior: "smooth", block: "start" }), 250);
         }
@@ -16479,6 +16579,25 @@
         } finally {
           researchSocialsBtn.disabled = false;
           researchSocialsBtn.textContent = "Research socials + LinkedIn";
+        }
+      }
+
+      async function researchCurrentContactImport() {
+        if (!lastContactIntelImportId) {
+          csvImportStatus.textContent = "Import a CSV first, then run LinkedIn and social research.";
+          return;
+        }
+        try {
+          const client = await getContactIntelClient();
+          await runDeepContactResearch(client, lastContactIntelImportId, { limit: 25, force: true });
+          renderCsvScan(null, "done", "Public profile research updated the categorized CRM list below.");
+          csvImportStatus.textContent = "LinkedIn and social research updated the CRM list.";
+        } catch (error) {
+          setContactIntelStatus("Public profile research could not run yet: " + (error.message || "research unavailable"), "error");
+          if (deepResearchBtn) {
+            deepResearchBtn.disabled = false;
+            deepResearchBtn.textContent = "Retry LinkedIn + social research";
+          }
         }
       }
 
@@ -16566,12 +16685,16 @@
 
         const detailAiSummary = document.getElementById("detail-ai-summary");
         if (detailAiSummary) {
+          const sourceLinks = Array.isArray(contact.research_sources) && contact.research_sources.length
+            ? " Found: " + contact.research_sources.slice(0, 4).map((source) => source.title || source.url).filter(Boolean).join(", ") + "."
+            : "";
+          const angle = contact.suggested_message_angle ? " Message angle: " + contact.suggested_message_angle : "";
           detailAiSummary.classList.remove("hidden");
           detailAiSummary.innerHTML =
             '<span class="scan-avatar">' +
             escapeHtml((contact.name || "P").charAt(0).toUpperCase()) +
             '</span><div><strong>PulseNow scan</strong><p>' +
-            escapeHtml(inferContactProfile(contact)) +
+            escapeHtml(inferContactProfile(contact) + sourceLinks + angle) +
             "</p></div>";
         }
 
@@ -17232,6 +17355,7 @@
         event.target.value = "";
       });
       researchSocialsBtn.addEventListener("click", researchImportedSocials);
+      if (deepResearchBtn) deepResearchBtn.addEventListener("click", researchCurrentContactImport);
       exportContactsBtn.addEventListener("click", exportContactsCsv);
       profilePhotoInput.addEventListener("change", (event) => {
         const file = event.target.files && event.target.files[0];
