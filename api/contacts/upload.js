@@ -7,6 +7,22 @@ export const config = {
 };
 
 export default async function handler(req, res) {
+  const action = String(req.query.action || '');
+
+  if (req.method === 'GET' && action === 'contact-intelligence-config') {
+    const supabaseUrl = getSupabaseUrl();
+    const anonKey = getSupabaseAnonKey();
+    return sendJson(res, 200, {
+      supabaseUrl,
+      anonKey,
+      configured: Boolean(supabaseUrl && anonKey),
+    });
+  }
+
+  if (req.method === 'POST' && action === 'run-contact-worker') {
+    return runContactWorker(req, res);
+  }
+
   if (req.method !== 'POST') return sendJson(res, 405, { error: 'method_not_allowed' });
 
   try {
@@ -57,6 +73,51 @@ export default async function handler(req, res) {
   } catch (error) {
     return sendJson(res, 500, { error: error.message || 'csv_upload_failed' });
   }
+}
+
+function getSupabaseUrl() {
+  return process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL || '';
+}
+
+function getSupabaseAnonKey() {
+  return process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || '';
+}
+
+async function runContactWorker(req, res) {
+  const supabaseUrl = getSupabaseUrl();
+  const workerSecret = process.env.CONTACT_WORKER_SECRET || '';
+  if (!supabaseUrl || !workerSecret) {
+    return sendJson(res, 503, {
+      error: 'contact_worker_not_configured',
+      message: 'Contact Intelligence worker is not configured for this deployment.',
+    });
+  }
+
+  const raw = await readBody(req);
+  const body = raw ? JSON.parse(raw) : {};
+  const importId = body.import_id || body.importId || null;
+  const limit = Number(body.limit || 500);
+
+  const response = await fetch(`${supabaseUrl.replace(/\/$/, '')}/functions/v1/contacts_worker`, {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+      'x-contact-worker-secret': workerSecret,
+    },
+    body: JSON.stringify({
+      import_id: importId,
+      limit: Number.isFinite(limit) && limit > 0 ? Math.min(limit, 1000) : 500,
+    }),
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    return sendJson(res, response.status, {
+      error: data.error || 'contact_worker_failed',
+      message: data.message || 'Contact worker failed.',
+      details: data,
+    });
+  }
+  return sendJson(res, 200, data);
 }
 
 function extractCsv(req, raw) {

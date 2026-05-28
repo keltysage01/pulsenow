@@ -15900,7 +15900,7 @@
       async function getContactIntelClient() {
         if (contactIntelClientPromise) return contactIntelClientPromise;
         contactIntelClientPromise = (async () => {
-          const configResponse = await fetch("/api/contact-intelligence?action=config");
+          const configResponse = await fetch("/api/contacts/upload?action=contact-intelligence-config");
           const config = await configResponse.json().catch(() => ({}));
           if (!configResponse.ok || !config.configured || !config.supabaseUrl || !config.anonKey) {
             throw new Error("Contact Intelligence needs SUPABASE_URL and SUPABASE_ANON_KEY configured in Vercel.");
@@ -16040,7 +16040,7 @@
         if (submitted.error) throw submitted.error;
 
         setContactIntelStatus("Running backend assessment worker...", "working");
-        const workerResponse = await fetch("/api/contact-intelligence?action=run-worker", {
+        const workerResponse = await fetch("/api/contacts/upload?action=run-contact-worker", {
           method: "POST",
           headers: { "content-type": "application/json" },
           body: JSON.stringify({ import_id: importId, limit: 500 }),
