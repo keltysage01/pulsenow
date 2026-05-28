@@ -28,14 +28,29 @@ export function prospectStatusFor(contact: Record<string, any>, assessment?: Rec
 export function missingInfoFor(contact: Record<string, any>, assessment?: Record<string, any> | null): string[] {
   const missing = new Set<string>();
   if (!contact.full_name) missing.add("name");
-  if (!contact.email) missing.add("email");
-  if (!contact.phone && !contact.phone_e164) missing.add("phone");
+  const hasEmail = Boolean(contact.email);
+  const hasPhone = Boolean(contact.phone || contact.phone_e164);
+  if (!hasEmail && !hasPhone) missing.add("phone or email");
+  else {
+    if (!hasEmail) missing.add("email");
+    if (!hasPhone) missing.add("phone");
+  }
   if (!contact.company) missing.add("company");
   if (!contact.job_title && !contact.occupation) missing.add("role");
-  if (!contact.notes) missing.add("notes");
+
   for (const item of assessment?.missing_data || []) {
-    if (typeof item === "string" && item.trim()) missing.add(item.trim());
+    if (typeof item !== "string") continue;
+    const normalized = item.trim().toLowerCase().replace(/_/g, " ");
+    if (!normalized) continue;
+    if (normalized === "missing email and phone" && (hasEmail || hasPhone)) continue;
+    if (normalized === "missing email" && hasEmail) continue;
+    if (normalized === "missing phone" && hasPhone) continue;
+    if (normalized === "missing company" && contact.company) continue;
+    if ((normalized === "missing role" || normalized === "missing professional role") && (contact.job_title || contact.occupation)) continue;
+    if (normalized === "missing notes") continue;
+    missing.add(normalized.replace(/^missing /, ""));
   }
+
   return Array.from(missing);
 }
 
