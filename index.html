@@ -10252,6 +10252,50 @@
         opacity: 0.92 !important;
       }
 
+      #badge-count {
+        align-self: center;
+        white-space: nowrap;
+      }
+
+      .badge-unlock-toast {
+        position: fixed;
+        left: 50%;
+        bottom: 96px;
+        z-index: 2200;
+        width: min(92vw, 420px);
+        padding: 14px 16px;
+        border-radius: 22px;
+        border: 1px solid rgba(77, 199, 215, 0.34);
+        color: #07385c;
+        background:
+          radial-gradient(circle at 94% 4%, rgba(152, 223, 101, 0.28), transparent 30%),
+          rgba(255, 255, 255, 0.92);
+        box-shadow: 0 24px 54px rgba(31, 65, 85, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.82);
+        transform: translate(-50%, 18px);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 220ms ease, transform 220ms ease;
+      }
+
+      .badge-unlock-toast.show {
+        opacity: 1;
+        transform: translate(-50%, 0);
+      }
+
+      .badge-unlock-toast strong {
+        display: block;
+        font-size: 14px;
+        letter-spacing: -0.01em;
+      }
+
+      .badge-unlock-toast span {
+        display: block;
+        margin-top: 3px;
+        color: rgba(55, 65, 81, 0.72);
+        font-size: 12px;
+        line-height: 1.35;
+      }
+
       @media (max-width: 520px) {
         #badge-grid .badge-item {
           grid-template-columns: 70px minmax(0, 1fr) !important;
@@ -10325,6 +10369,16 @@
       html[data-theme="dark"] .count-pill {
         color: #dffcff !important;
         background: rgba(77, 199, 215, 0.14) !important;
+      }
+
+      html[data-theme="dark"] .badge-unlock-toast {
+        color: #f8fbff !important;
+        background: rgba(5, 15, 28, 0.94) !important;
+        border-color: rgba(124, 227, 214, 0.22) !important;
+      }
+
+      html[data-theme="dark"] .badge-unlock-toast span {
+        color: rgba(235, 245, 255, 0.74) !important;
       }
 
       /* Me profile polish: larger photo, editable bio, full-width badges */
@@ -13076,6 +13130,7 @@
               <p class="eyebrow">Badges</p>
               <h2>My Badges</h2>
             </div>
+            <span id="badge-count" class="stage-pill">0/19</span>
           </div>
           <div id="badge-grid" class="badge-grid"></div>
         </section>
@@ -13274,6 +13329,7 @@
       const neighborhoodList = document.getElementById("neighborhood-list");
       const competitionList = document.getElementById("competition-list");
       const badgeGrid = document.getElementById("badge-grid");
+      const badgeCount = document.getElementById("badge-count");
       const careerTrack = document.getElementById("career-track");
       const meStats = document.getElementById("me-stats");
       const coachChat = document.getElementById("coach-chat");
@@ -13397,6 +13453,8 @@
       const contactsStorageKey = "pulsenow_demo_contacts";
       const substepsStorageKey = "pulsenow_demo_substeps";
       const fireUpStorageKey = "pulsenow_demo_fire_up";
+      const activityHistoryStoragePrefix = "pulsenow_demo_activity_history_";
+      const badgeStoragePrefix = "pulsenow_demo_badges_";
       const coachStorageKey = "pulsenow_demo_coach";
       const coachProfileStorageKey = "pulsenow_demo_coach_profile";
       const coachIqDismissedStorageKey = "pulsenow_demo_coach_iq_dismissed";
@@ -13889,14 +13947,25 @@
         { id: "u7", name: "Riley Ford", level: "TA", pts: 2, tier: "Some Timer" }
       ];
       const badgeDefs = [
-        ["first_log", "First Step", "Log your first day", "badge-first-step.webp"],
-        ["streak_3", "On Fire", "3-day streak", "badge-on-fire.webp"],
-        ["pts_21", "All-the-Timer", "21+ pts in a week", "badge-all-the-timer.webp"],
-        ["calls_100", "Dialer", "100 calls in a week", "badge-dialer.webp"],
-        ["appts_10", "Appt Pro", "10 appts done in a week", "badge-appt-pro.webp"],
-        ["recruits_3", "Team Builder", "3 recruits this month", "badge-team-builder.webp"],
-        ["fna_5", "FNA Machine", "5 FNAs in a week", "badge-fna-machine.webp"],
-        ["level_a", "Associate", "Reached Associate", "badge-associate.webp"]
+        { id: "first_step", title: "First Step", copy: "Save your first scored log", icon: "badge-first-step.webp" },
+        { id: "dialer", title: "Dialer", copy: "Log 100 cumulative phone calls", icon: "badge-dialer.webp" },
+        { id: "appt_pro", title: "Appt Pro", copy: "Log 20 cumulative appointments", icon: "badge-appt-pro.webp" },
+        { id: "fna_machine", title: "FNA Machine", copy: "Complete 20 total FNAs", icon: "badge-fna-machine.webp" },
+        { id: "helper", title: "Helper", copy: "Help 10 cumulative families", icon: "badge-fna-machine.webp" },
+        { id: "on_fire", title: "On Fire", copy: "Build a 7-day logging streak", icon: "badge-on-fire.webp" },
+        { id: "week_warrior", title: "Week Warrior", copy: "Log 5 days in one week", icon: "badge-on-fire.webp" },
+        { id: "unstoppable", title: "Unstoppable", copy: "Build a 30-day logging streak", icon: "badge-on-fire.webp" },
+        { id: "consistent", title: "Consistent", copy: "Log 20 days in one month", icon: "badge-first-step.webp" },
+        { id: "dedicated", title: "Dedicated", copy: "Log 60 total days", icon: "badge-fna-machine.webp" },
+        { id: "all_the_timer", title: "All-the-Timer", copy: "Reach 21+ points in one week", icon: "badge-all-the-timer.webp" },
+        { id: "associate", title: "Associate", copy: "Reach Associate rank", icon: "badge-associate.webp" },
+        { id: "marketing_director", title: "Marketing Director", copy: "Reach Marketing Director rank", icon: "badge-associate.webp" },
+        { id: "smd", title: "SMD", copy: "Reach Senior Marketing Director rank", icon: "badge-associate.webp" },
+        { id: "top_3", title: "Top 3", copy: "Finish top 3 on a weekly board", icon: "badge-all-the-timer.webp" },
+        { id: "number_one", title: "Number One", copy: "Finish first on a weekly board", icon: "badge-all-the-timer.webp" },
+        { id: "team_builder", title: "Team Builder", copy: "Recruit 5 personal partners", icon: "badge-team-builder.webp" },
+        { id: "growing_team", title: "Growing Team", copy: "Recruit 10 total team members", icon: "badge-team-builder.webp" },
+        { id: "real_team", title: "Real Team", copy: "Recruit 20 total team members", icon: "badge-team-builder.webp" }
       ];
       const salesStages = [
         ["Uncontacted Team Prospects", "#8aa0bb"],
@@ -14995,6 +15064,286 @@
         return fireUpStorageKey + "_" + todayKey().slice(0, 8);
       }
 
+      function storageProfileKey(session) {
+        const id = session && session.id && session.id !== "demo-user"
+          ? session.id
+          : [session && session.agent_code, session && session.name].filter(Boolean).join("_");
+        return String(id || "demo").toLowerCase().replace(/[^a-z0-9_-]/g, "_");
+      }
+
+      function getActivityHistoryKey(session) {
+        return activityHistoryStoragePrefix + storageProfileKey(session);
+      }
+
+      function getBadgeStorageKey(session) {
+        return badgeStoragePrefix + storageProfileKey(session);
+      }
+
+      function readLocalJson(key, fallback) {
+        try {
+          const raw = localStorage.getItem(key);
+          return raw ? JSON.parse(raw) : fallback;
+        } catch {
+          return fallback;
+        }
+      }
+
+      function writeLocalJson(key, value) {
+        try {
+          localStorage.setItem(key, JSON.stringify(value));
+        } catch {
+          // Keep the session usable if local storage is full or disabled.
+        }
+      }
+
+      function dateKeyFromDate(date) {
+        return date.getFullYear() + "-" + String(date.getMonth() + 1).padStart(2, "0") + "-" + String(date.getDate()).padStart(2, "0");
+      }
+
+      function weekKey(dateStr) {
+        const d = parseDateKey(dateStr);
+        if (!d) return "";
+        d.setDate(d.getDate() - d.getDay());
+        return dateKeyFromDate(d);
+      }
+
+      function readBadgeRecord(session) {
+        const record = readLocalJson(getBadgeStorageKey(session), {});
+        return {
+          earnedBadges: Array.isArray(record.earnedBadges) ? record.earnedBadges : [],
+          earnedAt: record.earnedAt && typeof record.earnedAt === "object" ? record.earnedAt : {},
+          bestWeeklyRank: Number(record.bestWeeklyRank || 0) || null
+        };
+      }
+
+      function writeBadgeRecord(session, record) {
+        writeLocalJson(getBadgeStorageKey(session), record);
+      }
+
+      function readActivityHistory(session) {
+        const history = readLocalJson(getActivityHistoryKey(session), {});
+        return history && typeof history === "object" ? history : {};
+      }
+
+      function writeActivityHistory(session, history) {
+        writeLocalJson(getActivityHistoryKey(session), history || {});
+      }
+
+      function persistActivityHistoryEntry(entry) {
+        const session = getCurrentSession() || { name: "Demo Agent", agent_code: "DEMO" };
+        const day = entry && entry.date ? entry.date : todayKey();
+        const history = readActivityHistory(session);
+        history[day] = Object.assign({}, entry, { date: day });
+        writeActivityHistory(session, history);
+      }
+
+      function removeActivityHistoryEntry(day) {
+        const session = getCurrentSession() || { name: "Demo Agent", agent_code: "DEMO" };
+        const history = readActivityHistory(session);
+        delete history[day];
+        writeActivityHistory(session, history);
+      }
+
+      function getAllActivityLogs(session, includeCurrent) {
+        const logs = Object.assign({}, readActivityHistory(session));
+        const prefix = logStorageKey + "_";
+        for (let i = 0; i < sessionStorage.length; i += 1) {
+          const key = sessionStorage.key(i);
+          if (!key || key.indexOf(prefix) !== 0) continue;
+          const day = key.slice(prefix.length);
+          if (!/^\d{4}-\d{2}-\d{2}$/.test(day)) continue;
+          try {
+            logs[day] = JSON.parse(sessionStorage.getItem(key));
+          } catch {
+            // Ignore malformed preview logs.
+          }
+        }
+        if (includeCurrent) {
+          const calc = calculatePoints();
+          logs[todayKey()] = Object.assign({}, currentLog, {
+            date: todayKey(),
+            pts: calc.pts,
+            tier: getTier(calc.pts)
+          });
+        }
+        return logs;
+      }
+
+      function logFieldValue(log, key) {
+        const fields = log && log.fields && typeof log.fields === "object" ? log.fields : log || {};
+        const value = Number(fields[key] || 0);
+        return Number.isFinite(value) && value > 0 ? value : 0;
+      }
+
+      function logPoints(log) {
+        const direct = Number(log && log.pts);
+        if (Number.isFinite(direct) && direct >= 0) return direct;
+        const totalContacts = contactIds.reduce((sum, id) => sum + logFieldValue(log, id), 0) + logFieldValue(log, "calls");
+        return (
+          Math.floor(totalContacts / 10) +
+          logFieldValue(log, "personal_guests") +
+          logFieldValue(log, "team_guests") +
+          logFieldValue(log, "new_partners") +
+          logFieldValue(log, "recruits-personal") +
+          logFieldValue(log, "fna1") +
+          logFieldValue(log, "fna2") +
+          Math.floor((logFieldValue(log, "referrals") + logFieldValue(log, "referrals-clients")) / 10)
+        );
+      }
+
+      function currentStreakFromLogs(logs) {
+        let streak = 0;
+        const cursor = parseDateKey(todayKey());
+        while (cursor) {
+          const day = dateKeyFromDate(cursor);
+          const entry = logs[day];
+          if (!entry || logPoints(entry) <= 0) break;
+          streak += 1;
+          cursor.setDate(cursor.getDate() - 1);
+        }
+        return streak;
+      }
+
+      function collectBadgeStats(options = {}) {
+        const session = getCurrentSession() || { name: "Demo Agent", level: "TA", agent_code: "DEMO" };
+        const logs = getAllActivityLogs(session, options.includeCurrent === true);
+        const currentWeek = weekKey(todayKey());
+        const currentMonth = todayKey().slice(0, 7);
+        const badgeRecord = readBadgeRecord(session);
+        const stats = {
+          totalDaysLogged: 0,
+          currentStreak: 0,
+          daysLoggedThisWeek: 0,
+          daysLoggedThisMonth: 0,
+          weeklyPts: 0,
+          totalContacts: 0,
+          totalCalls: 0,
+          totalAppts: 0,
+          totalFnas: 0,
+          totalFamilies: 0,
+          totalPersonalRecruits: 0,
+          totalRecruits: 0,
+          totalPersonalPts: 0,
+          totalFieldTraining: 0,
+          bestWeeklyRank: badgeRecord.bestWeeklyRank || null,
+          level: session.level || ""
+        };
+
+        Object.keys(logs).forEach((day) => {
+          const log = logs[day] || {};
+          const points = logPoints(log);
+          if (points > 0) {
+            stats.totalDaysLogged += 1;
+            if (weekKey(day) === currentWeek) stats.daysLoggedThisWeek += 1;
+            if (day.slice(0, 7) === currentMonth) stats.daysLoggedThisMonth += 1;
+          }
+          if (weekKey(day) === currentWeek) stats.weeklyPts += points;
+          stats.totalContacts += contactIds.reduce((sum, id) => sum + logFieldValue(log, id), 0) + logFieldValue(log, "calls");
+          stats.totalCalls += logFieldValue(log, "calls") + logFieldValue(log, "calls_warm") + logFieldValue(log, "calls_cold");
+          stats.totalAppts +=
+            logFieldValue(log, "appts") +
+            logFieldValue(log, "appt1_set") +
+            logFieldValue(log, "appt1_done") +
+            logFieldValue(log, "fu_set") +
+            logFieldValue(log, "fu_done") +
+            logFieldValue(log, "reschedule") +
+            logFieldValue(log, "field_training");
+          stats.totalFnas += logFieldValue(log, "fna1") + logFieldValue(log, "fna2");
+          stats.totalFamilies += logFieldValue(log, "families");
+          stats.totalPersonalRecruits += logFieldValue(log, "new_partners") + logFieldValue(log, "recruits-personal");
+          stats.totalRecruits +=
+            logFieldValue(log, "new_partners") +
+            logFieldValue(log, "recruits-personal") +
+            logFieldValue(log, "recruits-team") +
+            logFieldValue(log, "recruits_team");
+          stats.totalPersonalPts += logFieldValue(log, "personal_pts") + logFieldValue(log, "personal-pts");
+          stats.totalFieldTraining += logFieldValue(log, "field_training");
+        });
+        stats.currentStreak = currentStreakFromLogs(logs);
+        return stats;
+      }
+
+      function hasCareerRank(level, target) {
+        const normalized = String(level || "").toLowerCase().replace(/[^a-z]/g, "");
+        if (target === "associate") return ["a", "associate", "md", "marketingdirector", "smd", "seniormarketingdirector"].includes(normalized);
+        if (target === "marketing_director") return ["md", "marketingdirector", "smd", "seniormarketingdirector"].includes(normalized);
+        if (target === "smd") return ["smd", "seniormarketingdirector"].includes(normalized);
+        return false;
+      }
+
+      function badgeUnlockChecks(stats) {
+        return [
+          { id: "first_step", met: stats.totalDaysLogged >= 1 },
+          { id: "dialer", met: stats.totalCalls >= 100 },
+          { id: "appt_pro", met: stats.totalAppts >= 20 },
+          { id: "fna_machine", met: stats.totalFnas >= 20 },
+          { id: "helper", met: stats.totalFamilies >= 10 },
+          { id: "on_fire", met: stats.currentStreak >= 7 },
+          { id: "week_warrior", met: stats.daysLoggedThisWeek >= 5 },
+          { id: "unstoppable", met: stats.currentStreak >= 30 },
+          { id: "consistent", met: stats.daysLoggedThisMonth >= 20 },
+          { id: "dedicated", met: stats.totalDaysLogged >= 60 },
+          { id: "all_the_timer", met: stats.weeklyPts >= 21 },
+          { id: "associate", met: hasCareerRank(stats.level, "associate") || (stats.totalPersonalRecruits >= 3 && stats.totalFieldTraining >= 3 && stats.totalPersonalPts >= 20000) },
+          { id: "marketing_director", met: hasCareerRank(stats.level, "marketing_director") },
+          { id: "smd", met: hasCareerRank(stats.level, "smd") },
+          { id: "top_3", met: Number(stats.bestWeeklyRank) > 0 && Number(stats.bestWeeklyRank) <= 3 },
+          { id: "number_one", met: Number(stats.bestWeeklyRank) === 1 },
+          { id: "team_builder", met: stats.totalPersonalRecruits >= 5 },
+          { id: "growing_team", met: stats.totalRecruits >= 10 },
+          { id: "real_team", met: stats.totalRecruits >= 20 }
+        ];
+      }
+
+      function badgeById(id) {
+        return badgeDefs.find((badge) => badge.id === id) || { title: id, copy: "", icon: "badge-first-step.webp" };
+      }
+
+      function checkAndUnlockBadges() {
+        const session = getCurrentSession() || { name: "Demo Agent", level: "TA", agent_code: "DEMO" };
+        const record = readBadgeRecord(session);
+        const earned = new Set(record.earnedBadges);
+        const stats = collectBadgeStats({ includeCurrent: true });
+        const newlyEarned = badgeUnlockChecks(stats)
+          .filter((check) => check.met && !earned.has(check.id))
+          .map((check) => check.id);
+        if (newlyEarned.length === 0) return [];
+        newlyEarned.forEach((id) => {
+          earned.add(id);
+          if (!record.earnedAt[id]) record.earnedAt[id] = todayKey();
+        });
+        record.earnedBadges = badgeDefs.map((badge) => badge.id).filter((id) => earned.has(id));
+        writeBadgeRecord(session, record);
+        return newlyEarned;
+      }
+
+      function showBadgeUnlockUI(newBadgeIds) {
+        if (!newBadgeIds.length) return;
+        const names = newBadgeIds.map((id) => badgeById(id).title);
+        let toastEl = document.getElementById("badge-unlock-toast");
+        if (!toastEl) {
+          toastEl = document.createElement("div");
+          toastEl.id = "badge-unlock-toast";
+          toastEl.className = "badge-unlock-toast";
+          toastEl.setAttribute("role", "status");
+          toastEl.setAttribute("aria-live", "polite");
+          document.body.appendChild(toastEl);
+        }
+        toastEl.innerHTML =
+          "<strong>" +
+          escapeHtml(newBadgeIds.length === 1 ? "Badge unlocked" : "Badges unlocked") +
+          "</strong><span>" +
+          escapeHtml(names.join(", ")) +
+          "</span>";
+        toastEl.classList.add("show");
+        window.clearTimeout(showBadgeUnlockUI.hideTimer);
+        showBadgeUnlockUI.hideTimer = window.setTimeout(() => toastEl.classList.remove("show"), 3600);
+        saveFeed.unshift("Badge unlocked - " + names.join(", "));
+        saveFeed = saveFeed.slice(0, 12);
+        sessionStorage.setItem(getFeedKey(), JSON.stringify(saveFeed));
+        renderFeed();
+      }
+
       function numberValue(id) {
         const value = Number(currentLog[id] || 0);
         if (Number.isFinite(value) && value > 0) return value;
@@ -15296,49 +15645,42 @@
         };
       }
 
-      function hasBadge(badgeKey, stats) {
-        if (badgeKey === "first_log") return stats.pts > 0 || stats.contacts > 0;
-        if (badgeKey === "streak_3") return saveFeed.length >= 3;
-        if (badgeKey === "pts_21") return stats.pts >= 21;
-        if (badgeKey === "calls_100") return stats.contacts >= 100;
-        if (badgeKey === "appts_10") return stats.appts >= 10;
-        if (badgeKey === "recruits_3") return stats.recruits >= 3;
-        if (badgeKey === "fna_5") return stats.fnas >= 5;
-        if (badgeKey === "level_a") return stats.recruits >= 3 && stats.fieldTraining >= 3 && stats.personalPts >= 20000;
-        return false;
-      }
-
       function renderMe() {
         if (!meScreen) return;
         hydrateLog();
         const session = getCurrentSession() || { name: "Demo Agent", level: "TA", agent_code: "DEMO" };
         const stats = getCurrentStats();
+        const badgeStats = collectBadgeStats({ includeCurrent: true });
+        const badgeRecord = readBadgeRecord(session);
+        const earnedBadges = new Set(badgeRecord.earnedBadges);
         document.getElementById("me-name").textContent = session.name || "Demo Agent";
         setAvatarPhoto(document.getElementById("me-avatar"), session);
         document.getElementById("me-level").textContent = session.level || "TA";
         document.getElementById("me-code").textContent = session.agent_code || "DEMO";
         if (meDreamText) meDreamText.textContent = getProfileBio(session);
         setBioEditMode(false);
+        if (badgeCount) badgeCount.textContent = earnedBadges.size + "/" + badgeDefs.length;
         badgeGrid.innerHTML = "";
         badgeDefs.forEach((badge) => {
-          const earned = hasBadge(badge[0], stats);
+          const earned = earnedBadges.has(badge.id);
+          const earnedAt = badgeRecord.earnedAt[badge.id] ? "Earned " + badgeRecord.earnedAt[badge.id] : "Locked";
           const item = document.createElement("div");
           item.className = "badge-item" + (earned ? "" : " locked");
           item.innerHTML =
             '<span class="badge-art-wrap" aria-hidden="true">' +
-              '<img class="badge-art" src="badge-icons/' + badge[3] + '?v=badgeart1" alt="" loading="lazy" decoding="async" width="64" height="64">' +
+              '<img class="badge-art" src="badge-icons/' + badge.icon + '?v=badgeart1" alt="" loading="lazy" decoding="async" width="64" height="64">' +
             '</span>' +
             '<span class="badge-copy">' +
-              '<strong>' + badge[1] + '</strong>' +
-              '<span class="muted">' + badge[2] + '</span>' +
+              '<strong>' + escapeHtml(badge.title) + '</strong>' +
+              '<span class="muted">' + escapeHtml(badge.copy) + '</span>' +
             '</span>' +
-            '<span class="badge-state">' + (earned ? "Unlocked" : "Locked") + "</span>";
+            '<span class="badge-state">' + escapeHtml(earned ? earnedAt : "Locked") + "</span>";
           badgeGrid.appendChild(item);
         });
         const reqs = [
-          ["New Recruits", stats.recruits, 3],
-          ["Field Training Appts", stats.fieldTraining, 3],
-          ["Personal Net Points", stats.personalPts, 20000]
+          ["New Recruits", badgeStats.totalPersonalRecruits, 3],
+          ["Field Training Appts", badgeStats.totalFieldTraining, 3],
+          ["Personal Net Points", badgeStats.totalPersonalPts, 20000]
         ];
         careerTrack.innerHTML = "";
         reqs.forEach((req) => {
@@ -15856,7 +16198,9 @@
         const tier = getTier(calc.pts);
         currentLog.pts = calc.pts;
         currentLog.tier = tier;
+        currentLog.date = todayKey();
         sessionStorage.setItem(getLogKey(), JSON.stringify(currentLog));
+        persistActivityHistoryEntry(currentLog);
 
         const now = new Date();
         const time = now.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
@@ -15864,12 +16208,16 @@
         saveFeed = saveFeed.slice(0, 12);
         sessionStorage.setItem(getFeedKey(), JSON.stringify(saveFeed));
         renderFeed();
+        const newBadges = checkAndUnlockBadges();
+        showBadgeUnlockUI(newBadges);
         renderBoard();
+        if (meScreen && !meScreen.classList.contains("hidden")) renderMe();
       }
 
       function resetLog() {
         currentLog = {};
         sessionStorage.removeItem(getLogKey());
+        removeActivityHistoryEntry(todayKey());
         updateLogUI();
       }
 
