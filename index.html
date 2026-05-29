@@ -9933,6 +9933,100 @@
         display: none;
       }
 
+      .import-guide {
+        display: grid;
+        gap: 13px;
+        margin-top: 14px;
+        padding-top: 14px;
+        border-top: 1px solid rgba(20, 95, 134, 0.14);
+      }
+
+      .import-guide-head {
+        display: grid;
+        gap: 4px;
+      }
+
+      .import-guide-head strong,
+      .import-guide-column h3 {
+        color: #172033;
+        font-size: 15px;
+        font-weight: 720;
+        letter-spacing: -0.01em;
+      }
+
+      .import-guide-head span {
+        color: rgba(55, 65, 81, 0.76);
+        font-size: 13px;
+        line-height: 1.35;
+      }
+
+      .import-guide-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .import-guide-column {
+        display: grid;
+        gap: 7px;
+        min-width: 0;
+      }
+
+      .import-guide-column ol {
+        display: grid;
+        gap: 5px;
+        margin: 0;
+        padding-left: 19px;
+        color: rgba(55, 65, 81, 0.84);
+        font-size: 13px;
+        line-height: 1.38;
+      }
+
+      .import-guide-column p {
+        margin: 0;
+        color: rgba(55, 65, 81, 0.68);
+        font-size: 12px;
+        line-height: 1.38;
+      }
+
+      .import-guide-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .import-guide-actions a {
+        display: inline-flex;
+        align-items: center;
+        min-height: 34px;
+        padding: 0 11px;
+        border: 1px solid rgba(20, 95, 134, 0.16);
+        border-radius: 999px;
+        color: #176c95;
+        background: rgba(255, 255, 255, 0.5);
+        font-size: 12px;
+        font-weight: 650;
+        text-decoration: none;
+      }
+
+      .import-guide-actions a:hover,
+      .import-guide-actions a:focus-visible {
+        border-color: rgba(77, 199, 215, 0.36);
+        background: rgba(231, 253, 251, 0.72);
+      }
+
+      .export-help {
+        margin: 8px 0 0;
+        font-size: 12px;
+        line-height: 1.35;
+      }
+
+      @media (max-width: 560px) {
+        .import-guide-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
       .csv-scan-head {
         display: flex;
         justify-content: space-between;
@@ -10195,6 +10289,10 @@
       html[data-theme="dark"] .power-row p.muted,
       html[data-theme="dark"] .today-next-card .muted,
       html[data-theme="dark"] .section-subcopy,
+      html[data-theme="dark"] .export-help,
+      html[data-theme="dark"] .import-guide-head span,
+      html[data-theme="dark"] .import-guide-column ol,
+      html[data-theme="dark"] .import-guide-column p,
       html[data-theme="dark"] .scan-profile p {
         color: rgba(235, 245, 255, 0.74) !important;
       }
@@ -10204,6 +10302,21 @@
       html[data-theme="dark"] .dream-builder-card {
         background: rgba(255, 255, 255, 0.08) !important;
         border-color: rgba(255, 255, 255, 0.12) !important;
+      }
+
+      html[data-theme="dark"] .import-guide {
+        border-top-color: rgba(255, 255, 255, 0.12) !important;
+      }
+
+      html[data-theme="dark"] .import-guide-head strong,
+      html[data-theme="dark"] .import-guide-column h3 {
+        color: #f8fbff !important;
+      }
+
+      html[data-theme="dark"] .import-guide-actions a {
+        color: #7ce3d6 !important;
+        background: rgba(255, 255, 255, 0.08) !important;
+        border-color: rgba(255, 255, 255, 0.14) !important;
       }
 
       html[data-theme="dark"] .score-pill,
@@ -12612,6 +12725,38 @@
             <small>Upload a CSV spreadsheet or a .vcf/vCard export from iPhone, iCloud, Google Contacts, or Android.</small>
             <input id="csv-file-input" type="file" accept=".csv,.tsv,.txt,.vcf,.vcard,text/csv,text/tab-separated-values,text/plain,text/vcard,text/x-vcard" />
           </label>
+          <div class="import-guide" aria-label="Contact export guide">
+            <div class="import-guide-head">
+              <strong>Phone contacts need to be exported first</strong>
+              <span>Best formats: .vcf, .vCard, or Google CSV</span>
+            </div>
+            <div class="import-guide-grid">
+              <div class="import-guide-column">
+                <h3>iPhone</h3>
+                <ol>
+                  <li>Open Contacts and tap Lists.</li>
+                  <li>Touch and hold a list, then tap Export.</li>
+                  <li>Save or send the contact cards, then upload the .vcf file here.</li>
+                </ol>
+                <p>On a computer, iCloud Contacts can also export a vCard.</p>
+              </div>
+              <div class="import-guide-column">
+                <h3>Google Contacts</h3>
+                <ol>
+                  <li>Open contacts.google.com and select the contacts.</li>
+                  <li>Use More actions, then Export.</li>
+                  <li>Choose Google CSV or vCard, then upload the file here.</li>
+                </ol>
+                <p>Google CSV keeps spreadsheet columns clear; vCard works well for phone contacts.</p>
+              </div>
+            </div>
+            <div class="import-guide-actions">
+              <a href="https://support.apple.com/guide/iphone/export-contacts-iph075ddebf2/ios" target="_blank" rel="noopener noreferrer">Apple steps</a>
+              <a href="https://support.google.com/contacts/answer/7199294" target="_blank" rel="noopener noreferrer">Google steps</a>
+              <a href="https://contacts.google.com/" target="_blank" rel="noopener noreferrer">Open Google Contacts</a>
+              <a href="https://www.icloud.com/contacts" target="_blank" rel="noopener noreferrer">Open iCloud Contacts</a>
+            </div>
+          </div>
           <div id="csv-scan-panel" class="csv-scan-panel hidden" aria-live="polite">
             <div class="csv-scan-head">
               <strong id="csv-scan-title">Scanning contacts</strong>
@@ -12635,7 +12780,8 @@
           <div id="contact-intelligence-summary" class="csv-scan-panel hidden" aria-live="polite"></div>
           <button id="deep-research-btn" class="ghost-btn hidden" type="button">Run LinkedIn + social research</button>
           <button id="research-socials-btn" class="ghost-btn hidden" type="button">Research socials + LinkedIn</button>
-          <button id="export-contacts-btn" class="ghost-btn hidden" type="button">Download organized CSV</button>
+          <button id="export-contacts-btn" class="ghost-btn hidden" type="button">Download organized contacts CSV</button>
+          <p class="muted export-help">After import, export the cleaned CRM list with category, research status, next action, phone, email, and license fields.</p>
         </section>
 
         <section id="add-contact-panel" class="section card hidden">
@@ -17217,7 +17363,7 @@
         if (lastContactIntelImportId) {
           try {
             exportContactsBtn.disabled = true;
-            exportContactsBtn.textContent = "Preparing organized CSV...";
+            exportContactsBtn.textContent = "Preparing organized contacts CSV...";
             const client = await getContactIntelClient();
             const { data, error } = await client.functions.invoke("contacts_export_csv", {
               body: { import_id: lastContactIntelImportId, export_type: "organized_csv" },
@@ -17232,7 +17378,7 @@
             csvImportStatus.textContent = "Contact Intelligence export was not available, so PulseNow downloaded the local organized CSV. " + (error.message || "");
           } finally {
             exportContactsBtn.disabled = false;
-            exportContactsBtn.textContent = "Download organized CSV";
+            exportContactsBtn.textContent = "Download organized contacts CSV";
           }
         }
         const headers = ["name", "crm_area", "category", "research_status", "automation_status", "automation_next_step", "score", "phone", "email", "type", "stage", "followup", "linkedin", "facebook", "instagram", "tiktok", "company", "city", "state", "gender", "licensed", "license_status", "notes"];
