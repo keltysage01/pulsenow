@@ -10,17 +10,17 @@ const FIELD_ALIASES: Record<string, string[]> = {
   first_name: ["first", "first_name", "fname", "given_name", "given"],
   last_name: ["last", "last_name", "lname", "surname", "family_name", "family"],
   full_name: ["name", "full_name", "contact_name", "customer_name", "prospect_name", "person"],
-  phone: ["phone", "mobile", "cell", "number", "phone_number", "primary_phone", "telephone", "tel"],
-  email: ["email", "email_address", "e_mail", "primary_email", "mail", "primary_mail"],
-  contact_type: ["type", "contact_type", "lead_type", "category", "relationship", "source_type"],
+  phone: ["phone", "phone1", "mobile", "cell", "number", "phone_number", "primary_phone", "telephone", "tel"],
+  email: ["email", "email1", "email_address", "e_mail", "primary_email", "mail", "primary_mail"],
+  contact_type: ["type", "contact_type", "lead_type", "category", "relationship", "source_type", "license_class_desc"],
   follow_up_date: ["followup", "follow_up", "follow_up_date", "next_followup", "next_follow_up", "follow_up_on", "callback_date"],
   married: ["married", "spouse", "relationship_status", "marital_status"],
   homeowner: ["homeowner", "owns_home", "home_owner", "mortgage", "owns_property", "property_owner"],
-  city: ["city", "town"],
-  state: ["state", "province", "region"],
-  zip: ["zip", "zipcode", "postal_code", "postal"],
-  company: ["company", "employer", "organization", "agency", "business"],
-  job_title: ["title", "job_title", "occupation", "role", "position", "profession"],
+  city: ["city", "town", "bus_city", "mlg_city"],
+  state: ["state", "province", "region", "bus_state", "mlg_state", "domicilestate"],
+  zip: ["zip", "zipcode", "postal_code", "postal", "bus_zip", "mlg_zip"],
+  company: ["company", "employer", "organization", "agency", "business", "business_entity_name"],
+  job_title: ["title", "job_title", "occupation", "role", "position", "profession", "loa"],
   linkedin_url: ["linkedin", "linkedin_url", "linked_in", "linkedin_profile"],
   facebook_url: ["facebook", "facebook_url", "fb"],
   instagram_url: ["instagram", "instagram_url", "ig"],
@@ -48,7 +48,9 @@ export function detectColumnMapping(headers: string[]): { mapping: ColumnMapping
   const usedHeaders = new Set<string>();
 
   for (const [field, aliases] of Object.entries(FIELD_ALIASES)) {
-    const found = normalizedHeaders.find((h) => aliases.includes(h.normalized) && !usedHeaders.has(h.original));
+    const found = aliases
+      .map((alias) => normalizedHeaders.find((h) => h.normalized === alias && !usedHeaders.has(h.original)))
+      .find(Boolean);
     if (found) {
       mapping[field] = found.original;
       usedHeaders.add(found.original);
@@ -60,7 +62,12 @@ export function detectColumnMapping(headers: string[]): { mapping: ColumnMapping
   // Conservative fuzzy fallbacks.
   for (const h of normalizedHeaders) {
     if (usedHeaders.has(h.original)) continue;
-    if (!mapping.full_name && h.normalized.includes("name")) {
+    if (
+      !mapping.full_name &&
+      !(mapping.first_name && mapping.last_name) &&
+      h.normalized.includes("name") &&
+      !h.normalized.includes("jurisdiction")
+    ) {
       mapping.full_name = h.original;
       usedHeaders.add(h.original);
       continue;

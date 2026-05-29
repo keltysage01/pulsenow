@@ -16305,6 +16305,11 @@
         return "";
       }
 
+      function looksLikeAddressLine(value) {
+        const text = String(value || "").trim();
+        return /^\d+\s/.test(text) || /\b(ave|avenue|st|street|rd|road|dr|drive|ln|lane|blvd|way|suite|ste|apt|pkwy|parkway|po box)\b/i.test(text);
+      }
+
       function parseCsvBool(value) {
         const normalized = String(value || "").trim().toLowerCase();
         return normalized === "true" || normalized === "yes" || normalized === "y" || normalized === "1" || normalized === "x";
@@ -16390,22 +16395,40 @@
         const last = rowValue(row, ["last_name", "lastname", "lname", "last"]);
         const fullName = rowValue(row, ["name", "full_name", "contact_name", "full"]);
         const name = fullName || [first, last].filter(Boolean).join(" ");
-        const phone = rowValue(row, ["phone", "mobile", "cell", "phone_number", "telephone"]).replace(/[^0-9+]/g, "");
-        const email = rowValue(row, ["email", "email_address"]);
-        const type = rowValue(row, ["type", "contact_type", "category"]).toLowerCase() || "prospect";
+        const phone = rowValue(row, ["phone", "phone1", "mobile", "cell", "phone_number", "telephone"]).replace(/[^0-9+]/g, "");
+        const email = rowValue(row, ["email", "email1", "email_address"]);
+        const licenseNo = rowValue(row, ["licenseno", "license_no", "license_number"]);
+        const npn = rowValue(row, ["npn"]);
+        const licenseStatus = rowValue(row, ["license_status"]);
+        const licenseClass = rowValue(row, ["license_class_desc"]);
+        const loa = rowValue(row, ["loa"]);
+        const isProducerExport = Boolean(licenseNo || npn || licenseClass || loa);
+        const type = rowValue(row, ["type", "contact_type", "category"]).toLowerCase() || (isProducerExport ? "producer" : "prospect");
         const followup = rowValue(row, ["next_followup_date", "followup", "follow_up", "follow_up_date"]);
-        const stage = rowValue(row, ["stage", "pipeline_stage"]) || "Uncontacted Team Prospects";
-        const notes = rowValue(row, ["notes", "note", "company", "carrier"]);
-        const city = rowValue(row, ["city"]);
-        const state = rowValue(row, ["state", "province"]);
-        const company = rowValue(row, ["company", "business", "employer", "organization"]);
+        const stage = rowValue(row, ["stage", "pipeline_stage"]) || (isProducerExport ? "Licensed producer review" : "Uncontacted Team Prospects");
+        const businessAddress = [rowValue(row, ["bus_address1"]), rowValue(row, ["bus_city"]), rowValue(row, ["bus_state"]), rowValue(row, ["bus_zip"])].filter(Boolean).join(", ");
+        const producerNotes = [
+          licenseNo ? "License " + licenseNo : "",
+          npn ? "NPN " + npn : "",
+          licenseStatus ? "Status " + licenseStatus : "",
+          licenseClass ? "Class " + licenseClass : "",
+          loa ? "LOA " + loa : "",
+          rowValue(row, ["effective_date"]) ? "Effective " + rowValue(row, ["effective_date"]) : "",
+          rowValue(row, ["expiration_date"]) ? "Expires " + rowValue(row, ["expiration_date"]) : "",
+          businessAddress ? "Business address " + businessAddress : ""
+        ].filter(Boolean).join(" | ");
+        const notes = rowValue(row, ["notes", "note", "carrier"]) || producerNotes;
+        const city = rowValue(row, ["city", "bus_city", "mlg_city"]);
+        const state = rowValue(row, ["state", "province", "bus_state", "mlg_state", "domicilestate"]);
+        const companyFromAddress = rowValue(row, ["bus_address1"]);
+        const company = rowValue(row, ["company", "business", "employer", "organization", "business_entity_name"]) || (looksLikeAddressLine(companyFromAddress) ? "" : companyFromAddress);
         const linkedin = rowValue(row, ["linkedin", "linked_in", "linkedin_url", "linked_in_url"]);
         const facebook = rowValue(row, ["facebook", "facebook_url", "fb"]);
         const instagram = rowValue(row, ["instagram", "instagram_url", "ig"]);
         const tiktok = rowValue(row, ["tiktok", "tiktok_url"]);
         const gender = rowValue(row, ["gender", "sex", "identity"]);
-        const licensed = parseCsvBool(rowValue(row, ["licensed", "is_licensed", "already_licensed", "life_licensed", "licensed_agent"]));
-        const licenseStatus = rowValue(row, ["license_status", "license", "licensing_status"]);
+        const licensed = isProducerExport || parseCsvBool(rowValue(row, ["licensed", "is_licensed", "already_licensed", "life_licensed", "licensed_agent"]));
+        const displayLicenseStatus = licenseStatus || rowValue(row, ["license", "licensing_status"]);
         const contactName = name || email || phone || "Imported Contact " + (index + 1);
         const qualifiers = {
           married: parseCsvBool(rowValue(row, ["married", "spouse"])),
@@ -16435,7 +16458,9 @@
           gender,
           licensed,
           is_licensed: licensed,
-          license_status: licenseStatus,
+          license_status: displayLicenseStatus || (isProducerExport ? [licenseClass, loa].filter(Boolean).join(" - ") : ""),
+          license_number: licenseNo,
+          npn,
           socials: { linkedin, facebook, instagram, tiktok },
           notes,
           qualifiers,

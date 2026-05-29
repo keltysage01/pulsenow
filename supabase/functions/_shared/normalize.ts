@@ -54,6 +54,25 @@ function cleanText(v: string | null): string | null {
   return cleaned || null;
 }
 
+function normalizeKey(v: string): string {
+  return v
+    .trim()
+    .toLowerCase()
+    .replace(/[\s\-\/]+/g, "_")
+    .replace(/[^a-z0-9_]/g, "")
+    .replace(/_+/g, "_")
+    .replace(/^_|_$/g, "");
+}
+
+function rowValueByNormalized(row: Record<string, string>, keys: string[]): string | null {
+  const normalized = new Map(Object.entries(row).map(([key, value]) => [normalizeKey(key), value]));
+  for (const key of keys) {
+    const value = normalized.get(key);
+    if (value && value.trim()) return value.trim();
+  }
+  return null;
+}
+
 function rowText(row: Record<string, string>): string {
   return Object.values(row).filter(Boolean).join(" ");
 }
@@ -174,17 +193,45 @@ function normalizeBool(v: string | null): boolean {
   return ["yes", "y", "true", "1", "opt out", "opted out", "do not contact", "dnc"].includes(v.trim().toLowerCase());
 }
 
+function looksLikeAddressLine(v: string | null): boolean {
+  if (!v) return false;
+  return /^\d+\s/.test(v.trim()) || /\b(ave|avenue|st|street|rd|road|dr|drive|ln|lane|blvd|way|suite|ste|apt|pkwy|parkway|po box)\b/i.test(v);
+}
+
 export function normalizeContact(row: Record<string, string>, mapping: ColumnMapping): NormalizedContact {
   const errors: string[] = [];
   const fallbackText = rowText(row);
+  const licenseNo = cleanText(rowValueByNormalized(row, ["licenseno", "license_no", "license_number"]));
+  const npn = cleanText(rowValueByNormalized(row, ["npn"]));
+  const licenseStatus = cleanText(rowValueByNormalized(row, ["license_status"]));
+  const licenseClass = cleanText(rowValueByNormalized(row, ["license_class_desc"]));
+  const loa = cleanText(rowValueByNormalized(row, ["loa"]));
+  const resident = cleanText(rowValueByNormalized(row, ["is_resident"]));
+  const effectiveDate = cleanText(rowValueByNormalized(row, ["effective_date"]));
+  const expirationDate = cleanText(rowValueByNormalized(row, ["expiration_date"]));
+  const producerBusiness = cleanText(rowValueByNormalized(row, ["business_entity_name"]));
+  const busAddress1 = cleanText(rowValueByNormalized(row, ["bus_address1"]));
+  const isProducerExport = Boolean(licenseNo || npn || licenseClass || loa);
   const rawFirst = cleanText(value(row, mapping, "first_name"));
   const rawLast = cleanText(value(row, mapping, "last_name"));
   const rawFull = cleanText(value(row, mapping, "full_name"));
   const rawPhone = cleanText(value(row, mapping, "phone")) || cleanText(extractPhone(fallbackText));
   const rawEmail = cleanText(value(row, mapping, "email")) || cleanText(extractEmail(fallbackText));
-  const rawCompany = cleanText(value(row, mapping, "company"));
-  const rawJobTitle = cleanText(value(row, mapping, "job_title"));
-  const rawNotes = cleanText(value(row, mapping, "notes"));
+  const rawCompany = cleanText(value(row, mapping, "company")) || producerBusiness || (!looksLikeAddressLine(busAddress1) ? busAddress1 : null);
+  const producerJobTitle = cleanText([licenseClass, loa].filter(Boolean).join(" - "));
+  const rawJobTitle = (isProducerExport ? producerJobTitle : null) || cleanText(value(row, mapping, "job_title")) || producerJobTitle;
+  const producerNotes = [
+    licenseNo ? `License ${licenseNo}` : "",
+    npn ? `NPN ${npn}` : "",
+    licenseStatus ? `Status ${licenseStatus}` : "",
+    licenseClass ? `Class ${licenseClass}` : "",
+    loa ? `LOA ${loa}` : "",
+    resident ? `Resident ${resident}` : "",
+    effectiveDate ? `Effective ${effectiveDate}` : "",
+    expirationDate ? `Expires ${expirationDate}` : "",
+    busAddress1 ? `Business address ${[busAddress1, rowValueByNormalized(row, ["bus_city"]), rowValueByNormalized(row, ["bus_state"]), rowValueByNormalized(row, ["bus_zip"])].filter(Boolean).join(", ")}` : "",
+  ].filter(Boolean).join(" | ");
+  const rawNotes = cleanText(value(row, mapping, "notes")) || cleanText(producerNotes);
 
   const split = splitName(rawFull);
   const firstName = titleCaseName(rawFirst) || split.first_name;
@@ -204,12 +251,12 @@ export function normalizeContact(row: Record<string, string>, mapping: ColumnMap
   const emailOptOut = normalizeBool(value(row, mapping, "email_opt_out"));
   const smsOptOut = normalizeBool(value(row, mapping, "sms_opt_out"));
 
-  const city = cleanText(value(row, mapping, "city"));
-  const state = cleanText(value(row, mapping, "state"))?.toUpperCase() ?? null;
-  const zip = cleanText(value(row, mapping, "zip"));
+  const city = cleanText(value(row, mapping, "city")) || cleanText(rowValueByNormalized(row, ["bus_city", "mlg_city"]));
+  const state = (cleanText(value(row, mapping, "state")) || cleanText(rowValueByNormalized(row, ["bus_state", "mlg_state", "domicilestate"])))?.toUpperCase() ?? null;
+  const zip = cleanText(value(row, mapping, "zip")) || cleanText(rowValueByNormalized(row, ["bus_zip", "mlg_zip"]));
   const company = cleanText(rawCompany);
   const jobTitle = cleanText(rawJobTitle);
-  const contactType = cleanText(value(row, mapping, "contact_type"));
+  const contactType = cleanText(value(row, mapping, "contact_type")) || (isProducerExport ? "licensed_producer" : null);
   const followUpDate = normalizeDate(value(row, mapping, "follow_up_date"));
 
   const linkedinUrl = normalizeUrl(value(row, mapping, "linkedin_url"));
