@@ -429,6 +429,137 @@
         margin-top: 12px;
       }
 
+      .social-preview-card,
+      .social-composer-card,
+      .social-post-card {
+        overflow: hidden;
+      }
+
+      .social-mini-feed,
+      .social-feed-list {
+        display: grid;
+        gap: 10px;
+        margin-top: 14px;
+      }
+
+      .social-type-row {
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+        padding: 2px 0 12px;
+      }
+
+      #social-body-input {
+        width: 100%;
+        min-height: 124px;
+        margin-top: 10px;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        background: color-mix(in srgb, var(--surface) 92%, var(--sub));
+        color: var(--text);
+        padding: 12px 14px;
+        resize: vertical;
+        outline: none;
+        font: inherit;
+        line-height: 1.45;
+      }
+
+      #social-body-input:focus {
+        border-color: var(--primary);
+      }
+
+      .social-composer-actions {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        align-items: center;
+        gap: 12px;
+        margin-top: 12px;
+      }
+
+      .social-composer-actions .pill-btn {
+        margin-top: 0;
+      }
+
+      .social-post-card {
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        background: var(--card);
+        padding: 14px;
+      }
+
+      .social-post-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .social-post-author {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 0;
+      }
+
+      .social-author-avatar {
+        display: grid;
+        width: 42px;
+        height: 42px;
+        flex: 0 0 auto;
+        place-items: center;
+        border-radius: 999px;
+        background: color-mix(in srgb, var(--primary) 14%, transparent);
+        color: var(--primary);
+        font-weight: 950;
+      }
+
+      .social-post-card h3 {
+        margin: 12px 0 0;
+        font-size: 18px;
+        line-height: 1.2;
+      }
+
+      .social-post-card p {
+        line-height: 1.55;
+      }
+
+      .social-post-body {
+        margin-top: 8px;
+        white-space: pre-wrap;
+      }
+
+      .social-post-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 12px;
+      }
+
+      .social-post-actions button {
+        min-height: 34px;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        background: var(--surface);
+        color: var(--text);
+        padding: 0 12px;
+        font-size: 12px;
+        font-weight: 900;
+      }
+
+      .social-post-actions button.active {
+        border-color: color-mix(in srgb, var(--primary) 50%, transparent);
+        background: color-mix(in srgb, var(--primary) 12%, transparent);
+        color: var(--primary);
+      }
+
+      .social-empty {
+        border: 1px dashed var(--border);
+        border-radius: 18px;
+        padding: 16px;
+        color: var(--sub);
+        line-height: 1.5;
+      }
+
       .session-item {
         border-radius: 14px;
         background: color-mix(in srgb, var(--sub) 10%, transparent);
@@ -12521,6 +12652,7 @@
           <button class="drawer-link" data-screen="contacts" type="button">People</button>
           <button class="drawer-link" data-screen="log" type="button">Log Activity</button>
           <button class="drawer-link" data-screen="pipeline" type="button">Pipeline</button>
+          <button class="drawer-link" data-screen="social" type="button">Wins & Stories</button>
           <button class="drawer-link" data-screen="coach" type="button">AI Coach</button>
           <button class="drawer-link" data-screen="quiz" type="button">Profile Quiz</button>
           <button class="drawer-link" data-screen="campaigns" type="button">Campaigns</button>
@@ -12632,6 +12764,18 @@
             <div class="standing-row me"><strong>You</strong><span style="text-align:right">12</span><span style="text-align:right">1</span></div>
           </div>
           <p class="muted" style="margin-top: 12px; font-size: 13px;">Updates each time a teammate saves their log.</p>
+        </section>
+
+        <section class="section card social-preview-card">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Wins & Stories</p>
+              <h2>Team momentum</h2>
+            </div>
+            <button class="text-btn" data-screen="social" type="button">Open</button>
+          </div>
+          <p class="muted" style="line-height: 1.6;">Post a win, shout out a teammate, or tell the story behind a breakthrough.</p>
+          <div id="home-social-preview" class="social-mini-feed"></div>
         </section>
 
         <section class="section card challenge today-next-card">
@@ -13002,6 +13146,40 @@
         </section>
       </main>
 
+      <main id="social-screen" class="shell hidden">
+        <section class="card social-composer-card">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Wins & Stories</p>
+              <h2>Post team momentum</h2>
+            </div>
+            <span id="social-mode-pill" class="stage-pill">Preview</span>
+          </div>
+          <div class="social-type-row" aria-label="Post type">
+            <button class="filter-btn active" data-social-type="win" type="button">Win</button>
+            <button class="filter-btn" data-social-type="story" type="button">Story</button>
+            <button class="filter-btn" data-social-type="shoutout" type="button">Shoutout</button>
+          </div>
+          <input id="social-title-input" maxlength="80" placeholder="Headline" />
+          <textarea id="social-body-input" maxlength="700" placeholder="What happened? Share the useful details, not just the scoreboard."></textarea>
+          <div class="social-composer-actions">
+            <p id="social-status" class="muted">Posts save locally in preview and sync through the API when Supabase is configured.</p>
+            <button id="social-post-btn" class="pill-btn" type="button">Post</button>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Team Feed</p>
+              <h2>Latest wins</h2>
+            </div>
+            <button id="social-refresh-btn" class="text-btn" type="button">Refresh</button>
+          </div>
+          <div id="social-feed-list" class="social-feed-list"></div>
+        </section>
+      </main>
+
       <main id="dream-life-screen" class="shell hidden dream-life-flow">
         <div class="dl-shell">
           <div class="dl-topbar">
@@ -13318,6 +13496,7 @@
       const powerlistScreen = document.getElementById("powerlist-screen");
       const pipelineScreen = document.getElementById("pipeline-screen");
       const boardScreen = document.getElementById("board-screen");
+      const socialScreen = document.getElementById("social-screen");
       const dreamLifeScreen = document.getElementById("dream-life-screen");
       const meScreen = document.getElementById("me-screen");
       const coachScreen = document.getElementById("coach-screen");
@@ -13328,6 +13507,12 @@
       const leaderboardList = document.getElementById("leaderboard-list");
       const neighborhoodList = document.getElementById("neighborhood-list");
       const competitionList = document.getElementById("competition-list");
+      const homeSocialPreview = document.getElementById("home-social-preview");
+      const socialFeedList = document.getElementById("social-feed-list");
+      const socialTitleInput = document.getElementById("social-title-input");
+      const socialBodyInput = document.getElementById("social-body-input");
+      const socialStatus = document.getElementById("social-status");
+      const socialModePill = document.getElementById("social-mode-pill");
       const badgeGrid = document.getElementById("badge-grid");
       const badgeCount = document.getElementById("badge-count");
       const careerTrack = document.getElementById("career-track");
@@ -13404,6 +13589,8 @@
       let pipelineType = "sales";
       let selectedRecruitId = "";
       let boardRange = "week";
+      let socialType = "win";
+      let socialPosts = [];
       let firedUp = {};
       let coachMessages = [];
       let apiPowerPicks = null;
@@ -13455,6 +13642,7 @@
       const fireUpStorageKey = "pulsenow_demo_fire_up";
       const activityHistoryStoragePrefix = "pulsenow_demo_activity_history_";
       const badgeStoragePrefix = "pulsenow_demo_badges_";
+      const socialStoragePrefix = "pulsenow_demo_social_posts_";
       const coachStorageKey = "pulsenow_demo_coach";
       const coachProfileStorageKey = "pulsenow_demo_coach_profile";
       const coachIqDismissedStorageKey = "pulsenow_demo_coach_iq_dismissed";
@@ -15014,6 +15202,7 @@
         renderVisionWorkspace();
         renderImageRevealGoals();
         updateTodayPath();
+        hydrateSocialPosts(false);
         window.requestAnimationFrame(resetAppViewport);
         window.setTimeout(resetAppViewport, 60);
         window.setTimeout(resetAppViewport, 240);
@@ -15539,6 +15728,207 @@
 
       function saveFireUps() {
         sessionStorage.setItem(getFireUpKey(), JSON.stringify(firedUp));
+      }
+
+      function getSocialStorageKey() {
+        const session = getCurrentSession() || { name: "Demo Agent", agent_code: "DEMO" };
+        const orgId = session.org_id || "demo-org";
+        return socialStoragePrefix + String(orgId).toLowerCase().replace(/[^a-z0-9_-]/g, "_");
+      }
+
+      function seedSocialPosts() {
+        const session = getCurrentSession() || { name: "Demo Agent" };
+        return [
+          {
+            id: "seed-story",
+            type: "story",
+            title: "First appointment set from the Power List",
+            body: "I stopped scrolling the CRM and called the first person PulseNow surfaced. It turned into a real conversation and a follow-up appointment.",
+            author_name: session.name || "Demo Agent",
+            author_level: session.level || "TA",
+            created_at: new Date(Date.now() - 36 * 60000).toISOString(),
+            reactions: { fire: 3, congrats: 2 },
+            reacted: {}
+          },
+          {
+            id: "seed-win",
+            type: "win",
+            title: "Logged the contact block before lunch",
+            body: "Ten focused contacts, one FNA booked, and no guessing about what to do next.",
+            author_name: "Team Pulse",
+            author_level: "Leader",
+            created_at: new Date(Date.now() - 96 * 60000).toISOString(),
+            reactions: { fire: 5, congrats: 4 },
+            reacted: {}
+          }
+        ];
+      }
+
+      function normalizeSocialPost(post) {
+        const reactions = post && post.reactions && typeof post.reactions === "object" ? post.reactions : {};
+        const reacted = post && post.reacted && typeof post.reacted === "object" ? post.reacted : {};
+        return {
+          id: String(post.id || "post-" + Date.now()),
+          type: ["win", "story", "shoutout"].includes(post.type) ? post.type : "win",
+          title: String(post.title || "Untitled win").slice(0, 80),
+          body: String(post.body || "").slice(0, 700),
+          author_name: String(post.author_name || post.author || "Demo Agent"),
+          author_level: String(post.author_level || post.level || ""),
+          created_at: post.created_at || new Date().toISOString(),
+          reactions: {
+            fire: Math.max(0, Number(reactions.fire || 0)),
+            congrats: Math.max(0, Number(reactions.congrats || 0)),
+            inspired: Math.max(0, Number(reactions.inspired || 0))
+          },
+          reacted
+        };
+      }
+
+      function readLocalSocialPosts() {
+        const saved = readLocalJson(getSocialStorageKey(), null);
+        const posts = Array.isArray(saved) && saved.length ? saved : seedSocialPosts();
+        return posts.map(normalizeSocialPost).sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+      }
+
+      function writeLocalSocialPosts(posts) {
+        writeLocalJson(getSocialStorageKey(), posts.map(normalizeSocialPost).slice(0, 50));
+      }
+
+      function formatSocialTime(value) {
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) return "Just now";
+        const minutes = Math.max(0, Math.round((Date.now() - date.getTime()) / 60000));
+        if (minutes < 2) return "Just now";
+        if (minutes < 60) return minutes + "m ago";
+        const hours = Math.round(minutes / 60);
+        if (hours < 24) return hours + "h ago";
+        return date.toLocaleDateString([], { month: "short", day: "numeric" });
+      }
+
+      function renderSocialPost(post, compact) {
+        const item = document.createElement("article");
+        item.className = "social-post-card";
+        const typeLabel = post.type === "shoutout" ? "Shoutout" : post.type === "story" ? "Story" : "Win";
+        item.innerHTML =
+          '<div class="social-post-head"><div class="social-post-author"><span class="social-author-avatar">' +
+          escapeHtml((post.author_name || "P").slice(0, 1).toUpperCase()) +
+          '</span><div><strong>' +
+          escapeHtml(post.author_name) +
+          '</strong><p class="muted" style="margin-top:3px;">' +
+          escapeHtml([post.author_level, formatSocialTime(post.created_at)].filter(Boolean).join(" · ")) +
+          '</p></div></div><span class="stage-pill">' +
+          typeLabel +
+          "</span></div><h3>" +
+          escapeHtml(post.title) +
+          "</h3>" +
+          (compact ? "" : '<p class="social-post-body muted">' + escapeHtml(post.body) + "</p>") +
+          '<div class="social-post-actions">' +
+          '<button type="button" data-social-react="' +
+          escapeHtml(post.id) +
+          '" data-social-reaction="fire" class="' +
+          (post.reacted.fire ? "active" : "") +
+          '">Fire up · ' +
+          post.reactions.fire +
+          '</button><button type="button" data-social-react="' +
+          escapeHtml(post.id) +
+          '" data-social-reaction="congrats" class="' +
+          (post.reacted.congrats ? "active" : "") +
+          '">Congrats · ' +
+          post.reactions.congrats +
+          '</button><button type="button" data-social-react="' +
+          escapeHtml(post.id) +
+          '" data-social-reaction="inspired" class="' +
+          (post.reacted.inspired ? "active" : "") +
+          '">Inspired · ' +
+          post.reactions.inspired +
+          "</button></div>";
+        return item;
+      }
+
+      function renderSocial() {
+        if (homeSocialPreview) {
+          homeSocialPreview.innerHTML = "";
+          socialPosts.slice(0, 2).forEach((post) => homeSocialPreview.appendChild(renderSocialPost(post, true)));
+          if (socialPosts.length === 0) homeSocialPreview.innerHTML = '<div class="social-empty">No wins posted yet. Start with one real story from today.</div>';
+        }
+        if (!socialFeedList) return;
+        socialFeedList.innerHTML = "";
+        socialPosts.forEach((post) => socialFeedList.appendChild(renderSocialPost(post, false)));
+        if (socialPosts.length === 0) socialFeedList.innerHTML = '<div class="social-empty">No wins posted yet. Post the first story your team can learn from.</div>';
+      }
+
+      async function hydrateSocialPosts(forceRemote) {
+        socialPosts = readLocalSocialPosts();
+        renderSocial();
+        if (!forceRemote && sessionStorage.getItem("pulsenow_social_remote_checked") === todayKey()) return;
+        try {
+          const data = await apiRequest("/api/social/posts", { method: "GET" });
+          if (Array.isArray(data.posts) && data.posts.length) {
+            socialPosts = data.posts.map(normalizeSocialPost);
+            writeLocalSocialPosts(socialPosts);
+            renderSocial();
+          }
+          if (socialModePill) socialModePill.textContent = data.mode === "supabase" ? "Team" : "Preview";
+          if (socialStatus && data.mode === "supabase") socialStatus.textContent = "Posting to your team feed.";
+          sessionStorage.setItem("pulsenow_social_remote_checked", todayKey());
+        } catch {
+          if (socialModePill) socialModePill.textContent = "Preview";
+        }
+      }
+
+      async function createSocialPost() {
+        const title = socialTitleInput.value.trim();
+        const body = socialBodyInput.value.trim();
+        if (!title || !body) {
+          socialStatus.textContent = "Add a headline and the story before posting.";
+          return;
+        }
+        const session = getCurrentSession() || { name: "Demo Agent", level: "TA" };
+        const localPost = normalizeSocialPost({
+          id: "local-" + Date.now(),
+          type: socialType,
+          title,
+          body,
+          author_name: session.name || "Demo Agent",
+          author_level: session.level || "TA",
+          created_at: new Date().toISOString(),
+          reactions: { fire: 0, congrats: 0, inspired: 0 },
+          reacted: {}
+        });
+        socialPosts = [localPost].concat(socialPosts).slice(0, 50);
+        writeLocalSocialPosts(socialPosts);
+        renderSocial();
+        socialTitleInput.value = "";
+        socialBodyInput.value = "";
+        socialStatus.textContent = "Posted to preview feed.";
+        try {
+          const data = await apiRequest("/api/social/posts", {
+            method: "POST",
+            body: JSON.stringify({ type: localPost.type, title: localPost.title, body: localPost.body })
+          });
+          if (data.post) {
+            socialPosts = [normalizeSocialPost(data.post)].concat(socialPosts.filter((post) => post.id !== localPost.id)).slice(0, 50);
+            writeLocalSocialPosts(socialPosts);
+            renderSocial();
+          }
+          socialStatus.textContent = data.mode === "supabase" ? "Posted to team feed." : "Posted to preview feed.";
+          if (socialModePill) socialModePill.textContent = data.mode === "supabase" ? "Team" : "Preview";
+        } catch {
+          socialStatus.textContent = "Posted locally. Team sync will work once the social API is configured.";
+        }
+      }
+
+      function reactToSocialPost(id, reaction) {
+        socialPosts = socialPosts.map((post) => {
+          if (post.id !== id) return post;
+          const next = normalizeSocialPost(post);
+          const wasReacted = next.reacted[reaction] === true;
+          next.reacted[reaction] = !wasReacted;
+          next.reactions[reaction] = Math.max(0, Number(next.reactions[reaction] || 0) + (wasReacted ? -1 : 1));
+          return next;
+        });
+        writeLocalSocialPosts(socialPosts);
+        renderSocial();
       }
 
       function getLeaderboardRows() {
@@ -18038,6 +18428,7 @@
           powerlistScreen.classList.add("hidden");
           pipelineScreen.classList.add("hidden");
           boardScreen.classList.add("hidden");
+          socialScreen.classList.add("hidden");
           if (dreamLifeScreen) dreamLifeScreen.classList.remove("hidden");
           meScreen.classList.add("hidden");
           coachScreen.classList.add("hidden");
@@ -18063,6 +18454,7 @@
           powerlistScreen.classList.add("hidden");
           pipelineScreen.classList.add("hidden");
           boardScreen.classList.add("hidden");
+          socialScreen.classList.add("hidden");
           meScreen.classList.add("hidden");
           coachScreen.classList.add("hidden");
           quizScreen.classList.add("hidden");
@@ -18077,6 +18469,7 @@
           powerlistScreen.classList.add("hidden");
           pipelineScreen.classList.add("hidden");
           boardScreen.classList.add("hidden");
+          socialScreen.classList.add("hidden");
           meScreen.classList.add("hidden");
           coachScreen.classList.add("hidden");
           quizScreen.classList.add("hidden");
@@ -18093,6 +18486,7 @@
           powerlistScreen.classList.add("hidden");
           pipelineScreen.classList.add("hidden");
           boardScreen.classList.remove("hidden");
+          socialScreen.classList.add("hidden");
           meScreen.classList.add("hidden");
           coachScreen.classList.add("hidden");
           quizScreen.classList.add("hidden");
@@ -18107,6 +18501,7 @@
           powerlistScreen.classList.add("hidden");
           pipelineScreen.classList.add("hidden");
           boardScreen.classList.add("hidden");
+          socialScreen.classList.add("hidden");
           meScreen.classList.add("hidden");
           coachScreen.classList.add("hidden");
           quizScreen.classList.add("hidden");
@@ -18123,6 +18518,7 @@
           powerlistScreen.classList.remove("hidden");
           pipelineScreen.classList.add("hidden");
           boardScreen.classList.add("hidden");
+          socialScreen.classList.add("hidden");
           meScreen.classList.add("hidden");
           coachScreen.classList.add("hidden");
           quizScreen.classList.add("hidden");
@@ -18139,6 +18535,7 @@
           powerlistScreen.classList.add("hidden");
           pipelineScreen.classList.remove("hidden");
           boardScreen.classList.add("hidden");
+          socialScreen.classList.add("hidden");
           meScreen.classList.add("hidden");
           coachScreen.classList.add("hidden");
           quizScreen.classList.add("hidden");
@@ -18153,6 +18550,7 @@
           powerlistScreen.classList.add("hidden");
           pipelineScreen.classList.add("hidden");
           boardScreen.classList.add("hidden");
+          socialScreen.classList.add("hidden");
           meScreen.classList.remove("hidden");
           coachScreen.classList.add("hidden");
           quizScreen.classList.add("hidden");
@@ -18169,6 +18567,7 @@
           powerlistScreen.classList.add("hidden");
           pipelineScreen.classList.add("hidden");
           boardScreen.classList.add("hidden");
+          socialScreen.classList.add("hidden");
           meScreen.classList.add("hidden");
           coachScreen.classList.remove("hidden");
           quizScreen.classList.add("hidden");
@@ -18183,9 +18582,25 @@
           powerlistScreen.classList.add("hidden");
           pipelineScreen.classList.add("hidden");
           boardScreen.classList.add("hidden");
+          socialScreen.classList.add("hidden");
           meScreen.classList.add("hidden");
           coachScreen.classList.add("hidden");
           quizScreen.classList.remove("hidden");
+          placeholderScreen.classList.add("hidden");
+          return;
+        }
+        if (screen === "social") {
+          hydrateSocialPosts(false);
+          homeScreen.classList.add("hidden");
+          logScreen.classList.add("hidden");
+          contactsScreen.classList.add("hidden");
+          powerlistScreen.classList.add("hidden");
+          pipelineScreen.classList.add("hidden");
+          boardScreen.classList.add("hidden");
+          socialScreen.classList.remove("hidden");
+          meScreen.classList.add("hidden");
+          coachScreen.classList.add("hidden");
+          quizScreen.classList.add("hidden");
           placeholderScreen.classList.add("hidden");
           return;
         }
@@ -18204,6 +18619,7 @@
         powerlistScreen.classList.add("hidden");
         pipelineScreen.classList.add("hidden");
         boardScreen.classList.add("hidden");
+        socialScreen.classList.add("hidden");
         meScreen.classList.add("hidden");
         coachScreen.classList.add("hidden");
         quizScreen.classList.add("hidden");
@@ -18322,6 +18738,19 @@
         firedUp[button.dataset.fireUpId] = true;
         saveFireUps();
         renderBoard();
+      });
+      document.querySelectorAll("[data-social-type]").forEach((button) => {
+        button.addEventListener("click", () => {
+          socialType = button.dataset.socialType || "win";
+          document.querySelectorAll("[data-social-type]").forEach((item) => item.classList.toggle("active", item === button));
+        });
+      });
+      document.getElementById("social-post-btn").addEventListener("click", createSocialPost);
+      document.getElementById("social-refresh-btn").addEventListener("click", () => hydrateSocialPosts(true));
+      document.addEventListener("click", (event) => {
+        const button = event.target.closest("[data-social-react]");
+        if (!button) return;
+        reactToSocialPost(button.dataset.socialReact, button.dataset.socialReaction);
       });
       document.querySelectorAll("[data-coach-prompt]").forEach((button) => {
         button.addEventListener("click", () => sendCoachPrompt(button.dataset.coachPrompt));
@@ -18581,6 +19010,7 @@
       hydrateLog();
       hydrateSubsteps();
       hydrateContacts();
+      hydrateSocialPosts(false);
 
       const urlParams = new URLSearchParams(window.location.search);
       const forceLanding = urlParams.has("landing");
