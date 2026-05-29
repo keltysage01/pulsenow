@@ -12604,13 +12604,13 @@
             <div>
               <p class="eyebrow">Import</p>
               <h2>Import to CRM</h2>
-              <p class="muted section-subcopy">Choose a spreadsheet export. PulseNow will clean, categorize, and place each contact into a CRM area.</p>
+              <p class="muted section-subcopy">Choose a spreadsheet or phone contacts export. PulseNow will clean, categorize, and place each contact into a CRM area.</p>
             </div>
           </div>
           <label class="csv-drop" for="csv-file-input">
-            <span>Import contact CSV</span>
-            <small>Works with columns like name, first_name, last_name, phone, email, type, followup, company, LinkedIn, and notes.</small>
-            <input id="csv-file-input" type="file" accept=".csv,.tsv,.txt,text/csv,text/tab-separated-values,text/plain" />
+            <span>Import CSV or phone contacts</span>
+            <small>Upload a CSV spreadsheet or a .vcf/vCard export from iPhone, iCloud, Google Contacts, or Android.</small>
+            <input id="csv-file-input" type="file" accept=".csv,.tsv,.txt,.vcf,.vcard,text/csv,text/tab-separated-values,text/plain,text/vcard,text/x-vcard" />
           </label>
           <div id="csv-scan-panel" class="csv-scan-panel hidden" aria-live="polite">
             <div class="csv-scan-head">
@@ -12626,7 +12626,7 @@
               <span class="scan-avatar">P</span>
               <div>
                 <strong>Waiting for file</strong>
-                <p>Upload a CSV and PulseNow will organize the list into CRM areas.</p>
+                <p>Upload a CSV or phone contacts file and PulseNow will organize the list into CRM areas.</p>
               </div>
             </div>
           </div>
@@ -16317,6 +16317,120 @@
         });
       }
 
+      function isVCardFile(file, text) {
+        const name = String(file && file.name || "").toLowerCase();
+        return name.endsWith(".vcf") || name.endsWith(".vcard") || /^\s*BEGIN:VCARD/im.test(String(text || ""));
+      }
+
+      function decodeQuotedPrintableValue(value) {
+        const clean = String(value || "").replace(/=\r?\n/g, "");
+        const bytes = [];
+        for (let i = 0; i < clean.length; i += 1) {
+          if (clean[i] === "=" && /^[0-9a-f]{2}$/i.test(clean.slice(i + 1, i + 3))) {
+            bytes.push(parseInt(clean.slice(i + 1, i + 3), 16));
+            i += 2;
+          } else {
+            bytes.push(clean.charCodeAt(i));
+          }
+        }
+        try {
+          return new TextDecoder("utf-8").decode(new Uint8Array(bytes));
+        } catch {
+          return clean.replace(/=([0-9a-f]{2})/gi, (_, hex) => String.fromCharCode(parseInt(hex, 16)));
+        }
+      }
+
+      function decodeVCardValue(value, meta) {
+        const text = /quoted-printable/i.test(meta || "") ? decodeQuotedPrintableValue(value) : String(value || "");
+        return text
+          .replace(/\\n/gi, " ")
+          .replace(/\\,/g, ",")
+          .replace(/\\;/g, ";")
+          .replace(/\\\\/g, "\\")
+          .replace(/\s+/g, " ")
+          .trim();
+      }
+
+      function splitVCardParts(value) {
+        return String(value || "").split(";").map((part) => decodeVCardValue(part, ""));
+      }
+
+      function parseVCardText(text) {
+        const unfolded = String(text || "")
+          .replace(/\r\n[ \t]/g, "")
+          .replace(/\n[ \t]/g, "")
+          .replace(/\r/g, "\n");
+        const cards = unfolded.match(/BEGIN:VCARD[\s\S]*?END:VCARD/gi) || [];
+        return cards.map((card, index) => {
+          const row = {
+            full_name: "",
+            first_name: "",
+            last_name: "",
+            phone: "",
+            email: "",
+            company: "",
+            job_title: "",
+            city: "",
+            state: "",
+            zip: "",
+            website_url: "",
+            notes: "",
+            source_type: "phone_contacts",
+          };
+          const phoneCandidates = [];
+          const emailCandidates = [];
+          const notes = [];
+          card.split("\n").forEach((line) => {
+            const colonIndex = line.indexOf(":");
+            if (colonIndex < 0) return;
+            const meta = line.slice(0, colonIndex);
+            const key = meta.split(";")[0].toUpperCase();
+            const raw = line.slice(colonIndex + 1);
+            const value = decodeVCardValue(raw, meta);
+            if (!value) return;
+            if (key === "FN") row.full_name = row.full_name || value;
+            if (key === "N") {
+              const parts = splitVCardParts(raw);
+              row.last_name = row.last_name || parts[0] || "";
+              row.first_name = row.first_name || [parts[3], parts[1], parts[2]].filter(Boolean).join(" ");
+              if (!row.full_name) row.full_name = [row.first_name, row.last_name].filter(Boolean).join(" ");
+            }
+            if (key === "TEL") {
+              const weight = /cell|mobile|iphone|pref/i.test(meta) ? 0 : 1;
+              phoneCandidates.push({ value, weight });
+            }
+            if (key === "EMAIL") {
+              const weight = /pref|home|internet/i.test(meta) ? 0 : 1;
+              emailCandidates.push({ value, weight });
+            }
+            if (key === "ORG") row.company = row.company || value.split(";").filter(Boolean).join(" ");
+            if (key === "TITLE" || key === "ROLE") row.job_title = row.job_title || value;
+            if (key === "URL") row.website_url = row.website_url || value;
+            if (key === "NOTE") notes.push(value);
+            if (key === "ADR") {
+              const parts = splitVCardParts(raw);
+              row.city = row.city || parts[3] || "";
+              row.state = row.state || parts[4] || "";
+              row.zip = row.zip || parts[5] || "";
+              const street = parts[2] || "";
+              if (street) notes.push("Address " + [street, row.city, row.state, row.zip].filter(Boolean).join(", "));
+            }
+          });
+          phoneCandidates.sort((a, b) => a.weight - b.weight);
+          emailCandidates.sort((a, b) => a.weight - b.weight);
+          row.phone = phoneCandidates[0]?.value || "";
+          row.email = emailCandidates[0]?.value || "";
+          row.notes = notes.filter(Boolean).join(" | ");
+          if (!row.full_name) row.full_name = row.email || row.phone || "Phone Contact " + (index + 1);
+          return row;
+        }).filter((row) => row.full_name || row.phone || row.email);
+      }
+
+      function rowsToCsvText(rows) {
+        const headers = ["full_name", "first_name", "last_name", "phone", "email", "company", "job_title", "city", "state", "zip", "website_url", "notes", "source_type"];
+        return [headers.join(","), ...rows.map((row) => headers.map((header) => csvCell(row[header] || "")).join(","))].join("\n");
+      }
+
       function rowValue(row, keys) {
         for (const key of keys) {
           if (row[key] && String(row[key]).trim()) return String(row[key]).trim();
@@ -16391,7 +16505,7 @@
 
         const displayContact = contact || { name: "Imported contacts" };
         const initial = (displayContact.name || "P").trim().charAt(0).toUpperCase() || "P";
-        const summary = message || (contact ? inferContactProfile(contact) : "Upload a CSV and PulseNow will organize, categorize, and add the list to your CRM.");
+        const summary = message || (contact ? inferContactProfile(contact) : "Upload a CSV or phone contacts export and PulseNow will organize, categorize, and add the list to your CRM.");
         csvScanProfile.innerHTML =
           '<span class="scan-avatar">' +
           escapeHtml(initial) +
@@ -16423,6 +16537,8 @@
         const licenseClass = rowValue(row, ["license_class_desc"]);
         const loa = rowValue(row, ["loa"]);
         const isProducerExport = Boolean(licenseNo || npn || licenseClass || loa);
+        const jobTitle = isProducerExport ? [licenseClass, loa].filter(Boolean).join(" - ") : rowValue(row, ["job_title", "title", "occupation", "role", "position", "profession"]);
+        const contactType = rowValue(row, ["contact_type", "type", "category"]);
         const type = rowValue(row, ["type", "contact_type", "category"]).toLowerCase() || (isProducerExport ? "producer" : "prospect");
         const followup = rowValue(row, ["next_followup_date", "followup", "follow_up", "follow_up_date"]);
         const stage = rowValue(row, ["stage", "pipeline_stage"]) || (isProducerExport ? "Licensed producer review" : "Uncontacted Team Prospects");
@@ -16475,6 +16591,9 @@
           city,
           state,
           company,
+          contact_type: contactType,
+          job_title: jobTitle,
+          occupation: jobTitle,
           gender,
           licensed,
           is_licensed: licensed,
@@ -16873,14 +16992,14 @@
         return latest;
       }
 
-      async function runContactIntelligenceImport(file, rawCsvText) {
+      async function runContactIntelligenceImport(file, rawCsvText, importKind) {
         setContactIntelStatus("Starting Contact Intelligence import...", "working");
         const client = await getContactIntelClient();
         const title = file && file.name ? file.name.replace(/\.[^.]+$/, "") : "Contact Import";
         const createBody = {
           title,
           default_goal: "life_insurance_partner",
-          metadata: { source: "pulsenow_contacts_screen" },
+          metadata: { source: importKind === "phone_contacts" ? "phone_contacts_upload" : "pulsenow_contacts_screen", original_file_type: importKind || "csv" },
         };
         let created = await client.functions.invoke("contacts_create_import", { body: createBody });
         if (created.error) {
@@ -16895,7 +17014,7 @@
         lastContactIntelImportId = importId;
         sessionStorage.setItem(contactIntelImportStorageKey, importId);
 
-        setContactIntelStatus("Submitting CSV to Contact Intelligence...", "working");
+        setContactIntelStatus("Submitting " + (importKind === "phone_contacts" ? "phone contacts" : "CSV") + " to Contact Intelligence...", "working");
         const submitted = await client.functions.invoke("contacts_submit_csv", {
           body: {
             import_id: importId,
@@ -16943,7 +17062,14 @@
         if (contactIntelligenceSummary) contactIntelligenceSummary.classList.add("hidden");
         renderCsvScan(null, "scanning", "Reading columns and preparing CRM areas.");
         const text = await file.text();
-        const rows = parseCsvText(text);
+        const importingPhoneContacts = isVCardFile(file, text);
+        const rows = importingPhoneContacts ? parseVCardText(text) : parseCsvText(text);
+        const rawImportText = importingPhoneContacts ? rowsToCsvText(rows) : text;
+        if (!rows.length) {
+          renderCsvScan(null, "error", importingPhoneContacts ? "No contacts were found in this phone contacts export." : "No rows were found in this spreadsheet.");
+          csvImportStatus.textContent = "No contacts were found in " + file.name + ".";
+          return;
+        }
         const imported = prepareLocalCrmPreview(rows.map(csvRowToContact).filter((contact) => contact.name || contact.phone || contact.email));
         const added = mergeImportedContacts(imported);
         lastImportedContacts = imported.slice(0, 50);
@@ -16951,13 +17077,13 @@
         const reviewCount = imported.filter((contact) => crmAreaForContact(contact).key === "needs_review").length;
         setContactFilter("all");
         renderLocalCrmSummary(imported, "preview");
-        renderCsvScan(null, "scanning", "CRM preview is ready below. Contact Intelligence is checking the CSV now.");
+        renderCsvScan(null, "scanning", "CRM preview is ready below. Contact Intelligence is checking the " + (importingPhoneContacts ? "phone contacts export" : "CSV") + " now.");
         csvImportStatus.textContent = "Added " + added + " contacts to the CRM preview · " + reviewCount + " need review · " + businessCount + " possible business records flagged.";
         researchSocialsBtn.classList.add("hidden");
         exportContactsBtn.classList.toggle("hidden", contacts.length === 0);
 
         try {
-          const data = await runContactIntelligenceImport(file, text);
+          const data = await runContactIntelligenceImport(file, rawImportText, importingPhoneContacts ? "phone_contacts" : "csv");
           const backendRows = data && Array.isArray(data.rows) ? data.rows : [];
           const total = Number((data && data.total) || backendRows.length || 0);
           setContactFilter("all");
@@ -16988,7 +17114,7 @@
 
         try {
           const body = new FormData();
-          body.append("file", file);
+          body.append("file", importingPhoneContacts ? new File([rawImportText], file.name.replace(/\.(vcf|vcard)$/i, ".csv"), { type: "text/csv" }) : file);
           const headers = {};
           const encoded = encodeSessionHeader();
           if (encoded) headers["x-pulsenow-session"] = encoded;
@@ -17001,7 +17127,7 @@
       async function researchImportedSocials() {
         const batch = lastImportedContacts.length ? lastImportedContacts : contacts.slice(0, 50);
         if (!batch.length) {
-          csvImportStatus.textContent = "Import a CSV first, then Pulsenow can research socials for that list.";
+          csvImportStatus.textContent = "Import a CSV or phone contacts file first, then Pulsenow can research socials for that list.";
           return;
         }
         researchSocialsBtn.disabled = true;
@@ -17050,7 +17176,7 @@
 
       async function researchCurrentContactImport() {
         if (!lastContactIntelImportId) {
-          csvImportStatus.textContent = "Import a CSV first, then run LinkedIn and social research.";
+          csvImportStatus.textContent = "Import a CSV or phone contacts file first, then run LinkedIn and social research.";
           return;
         }
         try {
