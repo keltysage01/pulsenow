@@ -560,6 +560,265 @@
         line-height: 1.5;
       }
 
+      .social-hero-card {
+        border: 0;
+        background:
+          linear-gradient(135deg, rgba(22, 70, 109, 0.92), rgba(85, 182, 197, 0.88)),
+          url("/public/backgrounds/achievements/pulsenow_achievements_02.svg") center/cover;
+        color: #fff;
+      }
+
+      .social-hero-card .eyebrow,
+      .social-hero-card .muted {
+        color: rgba(255, 255, 255, 0.78);
+      }
+
+      .social-hero-card h2 {
+        font-size: 28px;
+        line-height: 1;
+      }
+
+      .social-story-rail {
+        display: grid;
+        grid-auto-flow: column;
+        grid-auto-columns: 82px;
+        gap: 12px;
+        overflow-x: auto;
+        margin-top: 16px;
+        padding: 2px 0 4px;
+      }
+
+      .social-story {
+        display: grid;
+        gap: 7px;
+        justify-items: center;
+        border: 0;
+        background: transparent;
+        color: inherit;
+        padding: 0;
+        text-align: center;
+      }
+
+      .story-ring {
+        display: grid;
+        width: 66px;
+        height: 66px;
+        place-items: center;
+        border-radius: 999px;
+        background: conic-gradient(from 210deg, #f4b942, #55b6c5, #86bd4d, #f4b942);
+        box-shadow: 0 14px 34px rgba(18, 36, 58, 0.22);
+      }
+
+      .story-ring span {
+        display: grid;
+        width: 56px;
+        height: 56px;
+        place-items: center;
+        border: 3px solid #fff;
+        border-radius: inherit;
+        background: var(--card);
+        color: var(--primary);
+        font-weight: 950;
+      }
+
+      .social-story small {
+        max-width: 76px;
+        overflow: hidden;
+        color: var(--sub);
+        font-size: 11px;
+        font-weight: 850;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .social-composer-card {
+        display: grid;
+        gap: 12px;
+        border-radius: 24px;
+        background:
+          linear-gradient(180deg, color-mix(in srgb, var(--card) 96%, #ffffff), var(--card)),
+          var(--card);
+      }
+
+      .social-prompt-row {
+        display: grid;
+        grid-template-columns: 44px 1fr;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .social-prompt-row .social-author-avatar {
+        width: 44px;
+        height: 44px;
+      }
+
+      .social-type-row .filter-btn {
+        min-height: 38px;
+        background: color-mix(in srgb, var(--sub) 8%, transparent);
+      }
+
+      .social-type-row .filter-btn.active {
+        background: linear-gradient(135deg, var(--primary), var(--aqua));
+        color: #fff;
+      }
+
+      .social-media-preview {
+        position: relative;
+        min-height: 138px;
+        overflow: hidden;
+        border-radius: 18px;
+        background: linear-gradient(135deg, rgba(244, 185, 66, 0.88), rgba(85, 182, 197, 0.88));
+        color: #fff;
+        padding: 16px;
+      }
+
+      .social-media-preview::before {
+        content: "";
+        position: absolute;
+        inset: auto -18px -46px auto;
+        width: 150px;
+        height: 150px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.2);
+      }
+
+      .social-media-preview strong {
+        position: relative;
+        display: block;
+        max-width: 78%;
+        font-size: 20px;
+        line-height: 1.05;
+      }
+
+      .social-media-preview span {
+        position: absolute;
+        right: 14px;
+        bottom: 14px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.22);
+        padding: 7px 10px;
+        font-size: 12px;
+        font-weight: 950;
+      }
+
+      .social-feed-list {
+        gap: 16px;
+      }
+
+      .social-post-card {
+        border-radius: 24px;
+        padding: 0;
+        box-shadow: 0 18px 48px rgba(18, 36, 58, 0.1);
+      }
+
+      .social-post-head,
+      .social-post-copy,
+      .social-post-actions,
+      .social-comment-row {
+        padding-inline: 14px;
+      }
+
+      .social-post-head {
+        align-items: center;
+        padding-top: 14px;
+        padding-bottom: 12px;
+      }
+
+      .social-post-media {
+        position: relative;
+        display: grid;
+        min-height: 300px;
+        align-content: end;
+        overflow: hidden;
+        border-block: 1px solid var(--border);
+        background: linear-gradient(135deg, #16466d, #55b6c5);
+        color: #fff;
+        padding: 18px;
+      }
+
+      .social-post-media::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+          radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.24), transparent 26%),
+          linear-gradient(180deg, transparent 32%, rgba(0, 0, 0, 0.32));
+      }
+
+      .social-post-media strong,
+      .social-post-media span {
+        position: relative;
+        z-index: 1;
+      }
+
+      .social-post-media strong {
+        max-width: 86%;
+        font-size: 28px;
+        line-height: 0.98;
+      }
+
+      .social-post-media span {
+        width: fit-content;
+        margin-top: 10px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.22);
+        padding: 7px 10px;
+        font-size: 12px;
+        font-weight: 950;
+      }
+
+      .social-post-copy {
+        padding-top: 12px;
+      }
+
+      .social-post-copy h3 {
+        margin: 0;
+      }
+
+      .social-post-actions {
+        justify-content: space-between;
+        padding-top: 12px;
+      }
+
+      .social-post-actions button {
+        min-height: 38px;
+        border-radius: 13px;
+        background: color-mix(in srgb, var(--sub) 8%, transparent);
+      }
+
+      .social-comment-row {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 8px;
+        padding-top: 4px;
+        padding-bottom: 14px;
+      }
+
+      .social-comment-row input {
+        min-height: 38px;
+        border-radius: 999px;
+        font-size: 13px;
+      }
+
+      .social-comment-row button {
+        min-height: 38px;
+        border: 0;
+        border-radius: 999px;
+        background: transparent;
+        color: var(--primary);
+        font-weight: 950;
+      }
+
+      .social-mini-feed .social-post-media,
+      .social-mini-feed .social-post-body,
+      .social-mini-feed .social-comment-row {
+        display: none;
+      }
+
+      .social-mini-feed .social-post-card {
+        padding-bottom: 12px;
+      }
+
       .session-item {
         border-radius: 14px;
         background: color-mix(in srgb, var(--sub) 10%, transparent);
@@ -13147,20 +13406,32 @@
       </main>
 
       <main id="social-screen" class="shell hidden">
+        <section class="card social-hero-card">
+          <p class="eyebrow">Team Social</p>
+          <h2>Wins worth watching</h2>
+          <p class="muted" style="margin-top:10px; line-height:1.55;">A clean team feed for proof, progress, shoutouts, and field stories.</p>
+        </section>
+
+        <section id="social-story-rail" class="social-story-rail" aria-label="Team stories"></section>
+
         <section class="card social-composer-card">
           <div class="section-head">
             <div>
               <p class="eyebrow">Wins & Stories</p>
-              <h2>Post team momentum</h2>
+              <h2>Share the moment</h2>
             </div>
             <span id="social-mode-pill" class="stage-pill">Preview</span>
+          </div>
+          <div class="social-prompt-row">
+            <span id="social-composer-avatar" class="social-author-avatar">P</span>
+            <input id="social-title-input" maxlength="80" placeholder="What win should the team see?" />
           </div>
           <div class="social-type-row" aria-label="Post type">
             <button class="filter-btn active" data-social-type="win" type="button">Win</button>
             <button class="filter-btn" data-social-type="story" type="button">Story</button>
             <button class="filter-btn" data-social-type="shoutout" type="button">Shoutout</button>
           </div>
-          <input id="social-title-input" maxlength="80" placeholder="Headline" />
+          <div id="social-media-preview" class="social-media-preview"><strong>Make the win visible.</strong><span>Preview</span></div>
           <textarea id="social-body-input" maxlength="700" placeholder="What happened? Share the useful details, not just the scoreboard."></textarea>
           <div class="social-composer-actions">
             <p id="social-status" class="muted">Posts save on this device for now. The Supabase table is ready for the server-side team feed pass.</p>
@@ -13513,6 +13784,9 @@
       const socialBodyInput = document.getElementById("social-body-input");
       const socialStatus = document.getElementById("social-status");
       const socialModePill = document.getElementById("social-mode-pill");
+      const socialStoryRail = document.getElementById("social-story-rail");
+      const socialMediaPreview = document.getElementById("social-media-preview");
+      const socialComposerAvatar = document.getElementById("social-composer-avatar");
       const badgeGrid = document.getElementById("badge-grid");
       const badgeCount = document.getElementById("badge-count");
       const careerTrack = document.getElementById("career-track");
@@ -15747,7 +16021,8 @@
             author_name: session.name || "Demo Agent",
             author_level: session.level || "TA",
             created_at: new Date(Date.now() - 36 * 60000).toISOString(),
-            reactions: { fire: 3, congrats: 2 },
+            media_theme: "aqua",
+            reactions: { fire: 3, congrats: 2, inspired: 1 },
             reacted: {}
           },
           {
@@ -15758,7 +16033,20 @@
             author_name: "Team Pulse",
             author_level: "Leader",
             created_at: new Date(Date.now() - 96 * 60000).toISOString(),
-            reactions: { fire: 5, congrats: 4 },
+            media_theme: "gold",
+            reactions: { fire: 5, congrats: 4, inspired: 2 },
+            reacted: {}
+          },
+          {
+            id: "seed-shoutout",
+            type: "shoutout",
+            title: "Shoutout for making the uncomfortable call",
+            body: "Mia made the call she had been avoiding, got a clean answer, and moved the contact into the right next step. That is the behavior to copy.",
+            author_name: "Mia Johnson",
+            author_level: "TA",
+            created_at: new Date(Date.now() - 4 * 60 * 60000).toISOString(),
+            media_theme: "green",
+            reactions: { fire: 8, congrats: 6, inspired: 3 },
             reacted: {}
           }
         ];
@@ -15775,6 +16063,7 @@
           author_name: String(post.author_name || post.author || "Demo Agent"),
           author_level: String(post.author_level || post.level || ""),
           created_at: post.created_at || new Date().toISOString(),
+          media_theme: ["aqua", "gold", "green", "blue"].includes(post.media_theme) ? post.media_theme : socialThemeForType(post.type),
           reactions: {
             fire: Math.max(0, Number(reactions.fire || 0)),
             congrats: Math.max(0, Number(reactions.congrats || 0)),
@@ -15805,10 +16094,54 @@
         return date.toLocaleDateString([], { month: "short", day: "numeric" });
       }
 
+      function socialThemeForType(type) {
+        if (type === "story") return "aqua";
+        if (type === "shoutout") return "green";
+        return "gold";
+      }
+
+      function socialGradient(theme) {
+        if (theme === "green") return "linear-gradient(135deg, #16466d 0%, #86bd4d 55%, #f4b942 100%)";
+        if (theme === "gold") return "linear-gradient(135deg, #16466d 0%, #f4b942 52%, #55b6c5 100%)";
+        if (theme === "blue") return "linear-gradient(135deg, #0f2440 0%, #5f9fc3 58%, #55b6c5 100%)";
+        return "linear-gradient(135deg, #16466d 0%, #55b6c5 55%, #86bd4d 100%)";
+      }
+
+      function socialTypeLabel(type) {
+        return type === "shoutout" ? "Shoutout" : type === "story" ? "Story" : "Win";
+      }
+
+      function updateSocialMediaPreview() {
+        if (!socialMediaPreview) return;
+        const title = socialTitleInput.value.trim() || (socialType === "shoutout" ? "Lift someone up." : socialType === "story" ? "Tell the story." : "Make the win visible.");
+        socialMediaPreview.style.background = socialGradient(socialThemeForType(socialType));
+        socialMediaPreview.innerHTML = "<strong>" + escapeHtml(title) + '</strong><span>' + escapeHtml(socialTypeLabel(socialType)) + "</span>";
+      }
+
+      function renderSocialStories() {
+        if (!socialStoryRail) return;
+        const storyPosts = socialPosts.slice(0, 8);
+        socialStoryRail.innerHTML = "";
+        storyPosts.forEach((post) => {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "social-story";
+          button.dataset.socialStoryId = post.id;
+          button.innerHTML =
+            '<span class="story-ring"><span>' +
+            escapeHtml((post.author_name || "P").slice(0, 1).toUpperCase()) +
+            "</span></span><small>" +
+            escapeHtml(post.author_name) +
+            "</small>";
+          socialStoryRail.appendChild(button);
+        });
+      }
+
       function renderSocialPost(post, compact) {
         const item = document.createElement("article");
         item.className = "social-post-card";
-        const typeLabel = post.type === "shoutout" ? "Shoutout" : post.type === "story" ? "Story" : "Win";
+        const typeLabel = socialTypeLabel(post.type);
+        const mediaText = post.type === "shoutout" ? "Team proof" : post.type === "story" ? "Field story" : "Win posted";
         item.innerHTML =
           '<div class="social-post-head"><div class="social-post-author"><span class="social-author-avatar">' +
           escapeHtml((post.author_name || "P").slice(0, 1).toUpperCase()) +
@@ -15818,34 +16151,47 @@
           escapeHtml([post.author_level, formatSocialTime(post.created_at)].filter(Boolean).join(" · ")) +
           '</p></div></div><span class="stage-pill">' +
           typeLabel +
-          "</span></div><h3>" +
+          '</span></div><div class="social-post-media" style="background:' +
+          socialGradient(post.media_theme) +
+          '"><strong>' +
+          escapeHtml(post.title) +
+          "</strong><span>" +
+          escapeHtml(mediaText) +
+          '</span></div><div class="social-post-copy"><h3>' +
           escapeHtml(post.title) +
           "</h3>" +
           (compact ? "" : '<p class="social-post-body muted">' + escapeHtml(post.body) + "</p>") +
+          "</div>" +
           '<div class="social-post-actions">' +
           '<button type="button" data-social-react="' +
           escapeHtml(post.id) +
           '" data-social-reaction="fire" class="' +
           (post.reacted.fire ? "active" : "") +
-          '">Fire up · ' +
+          '">Like · ' +
           post.reactions.fire +
           '</button><button type="button" data-social-react="' +
           escapeHtml(post.id) +
           '" data-social-reaction="congrats" class="' +
           (post.reacted.congrats ? "active" : "") +
-          '">Congrats · ' +
+          '">Comment · ' +
           post.reactions.congrats +
           '</button><button type="button" data-social-react="' +
           escapeHtml(post.id) +
           '" data-social-reaction="inspired" class="' +
           (post.reacted.inspired ? "active" : "") +
-          '">Inspired · ' +
+          '">Save · ' +
           post.reactions.inspired +
-          "</button></div>";
+          '</button></div><div class="social-comment-row"><input readonly value="Add a comment..." aria-label="Comment preview" /><button type="button" data-social-react="' +
+          escapeHtml(post.id) +
+          '" data-social-reaction="congrats">Post</button></div>';
         return item;
       }
 
       function renderSocial() {
+        const session = getCurrentSession() || { name: "Demo Agent" };
+        if (socialComposerAvatar) socialComposerAvatar.textContent = (session.name || "P").slice(0, 1).toUpperCase();
+        renderSocialStories();
+        updateSocialMediaPreview();
         if (homeSocialPreview) {
           homeSocialPreview.innerHTML = "";
           socialPosts.slice(0, 2).forEach((post) => homeSocialPreview.appendChild(renderSocialPost(post, true)));
@@ -15880,6 +16226,7 @@
           author_name: session.name || "Demo Agent",
           author_level: session.level || "TA",
           created_at: new Date().toISOString(),
+          media_theme: socialThemeForType(socialType),
           reactions: { fire: 0, congrats: 0, inspired: 0 },
           reacted: {}
         });
@@ -18716,7 +19063,21 @@
         button.addEventListener("click", () => {
           socialType = button.dataset.socialType || "win";
           document.querySelectorAll("[data-social-type]").forEach((item) => item.classList.toggle("active", item === button));
+          updateSocialMediaPreview();
         });
+      });
+      socialTitleInput.addEventListener("input", updateSocialMediaPreview);
+      socialStoryRail.addEventListener("click", (event) => {
+        const button = event.target.closest("[data-social-story-id]");
+        if (!button) return;
+        const post = socialPosts.find((item) => item.id === button.dataset.socialStoryId);
+        if (!post) return;
+        socialTitleInput.value = post.title;
+        socialBodyInput.value = post.body;
+        socialType = post.type;
+        document.querySelectorAll("[data-social-type]").forEach((item) => item.classList.toggle("active", item.dataset.socialType === socialType));
+        updateSocialMediaPreview();
+        socialTitleInput.focus();
       });
       document.getElementById("social-post-btn").addEventListener("click", createSocialPost);
       document.getElementById("social-refresh-btn").addEventListener("click", () => hydrateSocialPosts(true));
