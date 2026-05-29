@@ -5016,7 +5016,7 @@
 
       .crm-group {
         display: grid;
-        gap: 12px;
+        gap: 8px;
         margin-bottom: 18px;
       }
 
@@ -5046,6 +5046,122 @@
         text-align: center;
         font-size: 12px;
         font-weight: 700;
+      }
+
+      .crm-group-copy {
+        margin: -4px 0 4px;
+        color: rgba(71, 85, 105, 0.84);
+        font-size: 13px;
+        line-height: 1.35;
+      }
+
+      .contact-org-summary {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 8px;
+        margin: 0 0 14px;
+      }
+
+      .contact-org-tile {
+        min-width: 0;
+        border-radius: 16px;
+        padding: 10px 12px;
+        background: rgba(255, 255, 255, 0.64);
+        border: 1px solid rgba(15, 23, 42, 0.07);
+      }
+
+      .contact-org-tile strong {
+        display: block;
+        color: #172033;
+        font-size: 18px;
+        font-weight: 720;
+        line-height: 1;
+      }
+
+      .contact-org-tile span {
+        display: block;
+        margin-top: 4px;
+        color: rgba(71, 85, 105, 0.8);
+        font-size: 12px;
+        font-weight: 620;
+        line-height: 1.2;
+      }
+
+      .contact-card.is-compact {
+        display: grid;
+        gap: 10px;
+        padding: 14px 15px !important;
+        border-radius: 18px !important;
+      }
+
+      .contact-card.is-compact .contact-main {
+        gap: 10px;
+      }
+
+      .contact-card.is-compact h3 {
+        font-size: 17px !important;
+        line-height: 1.12 !important;
+        margin: 0 !important;
+      }
+
+      .contact-card.is-compact .contact-category-row {
+        margin-top: 0;
+      }
+
+      .contact-method-row {
+        display: grid;
+        grid-template-columns: minmax(120px, 0.8fr) minmax(0, 1fr);
+        gap: 8px;
+      }
+
+      .contact-method {
+        min-width: 0;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        border-radius: 12px;
+        padding: 8px 10px;
+        background: rgba(255, 255, 255, 0.62);
+        border: 1px solid rgba(15, 23, 42, 0.07);
+        color: #172033;
+        font-size: 13px;
+        font-weight: 620;
+        overflow-wrap: anywhere;
+      }
+
+      .contact-method span {
+        color: rgba(71, 85, 105, 0.72);
+        font-size: 11px;
+        font-weight: 740;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+
+      .contact-next-line {
+        color: rgba(71, 85, 105, 0.9);
+        font-size: 13px;
+        line-height: 1.35;
+      }
+
+      .contact-next-line strong {
+        color: #172033;
+        font-size: 13px !important;
+        font-weight: 720 !important;
+        letter-spacing: 0 !important;
+      }
+
+      .contact-card.is-compact .contact-actions {
+        margin-top: 0 !important;
+      }
+
+      @media (max-width: 520px) {
+        .contact-org-summary {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .contact-method-row {
+          grid-template-columns: 1fr;
+        }
       }
 
       .contact-insight {
@@ -5110,14 +5226,24 @@
 
       html[data-theme="dark"] .crm-group-head h3,
       html[data-theme="dark"] .contact-insight strong,
-      html[data-theme="dark"] .contact-info-item strong {
+      html[data-theme="dark"] .contact-info-item strong,
+      html[data-theme="dark"] .contact-org-tile strong,
+      html[data-theme="dark"] .contact-next-line strong {
         color: #f7fbff;
       }
 
       html[data-theme="dark"] .contact-insight,
-      html[data-theme="dark"] .contact-info-item {
+      html[data-theme="dark"] .contact-info-item,
+      html[data-theme="dark"] .contact-org-tile,
+      html[data-theme="dark"] .contact-method {
         background: rgba(255, 255, 255, 0.07);
         border-color: rgba(255, 255, 255, 0.1);
+      }
+
+      html[data-theme="dark"] .crm-group-copy,
+      html[data-theme="dark"] .contact-next-line,
+      html[data-theme="dark"] .contact-org-tile span {
+        color: rgba(235, 245, 255, 0.68);
       }
 
       /* Login tabs: remove heavy grey border and keep it clean */
@@ -12455,20 +12581,13 @@
           <div class="contact-toolbar">
             <input id="contact-search" placeholder="Search contacts" />
             <div class="filter-row" id="contact-filters">
-              <button class="filter-btn active" data-contact-filter="attention" type="button">Attention</button>
+              <button class="filter-btn active" data-contact-filter="all" type="button">All</button>
+              <button class="filter-btn" data-contact-filter="attention" type="button">Attention</button>
               <button class="filter-btn" data-contact-filter="potential_prospect" type="button">Potential prospects</button>
               <button class="filter-btn" data-contact-filter="needs_review" type="button">Needs review</button>
               <button class="filter-btn" data-contact-filter="nurture" type="button">Nurture</button>
               <button class="filter-btn" data-contact-filter="do_not_contact" type="button">Do not contact</button>
-              <button class="filter-btn" data-contact-filter="top100" type="button">Top 100</button>
-              <button class="filter-btn" data-contact-filter="all" type="button">All</button>
-              <button class="filter-btn" data-contact-filter="women" type="button">Women</button>
-              <button class="filter-btn" data-contact-filter="licensed" type="button">Licensed</button>
               <button class="filter-btn" data-contact-filter="needs_research" type="button">Needs research</button>
-              <button class="filter-btn" data-contact-filter="overdue" type="button">Overdue</button>
-              <button class="filter-btn" data-contact-filter="prospect" type="button">Prospects</button>
-              <button class="filter-btn" data-contact-filter="recruit" type="button">Recruits</button>
-              <button class="filter-btn" data-contact-filter="client" type="button">Clients</button>
               <button class="filter-btn" data-contact-filter="az" type="button">A-Z</button>
             </div>
             <div class="people-shortcuts">
@@ -12546,6 +12665,7 @@
             <h2 id="contact-count-label">0 contacts</h2>
             <button id="seed-contacts-btn" class="text-btn" type="button">Load sample contacts</button>
           </div>
+          <div id="contact-org-summary" class="contact-org-summary"></div>
           <div id="contact-list" class="contact-list"></div>
         </section>
 
@@ -13015,6 +13135,7 @@
       const fullPowerList = document.getElementById("full-power-list");
       const contactSearch = document.getElementById("contact-search");
       const contactList = document.getElementById("contact-list");
+      const contactOrgSummary = document.getElementById("contact-org-summary");
       const contactCountLabel = document.getElementById("contact-count-label");
       const addContactPanel = document.getElementById("add-contact-panel");
       const contactDetailPanel = document.getElementById("contact-detail-panel");
@@ -13074,7 +13195,7 @@
       let currentLog = {};
       let saveFeed = [];
       let contacts = [];
-      let contactFilter = "attention";
+      let contactFilter = "all";
       let selectedQualifiers = {};
       let selectedContactId = "";
       let pipelineType = "sales";
@@ -15952,9 +16073,55 @@
         });
       }
 
+      function contactGroupDescription(key) {
+        const descriptions = {
+          potential_prospect: "Ready for relationship-first outreach once you verify the fit.",
+          needs_review: "Needs a human pass before calling, texting, or adding automation.",
+          nurture: "Keep these contacts, but do not make them the first call block.",
+          do_not_contact: "Suppressed or not a fit. Keep visible so they are not contacted by mistake.",
+          attention: "Highest-priority follow-ups based on due dates, score, or review status.",
+          uncategorized: "Saved contacts that do not have enough category signal yet."
+        };
+        return descriptions[key] || "Contacts in this CRM area.";
+      }
+
+      function contactPrimaryAction(contact) {
+        if (contact.do_not_contact || crmAreaForContact(contact).key === "do_not_contact") return "Do not contact.";
+        if (Array.isArray(contact.missing_info) && contact.missing_info.length) {
+          return "Review missing " + contact.missing_info.slice(0, 3).join(", ") + ".";
+        }
+        return contact.what_to_do_next || (contact.phone || contact.phone_e164 ? "Call or text with a relationship-first opener." : "Find a phone or email before outreach.");
+      }
+
+      function renderContactOrgSummary(allRows) {
+        if (!contactOrgSummary) return;
+        const counts = {
+          attention: 0,
+          potential_prospect: 0,
+          needs_review: 0,
+          nurture: 0,
+          do_not_contact: 0
+        };
+        allRows.forEach((contact) => {
+          const area = crmAreaForContact(contact).key;
+          if (Object.prototype.hasOwnProperty.call(counts, area)) counts[area] += 1;
+        });
+        const tiles = [
+          ["Attention", counts.attention],
+          ["Potential", counts.potential_prospect],
+          ["Review", counts.needs_review],
+          ["Nurture", counts.nurture],
+          ["Do not contact", counts.do_not_contact]
+        ];
+        contactOrgSummary.innerHTML = tiles.map(([label, count]) => (
+          '<div class="contact-org-tile"><strong>' + Number(count) + '</strong><span>' + escapeHtml(label) + '</span></div>'
+        )).join("");
+      }
+
       function renderContacts() {
         const list = filteredContacts();
         const label = activeContactFilterLabel().toLowerCase();
+        renderContactOrgSummary(contacts.filter((contact) => contactMatchesSearch(contact, contactSearch.value.trim().toLowerCase())));
         if (contactFilter === "all") {
           contactCountLabel.textContent = list.length + " total " + (list.length === 1 ? "contact" : "contacts");
         } else if (contactFilter === "az") {
@@ -15989,7 +16156,7 @@
           }
           const section = document.createElement("section");
           section.className = "crm-group";
-          section.innerHTML = '<div class="crm-group-head"><h3>' + escapeHtml(group.area.label) + '</h3><span>' + group.contacts.length + '</span></div>';
+          section.innerHTML = '<div class="crm-group-head"><h3>' + escapeHtml(group.area.label) + '</h3><span>' + group.contacts.length + '</span></div><p class="crm-group-copy">' + escapeHtml(contactGroupDescription(group.area.key)) + '</p>';
           group.contacts.forEach((contact) => section.appendChild(renderContactCard(contact)));
           contactList.appendChild(section);
         });
@@ -15998,7 +16165,7 @@
 
       function renderContactCard(contact) {
           const card = document.createElement("div");
-          card.className = "contact-card";
+          card.className = "contact-card is-compact";
           card.setAttribute("role", "button");
           card.setAttribute("tabindex", "0");
           card.dataset.contactId = contact.id;
@@ -16011,22 +16178,14 @@
           const safeCategory = escapeHtml(category);
           const safeStatus = escapeHtml(status);
           const safeSource = escapeHtml(source);
-          const why = contact.why_this_category ? '<div class="contact-insight"><strong>Why this category</strong><p>' + escapeHtml(contact.why_this_category) + '</p></div>' : "";
-          const next = contact.what_to_do_next ? '<div class="contact-insight"><strong>What to do next</strong><p>' + escapeHtml(contact.what_to_do_next) + '</p></div>' : "";
-          const sources = Array.isArray(contact.research_sources) && contact.research_sources.length
-            ? '<div class="contact-insight"><strong>Found profiles</strong><p>' + contact.research_sources.slice(0, 4).map((source) => {
-                const href = safeExternalUrl(source.url);
-                const label = escapeHtml(source.title || source.platform || source.url || "Source");
-                return href ? '<a href="' + escapeHtml(href) + '" target="_blank" rel="noopener noreferrer">' + label + '</a>' : label;
-              }).join(" · ") + '</p></div>'
-            : "";
           const missing = Array.isArray(contact.missing_info) && contact.missing_info.length
-            ? '<div class="contact-insight"><strong>Missing info</strong><p>' + escapeHtml(contact.missing_info.join(", ")) + '</p></div>'
+            ? '<span class="category-pill secondary">Missing ' + escapeHtml(contact.missing_info.slice(0, 2).join(", ")) + '</span>'
             : "";
           const phoneHref = safePhoneUri("tel:", contact.phone);
           const smsHref = safePhoneUri("sms:", contact.phone);
           const safePhone = escapeHtml(contact.phone || contact.phone_e164 || "Not found");
           const safeEmail = escapeHtml(contact.email || "Not found");
+          const nextAction = escapeHtml(contactPrimaryAction(contact));
           const callAction = contact.phone || contact.phone_e164
             ? '<a href="' + escapeHtml(phoneHref) + '">Call</a><a href="' + escapeHtml(smsHref) + '">Text</a>'
             : '<a class="disabled" href="#" aria-disabled="true">Call</a><a class="disabled" href="#" aria-disabled="true">Text</a>';
@@ -16048,16 +16207,17 @@
             safeStatus +
             '</span><span class="category-pill secondary">' +
             safeSource +
-            '</span></div>' +
-            '<div class="contact-info-grid"><div class="contact-info-item"><span>Phone</span><strong>' +
-            safePhone +
-            '</strong></div><div class="contact-info-item"><span>Email</span><strong>' +
-            safeEmail +
-            '</strong></div></div>' +
-            why +
-            next +
-            sources +
+            '</span>' +
             missing +
+            '</div>' +
+            '<div class="contact-method-row"><div class="contact-method"><span>Phone</span>' +
+            safePhone +
+            '</div><div class="contact-method"><span>Email</span>' +
+            safeEmail +
+            '</div></div>' +
+            '<p class="contact-next-line"><strong>Next:</strong> ' +
+            nextAction +
+            '</p>' +
             '<div class="contact-actions">' +
             callAction +
             '<button type="button" data-detail-id="' +
