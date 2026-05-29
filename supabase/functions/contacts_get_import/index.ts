@@ -90,7 +90,7 @@ Deno.serve(async (req) => {
         display_name: displayNameForContact(contact),
         prospect_status: prospectStatusFor(contact, assessment),
         why_this_category: preLicensedRecruit
-          ? "The CSV identifies this contact as an active Life insurance producer with license/NPN context, so PulseNow treats them as a pre-licensed recruit before web research."
+          ? "The CSV identifies this contact as an active Life insurance producer with license/NPN context, so PulseNow treats them as a pre-licensed recruit before web research. Use NIPR for official verification when needed."
           : whyThisCategory(assessment),
         what_to_do_next: preLicensedRecruit
           ? "Reach out as a pre-licensed recruit or potential partner and confirm their current carrier situation."

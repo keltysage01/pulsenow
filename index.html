@@ -13808,6 +13808,12 @@
         }
       }
 
+      const NIPR_LICENSE_LOOKUP_URL = "https://nipr.com/licensing-center";
+
+      function niprLookupUrl() {
+        return NIPR_LICENSE_LOOKUP_URL;
+      }
+
       function setAvatarPhoto(element, session) {
         if (!element) return;
         const photo = session && session.avatar_url ? session.avatar_url : "";
@@ -16013,6 +16019,11 @@
         return isAlreadyLicensed(contact) && /\b(life|life producer|insurance producer|license|npn)\b/.test(text);
       }
 
+      function shouldShowNiprVerify(contact) {
+        const text = contactSearchText(contact);
+        return isPreLicensedRecruit(contact) || Boolean(contact.license_number || contact.npn) || /\b(license|npn|insurance producer|life producer)\b/.test(text);
+      }
+
       function contactNeedsResearch(contact) {
         return researchStatus(contact) === "Needs research" || researchStatus(contact) === "Research queued" || researchStatus(contact) === "Research failed";
       }
@@ -16208,6 +16219,9 @@
           const callAction = contact.phone || contact.phone_e164
             ? '<a href="' + escapeHtml(phoneHref) + '">Call</a><a href="' + escapeHtml(smsHref) + '">Text</a>'
             : '<a class="disabled" href="#" aria-disabled="true">Call</a><a class="disabled" href="#" aria-disabled="true">Text</a>';
+          const niprAction = shouldShowNiprVerify(contact)
+            ? '<a href="' + escapeHtml(niprLookupUrl(contact)) + '" target="_blank" rel="noopener noreferrer" data-external-action="nipr">Verify on NIPR</a>'
+            : "";
           card.innerHTML =
             '<div class="contact-main"><div><h3>' +
             contactName +
@@ -16239,6 +16253,7 @@
             '</p>' +
             '<div class="contact-actions">' +
             callAction +
+            niprAction +
             '<button type="button" data-detail-id="' +
             contactId +
             '">Details</button></div>';
@@ -17314,6 +17329,15 @@
             detailQualifiers.appendChild(item);
           });
         }
+        if (shouldShowNiprVerify(contact)) {
+          const item = document.createElement("a");
+          item.className = "toggle-btn active detail-social-link";
+          item.href = niprLookupUrl(contact);
+          item.target = "_blank";
+          item.rel = "noopener noreferrer";
+          item.textContent = "Verify on NIPR";
+          detailQualifiers.appendChild(item);
+        }
         contactDetailPanel.classList.remove("hidden");
         contactDetailPanel.scrollIntoView({ behavior: "smooth", block: "start" });
       }
@@ -18036,6 +18060,11 @@
         button.classList.toggle("active", selectedQualifiers[key] === true);
       });
       contactList.addEventListener("click", (event) => {
+        const externalAction = event.target.closest("[data-external-action]");
+        if (externalAction) {
+          event.stopPropagation();
+          return;
+        }
         const detailButton = event.target.closest("[data-detail-id]");
         if (detailButton) {
           event.preventDefault();

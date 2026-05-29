@@ -90,7 +90,7 @@ Deno.serve(async (req) => {
         candidate_type: a.candidate_type,
         priority_tier: a.priority_tier,
         why_this_category: preLicensedRecruit
-          ? "The CSV identifies this contact as an active Life insurance producer with license/NPN context, so PulseNow treats them as a pre-licensed recruit before web research."
+          ? "The CSV identifies this contact as an active Life insurance producer with license/NPN context, so PulseNow treats them as a pre-licensed recruit before web research. Use NIPR for official verification when needed."
           : whyThisCategory(a),
         partner_score: a.life_insurance_partner_score,
         educator_score: a.financial_educator_score,
