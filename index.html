@@ -16348,6 +16348,7 @@
 
       function researchStatus(contact) {
         if (contact.backend_import_id) {
+          if (crmAreaForContact(contact).key === "licensed_recruit") return "CSV verified";
           if (contact.research_status === "complete") return "Research complete";
           if (contact.research_status === "queued" || contact.research_status === "researching") return "Research queued";
           if (contact.research_status === "failed") return "Research failed";

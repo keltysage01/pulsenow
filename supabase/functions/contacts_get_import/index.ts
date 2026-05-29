@@ -1,7 +1,7 @@
 import { handleOptions } from "../_shared/cors.ts";
 import { badRequest, json, notFound, serverError, unauthorized } from "../_shared/respond.ts";
 import { requireUser } from "../_shared/auth.ts";
-import { contactCategoryDefinitions, displayNameForContact, missingInfoFor, prospectStatusFor, whyThisCategory } from "../_shared/contactPresentation.ts";
+import { contactCategoryDefinitions, displayNameForContact, isPreLicensedRecruit, missingInfoFor, prospectStatusFor, whyThisCategory } from "../_shared/contactPresentation.ts";
 
 function countBy<T extends Record<string, any>>(rows: T[], getKey: (row: T) => string | null | undefined) {
   const out: Record<string, number> = {};
@@ -84,12 +84,17 @@ Deno.serve(async (req) => {
 
     const rows = (contacts || []).map((contact: any) => {
       const assessment = assessmentByContact.get(contact.id) || null;
+      const preLicensedRecruit = isPreLicensedRecruit(contact);
       return {
         ...contact,
         display_name: displayNameForContact(contact),
         prospect_status: prospectStatusFor(contact, assessment),
-        why_this_category: whyThisCategory(assessment),
-        what_to_do_next: assessment?.next_best_action || "Review this contact before outreach.",
+        why_this_category: preLicensedRecruit
+          ? "The CSV identifies this contact as an active Life insurance producer with license/NPN context, so PulseNow treats them as a pre-licensed recruit before web research."
+          : whyThisCategory(assessment),
+        what_to_do_next: preLicensedRecruit
+          ? "Reach out as a pre-licensed recruit or potential partner and confirm their current carrier situation."
+          : assessment?.next_best_action || "Review this contact before outreach.",
         missing_info: missingInfoFor(contact, assessment),
         assessment,
         sources: sourcesByContact.get(contact.id) || [],

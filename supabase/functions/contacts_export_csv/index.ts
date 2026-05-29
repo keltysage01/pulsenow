@@ -3,7 +3,7 @@ import { badRequest, json, notFound, serverError, unauthorized } from "../_share
 import { requireUser } from "../_shared/auth.ts";
 import { getSupabaseAdmin } from "../_shared/supabaseAdmin.ts";
 import { toCsv } from "../_shared/csv.ts";
-import { displayNameForContact, missingInfoFor, prospectStatusFor, whyThisCategory } from "../_shared/contactPresentation.ts";
+import { displayNameForContact, isPreLicensedRecruit, missingInfoFor, prospectStatusFor, whyThisCategory } from "../_shared/contactPresentation.ts";
 
 Deno.serve(async (req) => {
   const options = handleOptions(req);
@@ -62,6 +62,7 @@ Deno.serve(async (req) => {
 
     const rows = (contacts || []).map((c: any) => {
       const a = assessmentByContact.get(c.id) || {};
+      const preLicensedRecruit = isPreLicensedRecruit(c);
       const s = sourcesByContact.get(c.id) || [];
       return {
         display_name: displayNameForContact(c),
@@ -88,7 +89,9 @@ Deno.serve(async (req) => {
         captive_status: a.captive_status,
         candidate_type: a.candidate_type,
         priority_tier: a.priority_tier,
-        why_this_category: whyThisCategory(a),
+        why_this_category: preLicensedRecruit
+          ? "The CSV identifies this contact as an active Life insurance producer with license/NPN context, so PulseNow treats them as a pre-licensed recruit before web research."
+          : whyThisCategory(a),
         partner_score: a.life_insurance_partner_score,
         educator_score: a.financial_educator_score,
         client_prospect_score: a.client_prospect_score,
