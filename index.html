@@ -12583,6 +12583,7 @@
             <div class="filter-row" id="contact-filters">
               <button class="filter-btn active" data-contact-filter="all" type="button">All</button>
               <button class="filter-btn" data-contact-filter="attention" type="button">Attention</button>
+              <button class="filter-btn" data-contact-filter="licensed_recruit" type="button">Pre-licensed recruits</button>
               <button class="filter-btn" data-contact-filter="potential_prospect" type="button">Potential prospects</button>
               <button class="filter-btn" data-contact-filter="needs_review" type="button">Needs review</button>
               <button class="filter-btn" data-contact-filter="nurture" type="button">Nurture</button>
@@ -15970,10 +15971,17 @@
           contact.company,
           contact.city,
           contact.state,
+          contact.category,
+          contact.category_label,
+          contact.contact_type,
+          contact.job_title,
+          contact.occupation,
           contact.notes,
           contact.gender,
           contact.sex,
           contact.license_status,
+          contact.license_number,
+          contact.npn,
           tags,
           socials.linkedin,
           socials.facebook,
@@ -15997,7 +16005,12 @@
 
       function isAlreadyLicensed(contact) {
         if (contact.licensed === true || contact.is_licensed === true || contact.licensed_agent === true) return true;
-        return /\b(licensed|life licensed|life-licensed|insurance agent|agent license|passed exam|nipr|license active)\b/.test(contactSearchText(contact));
+        return /\b(licensed|life licensed|life-licensed|life producer|insurance producer|insurance agent|agent license|passed exam|nipr|license active)\b/.test(contactSearchText(contact));
+      }
+
+      function isPreLicensedRecruit(contact) {
+        const text = contactSearchText(contact);
+        return isAlreadyLicensed(contact) && /\b(life|life producer|insurance producer|license|npn)\b/.test(text);
       }
 
       function contactNeedsResearch(contact) {
@@ -16006,36 +16019,39 @@
 
       function contactNeedsAttention(contact) {
         const area = contact.crm_area || "";
-        if (area === "potential_prospect" || area === "needs_review") return true;
+        if (area === "licensed_recruit" || area === "potential_prospect" || area === "needs_review") return true;
         return isOverdue(contact) || contact.is_top_100 === true || scoreContact(contact) >= 6;
       }
 
       function crmAreaForContact(contact) {
         if (contact.crm_area && contact.crm_area_label) {
-          const orders = { attention: 0, potential_prospect: 1, needs_review: 2, nurture: 3, do_not_contact: 4, uncategorized: 5 };
+          const orders = { attention: 0, licensed_recruit: 1, potential_prospect: 2, needs_review: 3, nurture: 4, do_not_contact: 5, uncategorized: 6 };
           return { key: contact.crm_area, label: contact.crm_area_label, order: orders[contact.crm_area] ?? 5 };
         }
         const status = String(contact.prospect_status || "").toLowerCase();
         const category = String(contact.category || "").toLowerCase();
         if (status.includes("do not") || status.includes("not a fit") || category === "do_not_contact" || category === "not_a_fit" || contact.do_not_contact) {
-          return { key: "do_not_contact", label: "Do not contact", order: 4 };
+          return { key: "do_not_contact", label: "Do not contact", order: 5 };
+        }
+        if (status.includes("pre-licensed") || status.includes("licensed recruit") || category === "licensed_recruit" || category === "pre_licensed_recruit" || isPreLicensedRecruit(contact)) {
+          return { key: "licensed_recruit", label: "Pre-licensed recruits", order: 1 };
         }
         if (status.includes("review") || category === "manual_review") {
-          return { key: "needs_review", label: "Needs review", order: 2 };
+          return { key: "needs_review", label: "Needs review", order: 3 };
         }
         if (status.includes("nurture") || category === "nurture") {
-          return { key: "nurture", label: "Nurture", order: 3 };
+          return { key: "nurture", label: "Nurture", order: 4 };
         }
         if (contact.backend_import_id || status.includes("potential")) {
-          return { key: "potential_prospect", label: "Potential prospects", order: 1 };
+          return { key: "potential_prospect", label: "Potential prospects", order: 2 };
         }
         if (contactNeedsAttention(contact)) return { key: "attention", label: "Needs attention", order: 0 };
-        return { key: "uncategorized", label: "Other CRM contacts", order: 5 };
+        return { key: "uncategorized", label: "Other CRM contacts", order: 6 };
       }
 
       function contactMatchesFilter(contact) {
         if (contactFilter === "all" || contactFilter === "az") return true;
-        if (["potential_prospect", "needs_review", "nurture", "do_not_contact"].includes(contactFilter)) {
+        if (["licensed_recruit", "potential_prospect", "needs_review", "nurture", "do_not_contact"].includes(contactFilter)) {
           return crmAreaForContact(contact).key === contactFilter;
         }
         if (contactFilter === "attention") return contactNeedsAttention(contact);
@@ -16075,6 +16091,7 @@
 
       function contactGroupDescription(key) {
         const descriptions = {
+          licensed_recruit: "Already licensed for life insurance. Best fit for recruiting or partnership outreach.",
           potential_prospect: "Ready for relationship-first outreach once you verify the fit.",
           needs_review: "Needs a human pass before calling, texting, or adding automation.",
           nurture: "Keep these contacts, but do not make them the first call block.",
@@ -16097,6 +16114,7 @@
         if (!contactOrgSummary) return;
         const counts = {
           attention: 0,
+          licensed_recruit: 0,
           potential_prospect: 0,
           needs_review: 0,
           nurture: 0,
@@ -16108,6 +16126,7 @@
         });
         const tiles = [
           ["Attention", counts.attention],
+          ["Licensed", counts.licensed_recruit],
           ["Potential", counts.potential_prospect],
           ["Review", counts.needs_review],
           ["Nurture", counts.nurture],
@@ -16479,7 +16498,7 @@
           return { key: "nurture", label: "Nurture" };
         }
         if (contact.licensed || contact.is_licensed || /\b(state farm|farmers|allstate|captive)\b/.test(search)) {
-          return { key: "needs_review", label: "Needs review" };
+          return { key: "licensed_recruit", label: "Pre-licensed recruits" };
         }
         return { key: "potential_prospect", label: "Potential prospects" };
       }
@@ -16491,13 +16510,17 @@
           if (!contact.phone) missing.push("phone");
           if (!contact.email) missing.push("email");
           if (!contact.company && !contact.notes) missing.push("context");
-          const categoryLabel = area.key === "needs_review" ? "Needs manual review" : area.key === "nurture" ? "Nurture" : "Potential prospect";
-          const why = area.key === "needs_review"
+          const categoryLabel = area.key === "licensed_recruit" ? "Pre-licensed recruit" : area.key === "needs_review" ? "Needs manual review" : area.key === "nurture" ? "Nurture" : "Potential prospect";
+          const why = area.key === "licensed_recruit"
+            ? "This contact already appears to have a life insurance license, so they belong in the recruiting or partnership lane."
+            : area.key === "needs_review"
             ? "The CSV has enough data to save this contact, but not enough to safely choose an outreach path without review."
             : area.key === "nurture"
               ? "This contact looks worth keeping, but the CSV signals do not make it a primary outreach target yet."
               : "The CSV has usable contact information and no obvious do-not-contact or captive-company conflict from the available fields.";
-          const next = area.key === "needs_review"
+          const next = area.key === "licensed_recruit"
+            ? "Reach out as a pre-licensed recruit or potential partner and confirm their current carrier situation."
+            : area.key === "needs_review"
             ? "Fill in the missing fields, then choose whether to move this contact into outreach."
             : area.key === "nurture"
               ? "Keep this contact in CRM and add context before starting an automation."
@@ -16599,8 +16622,11 @@
           if (profile.platform && profile.profile_url) socials[profile.platform] = profile.profile_url;
         });
         const missing = Array.isArray(row.missing_info) ? row.missing_info : [];
-        const candidateType = assessment.candidate_type || row.prospect_status || "potential_prospect";
+        const prospectStatus = row.prospect_status || "Potential prospect";
+        const isLicensedRecruitStatus = String(prospectStatus).toLowerCase().includes("pre-licensed");
+        const candidateType = isLicensedRecruitStatus ? "pre_licensed_recruit" : assessment.candidate_type || prospectStatus || "potential_prospect";
         const categoryLabel = candidateType === "life_insurance_partner" ? "Life insurance partner"
+          : candidateType === "pre_licensed_recruit" ? "Pre-licensed recruit"
           : candidateType === "financial_educator" ? "Financial educator"
           : candidateType === "referral_partner" ? "Referral partner"
           : candidateType === "client_prospect" ? "Client prospect"
@@ -16608,13 +16634,17 @@
           : candidateType === "not_a_fit" ? "Not a fit"
           : candidateType === "nurture" ? "Nurture"
           : String(candidateType || "Potential prospect").replace(/_/g, " ");
-        const prospectStatus = row.prospect_status || "Potential prospect";
         const crmArea = crmAreaForContact({
           backend_import_id: row.import_id,
           prospect_status: prospectStatus,
           category: candidateType,
+          contact_type: row.contact_type,
+          job_title: row.job_title,
+          occupation: row.occupation,
+          notes: row.notes,
           do_not_contact: row.do_not_contact,
         });
+        const licensedRecruit = crmArea.key === "licensed_recruit";
         return {
           id: "ci-" + row.id,
           backend_contact_id: row.id,
@@ -16651,10 +16681,13 @@
           city: row.city || "",
           state: row.state || "",
           company: row.company || "",
+          contact_type: row.contact_type || "",
+          job_title: row.job_title || row.occupation || "",
+          occupation: row.occupation || row.job_title || "",
           gender: row.gender_label || "",
-          licensed: assessment.captive_status === "captive_agent" || assessment.captive_status === "non_captive_independent",
-          is_licensed: assessment.captive_status === "captive_agent" || assessment.captive_status === "non_captive_independent",
-          license_status: assessment.captive_status || "",
+          licensed: licensedRecruit || assessment.captive_status === "captive_agent" || assessment.captive_status === "non_captive_independent",
+          is_licensed: licensedRecruit || assessment.captive_status === "captive_agent" || assessment.captive_status === "non_captive_independent",
+          license_status: row.job_title || row.contact_type || assessment.captive_status || "",
           socials,
           research_sources: (row.sources || []).concat(row.social_profiles || []).map((source) => ({
             title: source.title || source.display_name || source.platform || source.profile_url || source.url,
@@ -16662,7 +16695,7 @@
             platform: source.platform || "",
             snippet: source.snippet || source.headline || "",
           })).filter((source) => source.url || source.title),
-          notes: [row.why_this_category, row.what_to_do_next, missing.length ? "Missing: " + missing.join(", ") : ""].filter(Boolean).join(" "),
+          notes: [row.notes, row.why_this_category, row.what_to_do_next, missing.length ? "Missing: " + missing.join(", ") : ""].filter(Boolean).join(" "),
           automation_category: crmArea.key,
           automation_status: crmArea.key === "do_not_contact" ? "suppressed" : crmArea.key === "needs_review" ? "manual_review" : crmArea.key === "nurture" ? "nurture" : "ready_for_outreach",
           automation_next_step: row.what_to_do_next || "Review this contact before outreach.",

@@ -1,4 +1,5 @@
 export const contactCategoryDefinitions = {
+  pre_licensed_recruit: "Already has a life insurance license or active life producer signal. Useful for recruiting or partnership follow-up.",
   life_insurance_partner: "May be a fit for an insurance partnership or recruiting conversation based on allowed professional evidence.",
   financial_educator: "May be a fit for financial education, workshops, or community education based on role, notes, or public professional context.",
   referral_partner: "May know people who need support but is not necessarily a direct client or partner.",
@@ -17,9 +18,26 @@ export function displayNameForContact(contact: Record<string, any>): string {
   return contact.full_name || contact.email || contact.phone || contact.phone_e164 || `Row ${contact.row_number ?? "unknown"}`;
 }
 
+export function isPreLicensedRecruit(contact: Record<string, any>): boolean {
+  const professionalText = [
+    contact.contact_type,
+    contact.job_title,
+    contact.occupation,
+    contact.notes,
+    contact.raw_notes,
+    contact.original_row?.LICENSE_CLASS_DESC,
+    contact.original_row?.LOA,
+    contact.original_row?.LICENSE_STATUS,
+  ].filter(Boolean).join(" ").toLowerCase();
+  const hasLifeProducerSignal = professionalText.includes("insurance producer") && professionalText.includes("life");
+  const hasLicenseSignal = professionalText.includes("license ") || professionalText.includes("npn ") || professionalText.includes("license active") || professionalText.includes("active");
+  return hasLifeProducerSignal || (hasLicenseSignal && professionalText.includes("life"));
+}
+
 export function prospectStatusFor(contact: Record<string, any>, assessment?: Record<string, any> | null): string {
   if (contact.do_not_contact || assessment?.priority_tier === "DO_NOT_CONTACT") return "Do not contact";
   if (!contact.full_name && !contact.email && !contact.phone && !contact.phone_e164) return "Not enough data";
+  if (isPreLicensedRecruit(contact)) return "Pre-licensed recruits";
   if (assessment?.manual_review_required || assessment?.candidate_type === "manual_review" || contact.parse_status === "needs_review") return "Needs review";
   if (assessment?.candidate_type === "nurture" || assessment?.priority_tier === "NURTURE") return "Nurture";
   return "Potential prospect";
@@ -27,13 +45,7 @@ export function prospectStatusFor(contact: Record<string, any>, assessment?: Rec
 
 export function missingInfoFor(contact: Record<string, any>, assessment?: Record<string, any> | null): string[] {
   const missing = new Set<string>();
-  const professionalText = [
-    contact.contact_type,
-    contact.job_title,
-    contact.occupation,
-    contact.notes,
-  ].filter(Boolean).join(" ").toLowerCase();
-  const isProducerRecord = professionalText.includes("insurance producer") || professionalText.includes("license ") || professionalText.includes("npn ");
+  const isProducerRecord = isPreLicensedRecruit(contact);
   if (!contact.full_name) missing.add("name");
   const hasEmail = Boolean(contact.email);
   const hasPhone = Boolean(contact.phone || contact.phone_e164);
