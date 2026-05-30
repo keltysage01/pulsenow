@@ -13414,136 +13414,55 @@
           </div>
         </section>
 
-        <section class="profile pulse-main-container">
-          <div id="avatar" class="avatar">P</div>
-          <div>
-            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-              <h2 id="profile-name">Agent</h2>
-              <span class="level">TA</span>
-            </div>
-            <p class="muted" style="margin-top: 8px;">Streak: 0 · Contacts: 0 · Team: 0 licensed</p>
-          </div>
+        <section class="card social-hero-card today-social-feed-card">
+          <p class="eyebrow">Today Feed</p>
+          <h2>Wins, proof, and field stories</h2>
+          <p class="muted" style="margin-top:10px; line-height:1.55;">Share the moment, see what the team is building, and keep the day moving.</p>
         </section>
 
-        <section class="section card social-preview-card">
+        <section id="social-story-rail" class="social-story-rail" aria-label="Team stories"></section>
+
+        <section class="card social-composer-card">
           <div class="section-head">
             <div>
               <p class="eyebrow">Wins & Stories</p>
-              <h2>Team momentum</h2>
+              <h2>Share the moment</h2>
             </div>
-            <button class="text-btn" data-screen="social" type="button">Open</button>
+            <span id="social-mode-pill" class="stage-pill">Preview</span>
           </div>
-          <p class="muted" style="line-height: 1.6;">Post a win, shout out a teammate, or tell the story behind a breakthrough.</p>
-          <div id="home-social-preview" class="social-mini-feed"></div>
-        </section>
-
-        <section id="today-path-card" class="section card today-path-card">
-          <div class="quest-head">
-            <span class="quest-badge">Today</span>
-            <span id="today-quest-effort" class="quest-effort">0 / 21 pts</span>
+          <div class="social-prompt-row">
+            <span id="social-composer-avatar" class="social-author-avatar">P</span>
+            <input id="social-title-input" maxlength="80" placeholder="What win should the team see?" />
           </div>
-          <h2 id="today-quest-title">Start with one real conversation.</h2>
-          <p id="today-quest-copy" class="muted">Pick one person, make the contact, then log the outcome. That is the whole loop.</p>
-          <div class="quest-meter" aria-label="Weekly points progress">
-            <div class="quest-meter-top">
-              <span>Weekly push</span>
-              <strong id="weekly-effort-label">0%</strong>
-            </div>
-            <div class="quest-track"><span id="weekly-effort-fill"></span></div>
+          <div class="social-type-row" aria-label="Post type">
+            <button class="filter-btn active" data-social-type="win" type="button">Win</button>
+            <button class="filter-btn" data-social-type="story" type="button">Story</button>
+            <button class="filter-btn" data-social-type="shoutout" type="button">Shoutout</button>
           </div>
-          <div class="quest-steps" aria-label="Daily action path">
-            <button class="quest-step" data-screen="contacts" data-quest-step="people" type="button">
-              <span class="quest-dot">1</span>
-              <strong>Pick person</strong>
-              <small>Power List</small>
-            </button>
-            <button class="quest-step" data-screen="contacts" data-quest-step="contact" type="button">
-              <span class="quest-dot">2</span>
-              <strong>Reach out</strong>
-              <small>Call or text</small>
-            </button>
-            <button class="quest-step" data-screen="log" data-quest-step="log" type="button">
-              <span class="quest-dot">3</span>
-              <strong>Log it</strong>
-              <small>Keep streak</small>
-            </button>
+          <div class="social-upload-panel">
+            <label class="social-upload-btn" for="social-media-input">
+              Add photos or videos
+              <input id="social-media-input" type="file" accept="image/*,video/*" multiple />
+            </label>
+            <div id="social-selected-media-list" class="social-selected-media"></div>
+          </div>
+          <div id="social-media-preview" class="social-media-preview"><strong>Make the win visible.</strong><span>Preview</span></div>
+          <textarea id="social-body-input" maxlength="700" placeholder="What happened? Share the useful details, not just the scoreboard."></textarea>
+          <div class="social-composer-actions">
+            <p id="social-status" class="muted">Posts save on this device for now. The Supabase table is ready for the server-side team feed pass.</p>
+            <button id="social-post-btn" class="pill-btn" type="button">Post</button>
           </div>
         </section>
 
-        <section class="section pulse-main-container vision-workspace">
-          <div class="section-head">
-            <h2>Vision Board</h2>
-            <button class="text-btn" type="button">Edit</button>
-          </div>
-          <div class="dream-builder-card">
-            <div>
-              <strong>Speak the vision. Watch it grow.</strong>
-              <p class="muted">PulseNow turns your dream into a clickable map, milestones, and the next daily move.</p>
-            </div>
-            <button class="ghost-btn" data-dream-builder onclick="window.pulseNowOpenDreamBuilderPanel && window.pulseNowOpenDreamBuilderPanel()" type="button">Dream Builder</button>
-          </div>
-          <div id="dream-builder-input-panel" class="dream-builder-input-panel hidden">
-            <button id="dream-record-btn" class="dream-big-mic" type="button" aria-label="Start recording">
-              <img src="/public/dream-mic-button.png" alt="" aria-hidden="true" />
-            </button>
-            <p id="dream-record-status" class="muted">Tap the mic, speak your dream life, then tap again to generate the map.</p>
-            <div class="dream-provider-row">
-              <button id="dream-text-toggle" class="dream-text-toggle" type="button">Add text instead</button>
-            </div>
-            <div id="dream-text-entry-panel" class="dream-text-entry-panel hidden">
-              <textarea id="dream-text-input" placeholder="Type your dream life here if you do not want to record..."></textarea>
-              <button id="dream-text-submit" class="ghost-btn" type="button">Build dream map</button>
-            </div>
-          </div>
-          <div id="vision-board-grid" class="vision-board-grid"></div>
-          <p class="muted" style="margin-top: 10px; font-style: italic;">I make dreams possible by showing up every day.</p>
-        </section>
-
-        <section class="section card goals-panel">
-          <div class="section-head">
-            <h2>This Week's Goals</h2>
-            <button class="text-btn" type="button">Edit</button>
-          </div>
-          <div id="weekly-goals-list" class="weekly-goals-list"></div>
-        </section>
-
-        <section class="section card quiz-profile-card">
+        <section class="section today-feed-section">
           <div class="section-head">
             <div>
-              <p class="eyebrow">Personal profile</p>
-              <h2>Working style quizzes</h2>
+              <p class="eyebrow">Team Feed</p>
+              <h2>Latest wins</h2>
             </div>
-            <button class="text-btn" data-screen="quiz" type="button">Open</button>
+            <button id="social-refresh-btn" class="text-btn" type="button">Refresh</button>
           </div>
-          <p class="muted" style="margin-top: 10px; line-height: 1.6;">Complete Working Genius, Four Tendencies, Enneagram, and Myers-Briggs so the coach can personalize your Today feed and weekly insights.</p>
-        </section>
-
-        <section class="section card standings-card">
-          <h2>Today's Standings</h2>
-          <div class="standings">
-            <div class="standing-row"><strong>Sam</strong><span style="text-align:right">28</span><span style="text-align:right">3</span></div>
-            <div class="standing-row"><strong>Kaden</strong><span style="text-align:right">22</span><span style="text-align:right">2</span></div>
-            <div class="standing-row me"><strong>You</strong><span style="text-align:right">12</span><span style="text-align:right">1</span></div>
-          </div>
-          <p class="muted" style="margin-top: 12px; font-size: 13px;">Updates each time a teammate saves their log.</p>
-        </section>
-
-        <section class="section card challenge today-next-card">
-          <p class="eyebrow">Next best move</p>
-          <h2>Call the first person on your Power List.</h2>
-          <p class="muted" style="margin-top: 8px; line-height: 1.6;">One real conversation beats checking every dashboard. Start with the highest-priority person, then log the outcome.</p>
-          <div class="choice-row">
-            <button class="pill-btn" data-screen="contacts" type="button">Open People</button>
-            <button class="ghost-btn" data-screen="log" type="button">Log activity</button>
-          </div>
-        </section>
-
-        <section class="section card people-call-card">
-          <div class="section-head">
-            <h2>People to call</h2>
-            <button id="see-power-list-btn" class="text-btn" data-screen="powerlist" type="button">See all 10</button>
-          </div>
-          <div id="home-power-list" class="power-list"></div>
+          <div id="social-feed-list" class="social-feed-list"></div>
         </section>
       </main>
 
@@ -13896,58 +13815,7 @@
         </section>
       </main>
 
-      <main id="social-screen" class="shell hidden">
-        <section class="card social-hero-card">
-          <p class="eyebrow">Team Social</p>
-          <h2>Wins worth watching</h2>
-          <p class="muted" style="margin-top:10px; line-height:1.55;">A clean team feed for proof, progress, shoutouts, and field stories.</p>
-        </section>
-
-        <section id="social-story-rail" class="social-story-rail" aria-label="Team stories"></section>
-
-        <section class="card social-composer-card">
-          <div class="section-head">
-            <div>
-              <p class="eyebrow">Wins & Stories</p>
-              <h2>Share the moment</h2>
-            </div>
-            <span id="social-mode-pill" class="stage-pill">Preview</span>
-          </div>
-          <div class="social-prompt-row">
-            <span id="social-composer-avatar" class="social-author-avatar">P</span>
-            <input id="social-title-input" maxlength="80" placeholder="What win should the team see?" />
-          </div>
-          <div class="social-type-row" aria-label="Post type">
-            <button class="filter-btn active" data-social-type="win" type="button">Win</button>
-            <button class="filter-btn" data-social-type="story" type="button">Story</button>
-            <button class="filter-btn" data-social-type="shoutout" type="button">Shoutout</button>
-          </div>
-          <div class="social-upload-panel">
-            <label class="social-upload-btn" for="social-media-input">
-              Add photos or videos
-              <input id="social-media-input" type="file" accept="image/*,video/*" multiple />
-            </label>
-            <div id="social-selected-media-list" class="social-selected-media"></div>
-          </div>
-          <div id="social-media-preview" class="social-media-preview"><strong>Make the win visible.</strong><span>Preview</span></div>
-          <textarea id="social-body-input" maxlength="700" placeholder="What happened? Share the useful details, not just the scoreboard."></textarea>
-          <div class="social-composer-actions">
-            <p id="social-status" class="muted">Posts save on this device for now. The Supabase table is ready for the server-side team feed pass.</p>
-            <button id="social-post-btn" class="pill-btn" type="button">Post</button>
-          </div>
-        </section>
-
-        <section class="section">
-          <div class="section-head">
-            <div>
-              <p class="eyebrow">Team Feed</p>
-              <h2>Latest wins</h2>
-            </div>
-            <button id="social-refresh-btn" class="text-btn" type="button">Refresh</button>
-          </div>
-          <div id="social-feed-list" class="social-feed-list"></div>
-        </section>
-      </main>
+      <main id="social-screen" class="shell hidden"></main>
 
       <main id="manager-screen" class="shell hidden">
         <section class="card wfg-import-card">
@@ -14137,6 +14005,126 @@
               </div>
             </div>
           </div>
+        </section>
+
+        <section class="profile pulse-main-container">
+          <div id="avatar" class="avatar">P</div>
+          <div>
+            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+              <h2 id="profile-name">Agent</h2>
+              <span class="level">TA</span>
+            </div>
+            <p class="muted" style="margin-top: 8px;">Streak: 0 · Contacts: 0 · Team: 0 licensed</p>
+          </div>
+        </section>
+
+        <section id="today-path-card" class="section card today-path-card">
+          <div class="quest-head">
+            <span class="quest-badge">Today</span>
+            <span id="today-quest-effort" class="quest-effort">0 / 21 pts</span>
+          </div>
+          <h2 id="today-quest-title">Start with one real conversation.</h2>
+          <p id="today-quest-copy" class="muted">Pick one person, make the contact, then log the outcome. That is the whole loop.</p>
+          <div class="quest-meter" aria-label="Weekly points progress">
+            <div class="quest-meter-top">
+              <span>Weekly push</span>
+              <strong id="weekly-effort-label">0%</strong>
+            </div>
+            <div class="quest-track"><span id="weekly-effort-fill"></span></div>
+          </div>
+          <div class="quest-steps" aria-label="Daily action path">
+            <button class="quest-step" data-screen="contacts" data-quest-step="people" type="button">
+              <span class="quest-dot">1</span>
+              <strong>Pick person</strong>
+              <small>Power List</small>
+            </button>
+            <button class="quest-step" data-screen="contacts" data-quest-step="contact" type="button">
+              <span class="quest-dot">2</span>
+              <strong>Reach out</strong>
+              <small>Call or text</small>
+            </button>
+            <button class="quest-step" data-screen="log" data-quest-step="log" type="button">
+              <span class="quest-dot">3</span>
+              <strong>Log it</strong>
+              <small>Keep streak</small>
+            </button>
+          </div>
+        </section>
+
+        <section class="section pulse-main-container vision-workspace">
+          <div class="section-head">
+            <h2>Vision Board</h2>
+            <button class="text-btn" type="button">Edit</button>
+          </div>
+          <div class="dream-builder-card">
+            <div>
+              <strong>Speak the vision. Watch it grow.</strong>
+              <p class="muted">PulseNow turns your dream into a clickable map, milestones, and the next daily move.</p>
+            </div>
+            <button class="ghost-btn" data-dream-builder onclick="window.pulseNowOpenDreamBuilderPanel && window.pulseNowOpenDreamBuilderPanel()" type="button">Dream Builder</button>
+          </div>
+          <div id="dream-builder-input-panel" class="dream-builder-input-panel hidden">
+            <button id="dream-record-btn" class="dream-big-mic" type="button" aria-label="Start recording">
+              <img src="/public/dream-mic-button.png" alt="" aria-hidden="true" />
+            </button>
+            <p id="dream-record-status" class="muted">Tap the mic, speak your dream life, then tap again to generate the map.</p>
+            <div class="dream-provider-row">
+              <button id="dream-text-toggle" class="dream-text-toggle" type="button">Add text instead</button>
+            </div>
+            <div id="dream-text-entry-panel" class="dream-text-entry-panel hidden">
+              <textarea id="dream-text-input" placeholder="Type your dream life here if you do not want to record..."></textarea>
+              <button id="dream-text-submit" class="ghost-btn" type="button">Build dream map</button>
+            </div>
+          </div>
+          <div id="vision-board-grid" class="vision-board-grid"></div>
+          <p class="muted" style="margin-top: 10px; font-style: italic;">I make dreams possible by showing up every day.</p>
+        </section>
+
+        <section class="section card goals-panel">
+          <div class="section-head">
+            <h2>This Week's Goals</h2>
+            <button class="text-btn" type="button">Edit</button>
+          </div>
+          <div id="weekly-goals-list" class="weekly-goals-list"></div>
+        </section>
+
+        <section class="section card quiz-profile-card">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Personal profile</p>
+              <h2>Working style quizzes</h2>
+            </div>
+            <button class="text-btn" data-screen="quiz" type="button">Open</button>
+          </div>
+          <p class="muted" style="margin-top: 10px; line-height: 1.6;">Complete Working Genius, Four Tendencies, Enneagram, and Myers-Briggs so the coach can personalize your Today feed and weekly insights.</p>
+        </section>
+
+        <section class="section card standings-card">
+          <h2>Today's Standings</h2>
+          <div class="standings">
+            <div class="standing-row"><strong>Sam</strong><span style="text-align:right">28</span><span style="text-align:right">3</span></div>
+            <div class="standing-row"><strong>Kaden</strong><span style="text-align:right">22</span><span style="text-align:right">2</span></div>
+            <div class="standing-row me"><strong>You</strong><span style="text-align:right">12</span><span style="text-align:right">1</span></div>
+          </div>
+          <p class="muted" style="margin-top: 12px; font-size: 13px;">Updates each time a teammate saves their log.</p>
+        </section>
+
+        <section class="section card challenge today-next-card">
+          <p class="eyebrow">Next best move</p>
+          <h2>Call the first person on your Power List.</h2>
+          <p class="muted" style="margin-top: 8px; line-height: 1.6;">One real conversation beats checking every dashboard. Start with the highest-priority person, then log the outcome.</p>
+          <div class="choice-row">
+            <button class="pill-btn" data-screen="contacts" type="button">Open People</button>
+            <button class="ghost-btn" data-screen="log" type="button">Log activity</button>
+          </div>
+        </section>
+
+        <section class="section card people-call-card">
+          <div class="section-head">
+            <h2>People to call</h2>
+            <button id="see-power-list-btn" class="text-btn" data-screen="powerlist" type="button">See all 10</button>
+          </div>
+          <div id="home-power-list" class="power-list"></div>
         </section>
 
         <section class="section badges-section">
@@ -17955,7 +17943,12 @@
 
       function renderMe() {
         if (!meScreen) return;
+        hydrateContacts();
         hydrateLog();
+        renderVisionWorkspace();
+        renderImageRevealGoals();
+        renderPowerLists();
+        updateTodayPath();
         const session = getCurrentSession() || { name: "Demo Agent", level: "TA", agent_code: "DEMO" };
         const stats = getCurrentStats();
         const badgeStats = collectBadgeStats({ includeCurrent: true });
@@ -20413,6 +20406,7 @@
           hydrateLog();
           renderPowerLists();
           refreshPowerListsFromApi(false);
+          hydrateSocialPosts(false);
           homeScreen.classList.remove("hidden");
           logScreen.classList.add("hidden");
           contactsScreen.classList.add("hidden");
@@ -20566,19 +20560,7 @@
           return;
         }
         if (screen === "social") {
-          hydrateSocialPosts(false);
-          homeScreen.classList.add("hidden");
-          logScreen.classList.add("hidden");
-          contactsScreen.classList.add("hidden");
-          powerlistScreen.classList.add("hidden");
-          pipelineScreen.classList.add("hidden");
-          boardScreen.classList.add("hidden");
-          socialScreen.classList.remove("hidden");
-          managerScreen.classList.add("hidden");
-          meScreen.classList.add("hidden");
-          coachScreen.classList.add("hidden");
-          quizScreen.classList.add("hidden");
-          placeholderScreen.classList.add("hidden");
+          setScreen("home");
           return;
         }
         if (screen === "manager") {
