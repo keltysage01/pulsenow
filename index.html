@@ -449,6 +449,66 @@
         padding: 2px 0 12px;
       }
 
+      .social-upload-panel {
+        display: grid;
+        gap: 10px;
+      }
+
+      .social-upload-btn {
+        display: flex;
+        min-height: 48px;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        border: 1px dashed color-mix(in srgb, var(--primary) 45%, var(--border));
+        border-radius: 16px;
+        background: color-mix(in srgb, var(--primary) 8%, transparent);
+        color: var(--primary);
+        font-size: 13px;
+        font-weight: 950;
+      }
+
+      .social-upload-btn input {
+        display: none;
+      }
+
+      .social-selected-media {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .social-selected-tile {
+        position: relative;
+        min-height: 132px;
+        overflow: hidden;
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        background: color-mix(in srgb, var(--sub) 8%, transparent);
+      }
+
+      .social-selected-tile img,
+      .social-selected-tile video {
+        width: 100%;
+        height: 100%;
+        min-height: 132px;
+        object-fit: cover;
+        display: block;
+      }
+
+      .social-selected-tile button {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        min-width: 30px;
+        min-height: 30px;
+        border: 0;
+        border-radius: 999px;
+        background: rgba(0, 0, 0, 0.58);
+        color: #fff;
+        font-weight: 950;
+      }
+
       #social-body-input {
         width: 100%;
         min-height: 124px;
@@ -736,6 +796,37 @@
         padding: 18px;
       }
 
+      .social-post-media.uploaded-media {
+        min-height: 360px;
+        align-content: stretch;
+        padding: 0;
+        background: #0f172a !important;
+      }
+
+      .social-post-media.uploaded-media::before {
+        display: none;
+      }
+
+      .social-post-media-grid {
+        display: grid;
+        min-height: inherit;
+        grid-template-columns: 1fr;
+      }
+
+      .social-post-media-grid.multi {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .social-post-media-grid img,
+      .social-post-media-grid video {
+        width: 100%;
+        height: 100%;
+        min-height: 180px;
+        object-fit: cover;
+        display: block;
+        background: #0f172a;
+      }
+
       .social-post-media::before {
         content: "";
         position: absolute;
@@ -813,6 +904,11 @@
       .social-mini-feed .social-post-body,
       .social-mini-feed .social-comment-row {
         display: none;
+      }
+
+      .social-mini-feed .social-post-card.has-upload-media .social-post-media {
+        display: grid;
+        min-height: 220px;
       }
 
       .social-mini-feed .social-post-card {
@@ -13596,6 +13692,13 @@
             <button class="filter-btn" data-social-type="story" type="button">Story</button>
             <button class="filter-btn" data-social-type="shoutout" type="button">Shoutout</button>
           </div>
+          <div class="social-upload-panel">
+            <label class="social-upload-btn" for="social-media-input">
+              Add photos or videos
+              <input id="social-media-input" type="file" accept="image/*,video/*" multiple />
+            </label>
+            <div id="social-selected-media-list" class="social-selected-media"></div>
+          </div>
           <div id="social-media-preview" class="social-media-preview"><strong>Make the win visible.</strong><span>Preview</span></div>
           <textarea id="social-body-input" maxlength="700" placeholder="What happened? Share the useful details, not just the scoreboard."></textarea>
           <div class="social-composer-actions">
@@ -14016,6 +14119,8 @@
       const socialFeedList = document.getElementById("social-feed-list");
       const socialTitleInput = document.getElementById("social-title-input");
       const socialBodyInput = document.getElementById("social-body-input");
+      const socialMediaInput = document.getElementById("social-media-input");
+      const socialSelectedMediaList = document.getElementById("social-selected-media-list");
       const socialStatus = document.getElementById("social-status");
       const socialModePill = document.getElementById("social-mode-pill");
       const socialStoryRail = document.getElementById("social-story-rail");
@@ -14106,6 +14211,7 @@
       let boardRange = "week";
       let socialType = "win";
       let socialPosts = [];
+      let selectedSocialMedia = [];
       let wfgTeamRows = [];
       let wfgUnmatchedRows = [];
       let wfgHierarchyRows = [];
@@ -16719,6 +16825,17 @@
       function normalizeSocialPost(post) {
         const reactions = post && post.reactions && typeof post.reactions === "object" ? post.reactions : {};
         const reacted = post && post.reacted && typeof post.reacted === "object" ? post.reacted : {};
+        const mediaItems = Array.isArray(post && post.media_items)
+          ? post.media_items
+            .filter((item) => item && ["image", "video"].includes(item.type) && typeof item.url === "string" && item.url.indexOf("data:") === 0)
+            .slice(0, 4)
+            .map((item) => ({
+              type: item.type,
+              url: item.url,
+              name: String(item.name || (item.type === "video" ? "Video" : "Photo")).slice(0, 80),
+              mime: String(item.mime || "")
+            }))
+          : [];
         return {
           id: String(post.id || "post-" + Date.now()),
           type: ["win", "story", "shoutout"].includes(post.type) ? post.type : "win",
@@ -16728,6 +16845,7 @@
           author_level: String(post.author_level || post.level || ""),
           created_at: post.created_at || new Date().toISOString(),
           media_theme: ["aqua", "gold", "green", "blue"].includes(post.media_theme) ? post.media_theme : socialThemeForType(post.type),
+          media_items: mediaItems,
           reactions: {
             fire: Math.max(0, Number(reactions.fire || 0)),
             congrats: Math.max(0, Number(reactions.congrats || 0)),
@@ -16775,6 +16893,67 @@
         return type === "shoutout" ? "Shoutout" : type === "story" ? "Story" : "Win";
       }
 
+      function renderSelectedSocialMedia() {
+        if (!socialSelectedMediaList) return;
+        socialSelectedMediaList.innerHTML = "";
+        selectedSocialMedia.forEach((item, index) => {
+          const tile = document.createElement("div");
+          tile.className = "social-selected-tile";
+          tile.innerHTML =
+            (item.type === "video"
+              ? '<video src="' + escapeHtml(item.url) + '" muted playsinline></video>'
+              : '<img src="' + escapeHtml(item.url) + '" alt="' + escapeHtml(item.name || "Selected photo") + '" />') +
+            '<button type="button" data-social-remove-media="' + index + '" aria-label="Remove media">x</button>';
+          socialSelectedMediaList.appendChild(tile);
+        });
+      }
+
+      function socialFileToDataUrl(file) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(String(reader.result || ""));
+          reader.onerror = () => reject(reader.error || new Error("Could not read media file."));
+          reader.readAsDataURL(file);
+        });
+      }
+
+      async function handleSocialMediaFiles(fileList) {
+        const files = Array.from(fileList || []);
+        if (!files.length) return;
+        const next = selectedSocialMedia.slice();
+        let skipped = 0;
+        for (const file of files) {
+          if (next.length >= 4) {
+            skipped += 1;
+            continue;
+          }
+          const isImage = file.type.indexOf("image/") === 0;
+          const isVideo = file.type.indexOf("video/") === 0;
+          if (!isImage && !isVideo) {
+            skipped += 1;
+            continue;
+          }
+          if (file.size > 3500000) {
+            skipped += 1;
+            continue;
+          }
+          const url = await socialFileToDataUrl(file);
+          next.push({
+            type: isVideo ? "video" : "image",
+            url,
+            name: file.name,
+            mime: file.type
+          });
+        }
+        selectedSocialMedia = next;
+        renderSelectedSocialMedia();
+        if (socialStatus) {
+          socialStatus.textContent = skipped
+            ? "Added " + selectedSocialMedia.length + " media item" + (selectedSocialMedia.length === 1 ? "" : "s") + ". Some files were skipped because uploads are limited to 4 items and 3.5 MB each."
+            : "Added " + selectedSocialMedia.length + " media item" + (selectedSocialMedia.length === 1 ? "" : "s") + ".";
+        }
+      }
+
       function updateSocialMediaPreview() {
         if (!socialMediaPreview) return;
         const title = socialTitleInput.value.trim() || (socialType === "shoutout" ? "Lift someone up." : socialType === "story" ? "Tell the story." : "Make the win visible.");
@@ -16803,9 +16982,23 @@
 
       function renderSocialPost(post, compact) {
         const item = document.createElement("article");
-        item.className = "social-post-card";
+        const mediaItems = Array.isArray(post.media_items) ? post.media_items.slice(0, 4) : [];
+        item.className = "social-post-card" + (mediaItems.length ? " has-upload-media" : "");
         const typeLabel = socialTypeLabel(post.type);
         const mediaText = post.type === "shoutout" ? "Team proof" : post.type === "story" ? "Field story" : "Win posted";
+        const mediaMarkup = mediaItems.length
+          ? '<div class="social-post-media uploaded-media"><div class="social-post-media-grid ' + (mediaItems.length > 1 ? "multi" : "") + '">' +
+            mediaItems.map((media) => media.type === "video"
+              ? '<video src="' + escapeHtml(media.url) + '" controls playsinline preload="metadata"></video>'
+              : '<img src="' + escapeHtml(media.url) + '" alt="' + escapeHtml(media.name || post.title) + '" loading="lazy" />').join("") +
+            "</div></div>"
+          : '<div class="social-post-media" style="background:' +
+            socialGradient(post.media_theme) +
+            '"><strong>' +
+            escapeHtml(post.title) +
+            "</strong><span>" +
+            escapeHtml(mediaText) +
+            "</span></div>";
         item.innerHTML =
           '<div class="social-post-head"><div class="social-post-author"><span class="social-author-avatar">' +
           escapeHtml((post.author_name || "P").slice(0, 1).toUpperCase()) +
@@ -16815,13 +17008,9 @@
           escapeHtml([post.author_level, formatSocialTime(post.created_at)].filter(Boolean).join(" · ")) +
           '</p></div></div><span class="stage-pill">' +
           typeLabel +
-          '</span></div><div class="social-post-media" style="background:' +
-          socialGradient(post.media_theme) +
-          '"><strong>' +
-          escapeHtml(post.title) +
-          "</strong><span>" +
-          escapeHtml(mediaText) +
-          '</span></div><div class="social-post-copy"><h3>' +
+          "</span></div>" +
+          mediaMarkup +
+          '<div class="social-post-copy"><h3>' +
           escapeHtml(post.title) +
           "</h3>" +
           (compact ? "" : '<p class="social-post-body muted">' + escapeHtml(post.body) + "</p>") +
@@ -16891,6 +17080,7 @@
           author_level: session.level || "TA",
           created_at: new Date().toISOString(),
           media_theme: socialThemeForType(socialType),
+          media_items: selectedSocialMedia,
           reactions: { fire: 0, congrats: 0, inspired: 0 },
           reacted: {}
         });
@@ -16899,6 +17089,9 @@
         renderSocial();
         socialTitleInput.value = "";
         socialBodyInput.value = "";
+        selectedSocialMedia = [];
+        if (socialMediaInput) socialMediaInput.value = "";
+        renderSelectedSocialMedia();
         socialStatus.textContent = "Posted to preview feed.";
       }
 
@@ -20289,6 +20482,16 @@
         });
       });
       socialTitleInput.addEventListener("input", updateSocialMediaPreview);
+      socialMediaInput.addEventListener("change", async (event) => {
+        await handleSocialMediaFiles(event.target.files);
+        event.target.value = "";
+      });
+      socialSelectedMediaList.addEventListener("click", (event) => {
+        const button = event.target.closest("[data-social-remove-media]");
+        if (!button) return;
+        selectedSocialMedia.splice(Number(button.dataset.socialRemoveMedia), 1);
+        renderSelectedSocialMedia();
+      });
       socialStoryRail.addEventListener("click", (event) => {
         const button = event.target.closest("[data-social-story-id]");
         if (!button) return;
