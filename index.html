@@ -14073,6 +14073,7 @@
       let apiPowerPicks = null;
       let backendLeaderboardRows = null;
       let backendActivityLoadedFor = "";
+      let backendBadgesLoadedFor = "";
       let lastImportedContacts = [];
       let contactIntelClientPromise = null;
       let dreamMediaRecorder = null;
@@ -15815,6 +15816,51 @@
         return true;
       }
 
+      async function loadBackendBadgesForSession() {
+        const session = getCurrentSession();
+        if (!pulseBackendClient || !session || session.id === "demo-user") return false;
+        if (backendBadgesLoadedFor === session.id) return true;
+        const { data, error } = await pulseBackendClient
+          .from("pulse_badge_awards")
+          .select("badge_id,earned_at,metadata")
+          .eq("profile_id", session.id);
+        if (error) throw error;
+        const record = readBadgeRecord(session);
+        const earned = new Set(record.earnedBadges);
+        const earnedAt = Object.assign({}, record.earnedAt);
+        (data || []).forEach((row) => {
+          if (!row.badge_id) return;
+          earned.add(row.badge_id);
+          if (!earnedAt[row.badge_id]) earnedAt[row.badge_id] = row.earned_at || todayKey();
+        });
+        record.earnedBadges = badgeDefs.map((badge) => badge.id).filter((id) => earned.has(id));
+        record.earnedAt = earnedAt;
+        writeBadgeRecord(session, record);
+        backendBadgesLoadedFor = session.id;
+        if (meScreen && !meScreen.classList.contains("hidden")) renderMe();
+        return true;
+      }
+
+      async function persistBackendBadgeAwards(badgeIds) {
+        const session = getCurrentSession();
+        if (!pulseBackendClient || !session || session.id === "demo-user" || !Array.isArray(badgeIds) || badgeIds.length === 0) return false;
+        const rows = badgeIds.map((id) => ({
+          profile_id: session.id,
+          org_id: session.org_id || pulseDefaultOrgId,
+          badge_id: id,
+          earned_at: todayKey(),
+          metadata: {
+            title: badgeById(id).title,
+            source: "client_unlock"
+          }
+        }));
+        const { error } = await pulseBackendClient
+          .from("pulse_badge_awards")
+          .upsert(rows, { onConflict: "profile_id,badge_id" });
+        if (error) throw error;
+        return true;
+      }
+
       function fieldToApiAction(field) {
         if (field === "calls_warm" || field === "calls_cold" || field === "msg_text") return "contact_block";
         if (field === "appt1_set") return "appt_set";
@@ -16344,6 +16390,7 @@
         });
         record.earnedBadges = badgeDefs.map((badge) => badge.id).filter((id) => earned.has(id));
         writeBadgeRecord(session, record);
+        persistBackendBadgeAwards(newlyEarned).catch(() => {});
         return newlyEarned;
       }
 
@@ -19530,6 +19577,7 @@
           authNote("Connected. Your profile and CRM will save to Supabase.");
           await loadBackendContacts();
           await loadBackendActivityForSession();
+          await loadBackendBadgesForSession();
           await refreshBackendLeaderboard();
           showApp(backendSession);
           return;
@@ -19694,6 +19742,7 @@
           return;
         }
         if (screen === "me") {
+          loadBackendBadgesForSession().then(() => renderMe()).catch(() => {});
           renderMe();
           homeScreen.classList.add("hidden");
           logScreen.classList.add("hidden");
@@ -20257,6 +20306,7 @@
           sessionStorage.setItem(sessionKey, JSON.stringify(restored));
           await loadBackendContacts();
           await loadBackendActivityForSession();
+          await loadBackendBadgesForSession();
           await refreshBackendLeaderboard();
           showApp(restored);
           return;
