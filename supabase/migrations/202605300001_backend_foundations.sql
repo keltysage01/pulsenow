@@ -203,6 +203,11 @@ on public.pulse_activity_snapshots for all
 using (profile_id = auth.uid())
 with check (profile_id = auth.uid());
 
+drop policy if exists "pulse_activity org read" on public.pulse_activity_snapshots;
+create policy "pulse_activity org read"
+on public.pulse_activity_snapshots for select
+using (org_id = public.pulse_auth_org_id());
+
 drop policy if exists "pulse_badges owner all" on public.pulse_badge_awards;
 create policy "pulse_badges owner all"
 on public.pulse_badge_awards for all

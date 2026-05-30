@@ -14071,6 +14071,8 @@
       let firedUp = {};
       let coachMessages = [];
       let apiPowerPicks = null;
+      let backendLeaderboardRows = null;
+      let backendActivityLoadedFor = "";
       let lastImportedContacts = [];
       let contactIntelClientPromise = null;
       let dreamMediaRecorder = null;
@@ -15691,6 +15693,128 @@
         return data;
       }
 
+      function activitySnapshotToLog(row) {
+        const fields = row && row.fields && typeof row.fields === "object" ? row.fields : {};
+        return Object.assign({}, fields, {
+          date: row.day,
+          pts: Number(row.points || fields.pts || 0),
+          tier: row.tier || fields.tier || getTier(Number(row.points || fields.pts || 0))
+        });
+      }
+
+      async function persistBackendActivitySnapshot() {
+        const session = getCurrentSession();
+        if (!pulseBackendClient || !session || session.id === "demo-user") return null;
+        const calc = calculatePoints();
+        const tier = getTier(calc.pts);
+        const row = {
+          profile_id: session.id,
+          org_id: session.org_id || pulseDefaultOrgId,
+          day: todayKey(),
+          fields: Object.assign({}, currentLog, { date: todayKey(), pts: calc.pts, tier }),
+          points: calc.pts,
+          tier,
+          feed: Array.isArray(saveFeed) ? saveFeed.slice(0, 20) : [],
+          updated_at: new Date().toISOString()
+        };
+        const { data, error } = await pulseBackendClient
+          .from("pulse_activity_snapshots")
+          .upsert(row, { onConflict: "profile_id,day" })
+          .select("profile_id,day,points,tier,feed")
+          .single();
+        if (error) throw error;
+        return data;
+      }
+
+      async function removeBackendActivitySnapshot(day) {
+        const session = getCurrentSession();
+        if (!pulseBackendClient || !session || session.id === "demo-user") return;
+        const { error } = await pulseBackendClient
+          .from("pulse_activity_snapshots")
+          .delete()
+          .eq("profile_id", session.id)
+          .eq("day", day);
+        if (error) throw error;
+      }
+
+      async function loadBackendActivityForSession() {
+        const session = getCurrentSession();
+        if (!pulseBackendClient || !session || session.id === "demo-user") return false;
+        if (backendActivityLoadedFor === session.id) return true;
+        const since = new Date();
+        since.setDate(since.getDate() - 120);
+        const sinceKey = dateKeyFromDate(since);
+        const { data, error } = await pulseBackendClient
+          .from("pulse_activity_snapshots")
+          .select("day,fields,points,tier,feed")
+          .eq("profile_id", session.id)
+          .gte("day", sinceKey)
+          .order("day", { ascending: false });
+        if (error) throw error;
+        const history = {};
+        (data || []).forEach((row) => {
+          const log = activitySnapshotToLog(row);
+          history[row.day] = log;
+          if (row.day === todayKey()) {
+            currentLog = log;
+            saveFeed = Array.isArray(row.feed) ? row.feed : [];
+            sessionStorage.setItem(getLogKey(), JSON.stringify(currentLog));
+            sessionStorage.setItem(getFeedKey(), JSON.stringify(saveFeed));
+          }
+        });
+        writeActivityHistory(session, Object.assign(readActivityHistory(session), history));
+        backendActivityLoadedFor = session.id;
+        updateLogUI();
+        renderFeed();
+        return true;
+      }
+
+      function leaderboardPeriodStart() {
+        const d = parseDateKey(todayKey());
+        if (!d) return todayKey();
+        if (boardRange === "week") d.setDate(d.getDate() - d.getDay());
+        if (boardRange === "month") d.setDate(1);
+        if (boardRange === "all") d.setFullYear(d.getFullYear() - 3);
+        return dateKeyFromDate(d);
+      }
+
+      async function refreshBackendLeaderboard() {
+        const session = getCurrentSession();
+        if (!pulseBackendClient || !session || session.id === "demo-user") return false;
+        const { data, error } = await pulseBackendClient
+          .from("pulse_activity_snapshots")
+          .select("profile_id,day,points,tier,profiles(full_name,level)")
+          .eq("org_id", session.org_id || pulseDefaultOrgId)
+          .gte("day", leaderboardPeriodStart())
+          .order("day", { ascending: false });
+        if (error) throw error;
+        const byProfile = {};
+        (data || []).forEach((row) => {
+          const id = row.profile_id;
+          if (!byProfile[id]) {
+            const profile = row.profiles || {};
+            byProfile[id] = {
+              id,
+              name: profile.full_name || (id === session.id ? session.name : "Team member"),
+              level: profile.level || "TA",
+              pts: 0,
+              tier: "No Timer",
+              isMe: id === session.id
+            };
+          }
+          byProfile[id].pts += Number(row.points || 0);
+          if (row.day === todayKey() || byProfile[id].tier === "No Timer") byProfile[id].tier = row.tier || getTier(byProfile[id].pts);
+        });
+        const rows = Object.values(byProfile);
+        const me = rows.find((row) => row.id === session.id);
+        if (!me) {
+          const calc = calculatePoints();
+          rows.push({ id: session.id, name: session.name, level: session.level || "TA", pts: calc.pts, tier: getTier(calc.pts), isMe: true });
+        }
+        backendLeaderboardRows = rows.sort((a, b) => b.pts - a.pts);
+        return true;
+      }
+
       function fieldToApiAction(field) {
         if (field === "calls_warm" || field === "calls_cold" || field === "msg_text") return "contact_block";
         if (field === "appt1_set") return "appt_set";
@@ -16340,6 +16464,9 @@
       }
 
       function hydrateLog() {
+        if (pulseBackendClient && getCurrentSession() && getCurrentSession().id !== "demo-user" && backendActivityLoadedFor !== getCurrentSession().id) {
+          loadBackendActivityForSession().catch(() => {});
+        }
         const savedLog = sessionStorage.getItem(getLogKey());
         if (savedLog) {
           try {
@@ -16901,6 +17028,9 @@
       }
 
       function getLeaderboardRows() {
+        if (Array.isArray(backendLeaderboardRows) && backendLeaderboardRows.length > 0) {
+          return backendLeaderboardRows.slice().sort((a, b) => b.pts - a.pts);
+        }
         const sessionRaw = sessionStorage.getItem(sessionKey);
         let name = "Demo Agent";
         let level = "TA";
@@ -17567,6 +17697,10 @@
         saveFeed = saveFeed.slice(0, 12);
         sessionStorage.setItem(getFeedKey(), JSON.stringify(saveFeed));
         renderFeed();
+        persistBackendActivitySnapshot()
+          .then(() => refreshBackendLeaderboard())
+          .then(() => renderBoard())
+          .catch(() => {});
         const newBadges = checkAndUnlockBadges();
         showBadgeUnlockUI(newBadges);
         renderBoard();
@@ -17577,6 +17711,10 @@
         currentLog = {};
         sessionStorage.removeItem(getLogKey());
         removeActivityHistoryEntry(todayKey());
+        removeBackendActivitySnapshot(todayKey())
+          .then(() => refreshBackendLeaderboard())
+          .then(() => renderBoard())
+          .catch(() => {});
         updateLogUI();
       }
 
@@ -19391,6 +19529,8 @@
           sessionStorage.setItem(sessionKey, JSON.stringify(backendSession));
           authNote("Connected. Your profile and CRM will save to Supabase.");
           await loadBackendContacts();
+          await loadBackendActivityForSession();
+          await refreshBackendLeaderboard();
           showApp(backendSession);
           return;
         } catch (error) {
@@ -19486,6 +19626,7 @@
           hydrateContacts();
           hydrateLog();
           renderBoard();
+          refreshBackendLeaderboard().then(() => renderBoard()).catch(() => {});
           homeScreen.classList.add("hidden");
           logScreen.classList.add("hidden");
           contactsScreen.classList.add("hidden");
@@ -20115,6 +20256,8 @@
         if (restored) {
           sessionStorage.setItem(sessionKey, JSON.stringify(restored));
           await loadBackendContacts();
+          await loadBackendActivityForSession();
+          await refreshBackendLeaderboard();
           showApp(restored);
           return;
         }
