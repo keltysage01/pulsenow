@@ -13627,6 +13627,17 @@
         <section class="section wfg-team-card">
           <div class="section-head">
             <div>
+              <p class="eyebrow">Hierarchy</p>
+              <h2>Manager tree</h2>
+            </div>
+            <button id="wfg-rebuild-hierarchy-btn" class="text-btn" type="button">Rebuild</button>
+          </div>
+          <div id="wfg-hierarchy-list" class="wfg-team-list"></div>
+        </section>
+
+        <section class="section wfg-team-card">
+          <div class="section-head">
+            <div>
               <p class="eyebrow">Team Map</p>
               <h2>Matched agents</h2>
             </div>
@@ -13986,6 +13997,7 @@
       const wfgPasteInput = document.getElementById("wfg-paste-input");
       const wfgImportStatus = document.getElementById("wfg-import-status");
       const wfgSummaryGrid = document.getElementById("wfg-summary-grid");
+      const wfgHierarchyList = document.getElementById("wfg-hierarchy-list");
       const wfgTeamList = document.getElementById("wfg-team-list");
       const wfgUnmatchedList = document.getElementById("wfg-unmatched-list");
       const badgeGrid = document.getElementById("badge-grid");
@@ -14068,6 +14080,7 @@
       let socialPosts = [];
       let wfgTeamRows = [];
       let wfgUnmatchedRows = [];
+      let wfgHierarchyRows = [];
       let firedUp = {};
       let coachMessages = [];
       let apiPowerPicks = null;
@@ -15791,7 +15804,12 @@
           .order("day", { ascending: false });
         if (error) throw error;
         const byProfile = {};
+        const hierarchyProfileIds = new Set((Array.isArray(wfgHierarchyRows) ? wfgHierarchyRows : [])
+          .map((row) => row.matched_profile_id)
+          .filter(Boolean));
+        if (hierarchyProfileIds.size > 0) hierarchyProfileIds.add(session.id);
         (data || []).forEach((row) => {
+          if (hierarchyProfileIds.size > 0 && !hierarchyProfileIds.has(row.profile_id)) return;
           const id = row.profile_id;
           if (!byProfile[id]) {
             const profile = row.profiles || {};
@@ -16995,6 +17013,48 @@
       function applyWfgHierarchyToRows() {
         wfgTeamRows = wfgTeamRows.map(applyWfgHierarchy);
         wfgUnmatchedRows = wfgUnmatchedRows.map(applyWfgHierarchy);
+        wfgHierarchyRows = buildLocalWfgHierarchy();
+      }
+
+      function buildLocalWfgHierarchy() {
+        const session = getCurrentSession() || {};
+        const myCode = normalizeMatchKey(session.agent_code);
+        const rows = wfgTeamRows.concat(wfgUnmatchedRows).filter((row) => normalizeMatchKey(row.agent_code));
+        const byCode = {};
+        rows.forEach((row) => {
+          byCode[normalizeMatchKey(row.agent_code)] = row;
+        });
+        const result = [];
+        const seen = new Set();
+        function addBranch(row, depth) {
+          const code = normalizeMatchKey(row.agent_code);
+          if (!code || seen.has(code) || depth > 8) return;
+          seen.add(code);
+          const leader = byCode[normalizeMatchKey(row.leader_code)] || null;
+          result.push(Object.assign({}, row, {
+            depth,
+            source: "local_wfg",
+            agent_name: row.name,
+            leader_name: leader ? leader.name : "",
+            matched_profile_id: row.match_source === "session" ? (getCurrentSession() || {}).id : row.match_source === "profile" ? row.match_id : ""
+          }));
+          rows
+            .filter((candidate) => normalizeMatchKey(candidate.leader_code) === code)
+            .sort((a, b) => String(a.name || "").localeCompare(String(b.name || "")))
+            .forEach((child) => addBranch(child, depth + 1));
+        }
+        if (myCode && byCode[myCode]) addBranch(byCode[myCode], 0);
+        rows
+          .filter((row) => myCode && normalizeMatchKey(row.leader_code) === myCode)
+          .sort((a, b) => String(a.name || "").localeCompare(String(b.name || "")))
+          .forEach((row) => addBranch(row, 1));
+        if (!result.length) {
+          rows
+            .filter((row) => !normalizeMatchKey(row.leader_code) || !byCode[normalizeMatchKey(row.leader_code)])
+            .sort((a, b) => String(a.name || "").localeCompare(String(b.name || "")))
+            .forEach((row) => addBranch(row, 0));
+        }
+        return result;
       }
 
       function wfgRowToDbRow(row) {
@@ -17034,6 +17094,54 @@
         return true;
       }
 
+      function dbRowToWfgHierarchyRow(row) {
+        const data = row.row_data && typeof row.row_data === "object" ? row.row_data : {};
+        return {
+          id: "wfg-edge-" + (row.agent_code || data.agent_code || Math.random()),
+          agent_code: row.agent_code || data.agent_code || "",
+          leader_code: row.leader_code || data.leader_code || "",
+          name: row.agent_name || data.name || "WFG Agent",
+          agent_name: row.agent_name || data.name || "WFG Agent",
+          leader_name: row.leader_name || "",
+          depth: Number(row.depth || 0),
+          matched_profile_id: row.matched_profile_id || "",
+          points: Number(data.points || 0),
+          recruits: Number(data.recruits || 0),
+          licensed: data.licensed === true,
+          licensing_stage: data.licensing_stage || "",
+          rank: data.rank || ""
+        };
+      }
+
+      async function loadBackendWfgHierarchy() {
+        const session = getCurrentSession();
+        if (!pulseBackendClient || !session || session.id === "demo-user") return false;
+        const { data, error } = await pulseBackendClient
+          .from("pulse_wfg_team_edges")
+          .select("agent_code,agent_name,leader_code,leader_name,depth,matched_profile_id,row_data,updated_at")
+          .eq("source_profile_id", session.id)
+          .order("depth", { ascending: true })
+          .order("agent_name", { ascending: true });
+        if (error) throw error;
+        wfgHierarchyRows = (data || []).map(dbRowToWfgHierarchyRow);
+        if (!wfgHierarchyRows.length) wfgHierarchyRows = buildLocalWfgHierarchy();
+        renderWfgTeam();
+        return true;
+      }
+
+      async function rebuildBackendWfgHierarchy() {
+        const session = getCurrentSession();
+        if (!pulseBackendClient || !session || session.id === "demo-user") {
+          wfgHierarchyRows = buildLocalWfgHierarchy();
+          renderWfgTeam();
+          return null;
+        }
+        const { data, error } = await pulseBackendClient.rpc("pulse_rebuild_wfg_team_hierarchy");
+        if (error) throw error;
+        await loadBackendWfgHierarchy();
+        return Array.isArray(data) ? data[0] : data;
+      }
+
       async function loadBackendWfgTeamRows() {
         const session = getCurrentSession();
         if (!pulseBackendClient || !session || session.id === "demo-user") return false;
@@ -17047,9 +17155,11 @@
         const rows = (data || []).map(dbRowToWfgRow);
         wfgTeamRows = rows.filter((row) => row.matched);
         wfgUnmatchedRows = rows.filter((row) => !row.matched);
+        wfgHierarchyRows = buildLocalWfgHierarchy();
         writeLocalJson(wfgTeamStorageKey, wfgTeamRows);
         writeLocalJson(wfgUnmatchedStorageKey, wfgUnmatchedRows);
         backendWfgLoadedFor = session.id;
+        loadBackendWfgHierarchy().catch(() => {});
         renderWfgTeam();
         if (rows.length && wfgImportStatus) {
           wfgImportStatus.textContent = "Loaded " + rows.length + " saved WFG rows from Supabase.";
@@ -17070,6 +17180,7 @@
         });
         wfgTeamRows = matched;
         wfgUnmatchedRows = unmatched;
+        wfgHierarchyRows = [];
         applyWfgHierarchyToRows();
         writeLocalJson(wfgTeamStorageKey, wfgTeamRows);
         writeLocalJson(wfgUnmatchedStorageKey, wfgUnmatchedRows);
@@ -17078,8 +17189,10 @@
         try {
           const saved = await persistBackendWfgTeamRows();
           if (saved) {
+            const rebuilt = await rebuildBackendWfgHierarchy();
             backendWfgLoadedFor = getCurrentSession().id;
-            wfgImportStatus.textContent += " Saved to Supabase.";
+            const directCount = rebuilt && Number.isFinite(Number(rebuilt.direct_count)) ? Number(rebuilt.direct_count) : wfgHierarchyRows.filter((row) => Number(row.depth || 0) === 1).length;
+            wfgImportStatus.textContent += " Saved to Supabase. Hierarchy rebuilt with " + directCount + " direct team rows.";
           }
         } catch (error) {
           wfgImportStatus.textContent += " Saved on this device; Supabase save failed.";
@@ -17094,25 +17207,41 @@
         applyWfgHierarchyToRows();
         renderWfgTeam();
         if (pulseBackendClient && getCurrentSession() && getCurrentSession().id !== "demo-user") {
-          loadBackendWfgTeamRows().catch(() => {});
+          loadBackendWfgTeamRows().then(() => loadBackendWfgHierarchy()).catch(() => {});
         }
       }
 
       function renderWfgTeam() {
         if (!wfgSummaryGrid || !wfgTeamList || !wfgUnmatchedList) return;
+        if (!Array.isArray(wfgHierarchyRows) || !wfgHierarchyRows.length) wfgHierarchyRows = buildLocalWfgHierarchy();
         const total = wfgTeamRows.length + wfgUnmatchedRows.length;
         const licensed = wfgTeamRows.filter((row) => row.licensed).length;
         const points = wfgTeamRows.reduce((sum, row) => sum + Number(row.points || 0), 0);
         const recruits = wfgTeamRows.reduce((sum, row) => sum + Number(row.recruits || 0), 0);
         const directTeam = wfgTeamRows.concat(wfgUnmatchedRows).filter((row) => row.is_direct_team).length;
+        const hierarchyTotal = wfgHierarchyRows.length;
+        const profileMatches = wfgHierarchyRows.filter((row) => row.matched_profile_id).length;
         wfgSummaryGrid.innerHTML =
           '<div class="wfg-metric"><span>Report rows</span><strong>' + total + '</strong></div>' +
           '<div class="wfg-metric"><span>Matched</span><strong>' + wfgTeamRows.length + '</strong></div>' +
           '<div class="wfg-metric"><span>Licensed</span><strong>' + licensed + '</strong></div>' +
           '<div class="wfg-metric"><span>Direct team</span><strong>' + directTeam + '</strong></div>' +
+          '<div class="wfg-metric"><span>Hierarchy rows</span><strong>' + hierarchyTotal + '</strong></div>' +
+          '<div class="wfg-metric"><span>App profiles</span><strong>' + profileMatches + '</strong></div>' +
           '<div class="wfg-metric"><span>Points / recruits</span><strong>' + points + " / " + recruits + '</strong></div>';
         wfgTeamList.innerHTML = "";
         wfgUnmatchedList.innerHTML = "";
+        if (wfgHierarchyList) {
+          wfgHierarchyList.innerHTML = "";
+          if (!wfgHierarchyRows.length) {
+            wfgHierarchyList.innerHTML = '<div class="social-empty">No hierarchy built yet. Import a WFG report, then rebuild.</div>';
+          } else {
+            wfgHierarchyRows
+              .slice()
+              .sort((a, b) => Number(a.depth || 0) - Number(b.depth || 0) || String(a.name || a.agent_name || "").localeCompare(String(b.name || b.agent_name || "")))
+              .forEach((row) => wfgHierarchyList.appendChild(renderWfgHierarchyRow(row)));
+          }
+        }
         if (!wfgTeamRows.length) wfgTeamList.innerHTML = '<div class="social-empty">No matched agents yet. Upload a WFG export or load the sample.</div>';
         wfgTeamRows
           .slice()
@@ -17154,16 +17283,46 @@
         return item;
       }
 
+      function renderWfgHierarchyRow(row) {
+        const item = document.createElement("article");
+        item.className = "wfg-team-row";
+        const depth = Number(row.depth || 0);
+        const inset = Math.min(depth, 6) * 14;
+        const label = depth === 0 ? "Manager root" : depth === 1 ? "Direct team" : "Level " + depth;
+        item.style.marginLeft = inset + "px";
+        item.innerHTML =
+          '<div class="wfg-team-top"><span class="wfg-agent-avatar">' +
+          escapeHtml((row.agent_name || row.name || "W").slice(0, 1).toUpperCase()) +
+          '</span><div><strong>' +
+          escapeHtml(row.agent_name || row.name || "WFG Agent") +
+          '</strong><p class="muted" style="margin-top:4px;">' +
+          escapeHtml([row.agent_code ? "Code " + row.agent_code : "", row.leader_code ? "Leader " + row.leader_code : "", row.leader_name ? "Under " + row.leader_name : ""].filter(Boolean).join(" · ")) +
+          '</p></div><span class="stage-pill">' +
+          escapeHtml(label) +
+          '</span></div><div class="wfg-agent-meta"><span class="stage-pill">' +
+          Number(row.points || 0) +
+          ' pts</span><span class="stage-pill">' +
+          Number(row.recruits || 0) +
+          ' recruits</span><span class="stage-pill">' +
+          (row.matched_profile_id ? "App profile linked" : "WFG-only") +
+          '</span></div>';
+        return item;
+      }
+
       async function clearWfgTeam() {
         wfgTeamRows = [];
         wfgUnmatchedRows = [];
+        wfgHierarchyRows = [];
         localStorage.removeItem(wfgTeamStorageKey);
         localStorage.removeItem(wfgUnmatchedStorageKey);
         wfgImportStatus.textContent = "Cleared WFG team import.";
         renderWfgTeam();
         try {
           const cleared = await persistBackendWfgTeamRows();
-          if (cleared) wfgImportStatus.textContent = "Cleared WFG team import from this device and Supabase.";
+          if (cleared) {
+            await rebuildBackendWfgHierarchy();
+            wfgImportStatus.textContent = "Cleared WFG team import from this device and Supabase.";
+          }
         } catch {
           wfgImportStatus.textContent = "Cleared WFG team import on this device. Supabase clear failed.";
         }
@@ -20149,6 +20308,18 @@
         await processWfgRows(rows);
       });
       document.getElementById("wfg-clear-btn").addEventListener("click", clearWfgTeam);
+      document.getElementById("wfg-rebuild-hierarchy-btn").addEventListener("click", async () => {
+        wfgImportStatus.textContent = "Rebuilding WFG hierarchy...";
+        try {
+          const rebuilt = await rebuildBackendWfgHierarchy();
+          const directCount = rebuilt && Number.isFinite(Number(rebuilt.direct_count)) ? Number(rebuilt.direct_count) : wfgHierarchyRows.filter((row) => Number(row.depth || 0) === 1).length;
+          wfgImportStatus.textContent = "Hierarchy rebuilt with " + wfgHierarchyRows.length + " rows and " + directCount + " direct team rows.";
+        } catch {
+          wfgHierarchyRows = buildLocalWfgHierarchy();
+          renderWfgTeam();
+          wfgImportStatus.textContent = "Hierarchy rebuilt on this device. Supabase hierarchy needs the latest migration.";
+        }
+      });
       document.addEventListener("click", (event) => {
         const createButton = event.target.closest("[data-wfg-create-contact]");
         if (createButton) {
