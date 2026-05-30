@@ -14074,6 +14074,7 @@
       let backendLeaderboardRows = null;
       let backendActivityLoadedFor = "";
       let backendBadgesLoadedFor = "";
+      let backendWfgLoadedFor = "";
       let lastImportedContacts = [];
       let contactIntelClientPromise = null;
       let dreamMediaRecorder = null;
@@ -16913,6 +16914,17 @@
             phone: contact.phone || "",
           });
         });
+        wfgTeamRows.concat(wfgUnmatchedRows).forEach((row) => {
+          rows.push({
+            source: "wfg",
+            id: row.match_id || row.id,
+            name: row.name,
+            agent_code: row.agent_code || "",
+            leader_code: row.leader_code || "",
+            email: row.email || "",
+            phone: row.phone || "",
+          });
+        });
         return rows;
       }
 
@@ -16936,8 +16948,10 @@
         const recruits = Number(getWfgValue(row, ["recruits", "new_recruits", "net_recruits", "licensed_recruits"]) || 0) || 0;
         const commission = Number(String(getWfgValue(row, ["commission", "paid", "payment", "earnings", "cash_flow"]) || "0").replace(/[^0-9.-]/g, "")) || 0;
         const licensed = normalizeWfgBool(getWfgValue(row, ["licensed", "license_status", "licensing_status", "active_license"]));
+        const reportRowId = buildWfgReportRowId({ agent_code: agentCode, email: getWfgValue(row, ["email", "email_address"]), phone: getWfgValue(row, ["phone", "mobile", "cell"]), name }, index);
         return {
-          id: "wfg-" + Date.now() + "-" + index,
+          id: "wfg-" + reportRowId,
+          report_row_id: reportRowId,
           matched: Boolean(match),
           match_source: match ? match.source : "",
           match_id: match ? match.id : "",
@@ -16956,8 +16970,95 @@
         };
       }
 
-      function processWfgRows(rows) {
-        hydrateContacts();
+      function buildWfgReportRowId(row, index) {
+        const code = normalizeMatchKey(row.agent_code);
+        if (code) return "agent_" + code;
+        const email = normalizeMatchKey(row.email);
+        if (email) return "email_" + email;
+        const phone = normalizeMatchKey(row.phone);
+        if (phone) return "phone_" + phone;
+        const name = normalizeMatchKey(row.name);
+        return (name ? "name_" + name : "row") + "_" + String(index + 1);
+      }
+
+      function applyWfgHierarchy(row) {
+        const session = getCurrentSession() || {};
+        const myCode = normalizeMatchKey(session.agent_code);
+        const rowCode = normalizeMatchKey(row.agent_code);
+        const rowLeader = normalizeMatchKey(row.leader_code);
+        row.is_current_agent = Boolean(myCode && rowCode === myCode);
+        row.is_direct_team = Boolean(myCode && rowLeader === myCode);
+        row.hierarchy_label = row.is_current_agent ? "My WFG row" : row.is_direct_team ? "Direct team" : row.leader_code ? "Downline row" : "No leader code";
+        return row;
+      }
+
+      function applyWfgHierarchyToRows() {
+        wfgTeamRows = wfgTeamRows.map(applyWfgHierarchy);
+        wfgUnmatchedRows = wfgUnmatchedRows.map(applyWfgHierarchy);
+      }
+
+      function wfgRowToDbRow(row) {
+        const session = getCurrentSession();
+        return {
+          profile_id: session.id,
+          org_id: session.org_id || pulseDefaultOrgId,
+          report_row_id: row.report_row_id || buildWfgReportRowId(row, 0),
+          matched: row.matched === true,
+          match_source: row.match_source || null,
+          match_id: row.match_id || null,
+          row_data: row,
+          updated_at: new Date().toISOString()
+        };
+      }
+
+      function dbRowToWfgRow(row) {
+        const data = row.row_data && typeof row.row_data === "object" ? row.row_data : {};
+        return applyWfgHierarchy(Object.assign({}, data, {
+          id: data.id || "wfg-" + row.report_row_id,
+          report_row_id: row.report_row_id,
+          matched: row.matched === true,
+          match_source: row.match_source || data.match_source || "",
+          match_id: row.match_id || data.match_id || ""
+        }));
+      }
+
+      async function persistBackendWfgTeamRows() {
+        const session = getCurrentSession();
+        if (!pulseBackendClient || !session || session.id === "demo-user") return false;
+        const rows = wfgTeamRows.concat(wfgUnmatchedRows).map(wfgRowToDbRow);
+        const deleteResult = await pulseBackendClient.from("pulse_wfg_team_rows").delete().eq("profile_id", session.id);
+        if (deleteResult.error) throw deleteResult.error;
+        if (!rows.length) return true;
+        const { error } = await pulseBackendClient.from("pulse_wfg_team_rows").insert(rows);
+        if (error) throw error;
+        return true;
+      }
+
+      async function loadBackendWfgTeamRows() {
+        const session = getCurrentSession();
+        if (!pulseBackendClient || !session || session.id === "demo-user") return false;
+        if (backendWfgLoadedFor === session.id) return true;
+        const { data, error } = await pulseBackendClient
+          .from("pulse_wfg_team_rows")
+          .select("report_row_id,matched,match_source,match_id,row_data,updated_at")
+          .eq("profile_id", session.id)
+          .order("updated_at", { ascending: false });
+        if (error) throw error;
+        const rows = (data || []).map(dbRowToWfgRow);
+        wfgTeamRows = rows.filter((row) => row.matched);
+        wfgUnmatchedRows = rows.filter((row) => !row.matched);
+        writeLocalJson(wfgTeamStorageKey, wfgTeamRows);
+        writeLocalJson(wfgUnmatchedStorageKey, wfgUnmatchedRows);
+        backendWfgLoadedFor = session.id;
+        renderWfgTeam();
+        if (rows.length && wfgImportStatus) {
+          wfgImportStatus.textContent = "Loaded " + rows.length + " saved WFG rows from Supabase.";
+        }
+        return true;
+      }
+
+      async function processWfgRows(rows) {
+        await hydrateContacts();
         const directory = currentAgentDirectory();
         const matched = [];
         const unmatched = [];
@@ -16969,10 +17070,20 @@
         });
         wfgTeamRows = matched;
         wfgUnmatchedRows = unmatched;
+        applyWfgHierarchyToRows();
         writeLocalJson(wfgTeamStorageKey, wfgTeamRows);
         writeLocalJson(wfgUnmatchedStorageKey, wfgUnmatchedRows);
         renderWfgTeam();
         wfgImportStatus.textContent = "Processed " + rows.length + " WFG rows · " + matched.length + " matched · " + unmatched.length + " need review.";
+        try {
+          const saved = await persistBackendWfgTeamRows();
+          if (saved) {
+            backendWfgLoadedFor = getCurrentSession().id;
+            wfgImportStatus.textContent += " Saved to Supabase.";
+          }
+        } catch (error) {
+          wfgImportStatus.textContent += " Saved on this device; Supabase save failed.";
+        }
       }
 
       function hydrateWfgTeam() {
@@ -16980,7 +17091,11 @@
         wfgUnmatchedRows = readLocalJson(wfgUnmatchedStorageKey, []);
         if (!Array.isArray(wfgTeamRows)) wfgTeamRows = [];
         if (!Array.isArray(wfgUnmatchedRows)) wfgUnmatchedRows = [];
+        applyWfgHierarchyToRows();
         renderWfgTeam();
+        if (pulseBackendClient && getCurrentSession() && getCurrentSession().id !== "demo-user") {
+          loadBackendWfgTeamRows().catch(() => {});
+        }
       }
 
       function renderWfgTeam() {
@@ -16989,10 +17104,12 @@
         const licensed = wfgTeamRows.filter((row) => row.licensed).length;
         const points = wfgTeamRows.reduce((sum, row) => sum + Number(row.points || 0), 0);
         const recruits = wfgTeamRows.reduce((sum, row) => sum + Number(row.recruits || 0), 0);
+        const directTeam = wfgTeamRows.concat(wfgUnmatchedRows).filter((row) => row.is_direct_team).length;
         wfgSummaryGrid.innerHTML =
           '<div class="wfg-metric"><span>Report rows</span><strong>' + total + '</strong></div>' +
           '<div class="wfg-metric"><span>Matched</span><strong>' + wfgTeamRows.length + '</strong></div>' +
           '<div class="wfg-metric"><span>Licensed</span><strong>' + licensed + '</strong></div>' +
+          '<div class="wfg-metric"><span>Direct team</span><strong>' + directTeam + '</strong></div>' +
           '<div class="wfg-metric"><span>Points / recruits</span><strong>' + points + " / " + recruits + '</strong></div>';
         wfgTeamList.innerHTML = "";
         wfgUnmatchedList.innerHTML = "";
@@ -17024,6 +17141,8 @@
           ' pts</span><span class="stage-pill">' +
           Number(row.recruits || 0) +
           ' recruits</span><span class="stage-pill">' +
+          escapeHtml(row.hierarchy_label || "Hierarchy pending") +
+          '</span><span class="stage-pill">' +
           escapeHtml(row.licensing_stage) +
           '</span></div><div class="wfg-action-row"><button type="button" data-wfg-create-contact="' +
           escapeHtml(row.id) +
@@ -17035,13 +17154,19 @@
         return item;
       }
 
-      function clearWfgTeam() {
+      async function clearWfgTeam() {
         wfgTeamRows = [];
         wfgUnmatchedRows = [];
         localStorage.removeItem(wfgTeamStorageKey);
         localStorage.removeItem(wfgUnmatchedStorageKey);
         wfgImportStatus.textContent = "Cleared WFG team import.";
         renderWfgTeam();
+        try {
+          const cleared = await persistBackendWfgTeamRows();
+          if (cleared) wfgImportStatus.textContent = "Cleared WFG team import from this device and Supabase.";
+        } catch {
+          wfgImportStatus.textContent = "Cleared WFG team import on this device. Supabase clear failed.";
+        }
       }
 
       function createContactFromWfgRow(rowId) {
@@ -19578,6 +19703,7 @@
           await loadBackendContacts();
           await loadBackendActivityForSession();
           await loadBackendBadgesForSession();
+          await loadBackendWfgTeamRows();
           await refreshBackendLeaderboard();
           showApp(backendSession);
           return;
@@ -20000,18 +20126,18 @@
         if (!file) return;
         const text = await file.text();
         const rows = parseCsvText(text);
-        processWfgRows(rows);
+        await processWfgRows(rows);
         event.target.value = "";
       });
-      document.getElementById("wfg-process-paste-btn").addEventListener("click", () => {
+      document.getElementById("wfg-process-paste-btn").addEventListener("click", async () => {
         const rows = parseCsvText(wfgPasteInput.value);
         if (!rows.length) {
           wfgImportStatus.textContent = "Paste a WFG report with a header row first.";
           return;
         }
-        processWfgRows(rows);
+        await processWfgRows(rows);
       });
-      document.getElementById("wfg-load-sample-btn").addEventListener("click", () => {
+      document.getElementById("wfg-load-sample-btn").addEventListener("click", async () => {
         const rows = seedWfgRows();
         wfgPasteInput.value = [
           "Agent Code,Full Name,Leader Code,Email,Phone,Rank,Points,Recruits,Licensed,Licensing Stage,Commission",
@@ -20020,7 +20146,7 @@
           "TR,Taylor Reed,KT,taylor@example.com,8015550199,TA,9,1,No,Pre-Passing the Test,0",
           "AC,Alex Carter,JM,alex@example.com,8015550121,TA,14,0,Yes,Company Trainings,920"
         ].join("\n");
-        processWfgRows(rows);
+        await processWfgRows(rows);
       });
       document.getElementById("wfg-clear-btn").addEventListener("click", clearWfgTeam);
       document.addEventListener("click", (event) => {
@@ -20307,6 +20433,7 @@
           await loadBackendContacts();
           await loadBackendActivityForSession();
           await loadBackendBadgesForSession();
+          await loadBackendWfgTeamRows();
           await refreshBackendLeaderboard();
           showApp(restored);
           return;
