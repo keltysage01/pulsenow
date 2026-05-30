@@ -8255,55 +8255,71 @@
 
       /* Habit-loop IA pass: Duolingo clarity + Strava progress, without adding noise */
       #home-screen > .profile {
+        order: 2;
+      }
+
+      #home-screen > .social-preview-card {
         order: 1;
       }
 
       #home-screen > .challenge {
-        order: 2;
-      }
-
-      #home-screen > section:nth-of-type(7) {
-        order: 3;
-      }
-
-      #home-screen > .goals-panel {
         order: 4;
       }
 
-      #home-screen > .vision-workspace {
-        order: 5;
+      #home-screen > section:nth-of-type(7) {
+        order: 9;
       }
 
-      #home-screen > section:nth-of-type(5) {
+      #home-screen > .goals-panel {
         order: 6;
       }
 
-      #home-screen > section:nth-of-type(4) {
+      #home-screen > .vision-workspace {
         order: 7;
       }
 
+      #home-screen > section:nth-of-type(5) {
+        order: 7;
+      }
+
+      #home-screen > section:nth-of-type(4) {
+        order: 8;
+      }
+
       #home-screen > #today-path-card {
+        order: 3 !important;
+      }
+
+      #home-screen > .social-preview-card {
+        order: 1 !important;
+      }
+
+      #home-screen > .profile {
         order: 2 !important;
       }
 
       #home-screen > .today-next-card {
-        order: 3 !important;
-      }
-
-      #home-screen > .people-call-card {
         order: 4 !important;
       }
 
-      #home-screen > .goals-panel {
+      #home-screen > .people-call-card {
         order: 5 !important;
       }
 
-      #home-screen > .vision-workspace {
+      #home-screen > .goals-panel {
         order: 6 !important;
       }
 
-      #home-screen > .standings-card {
+      #home-screen > .vision-workspace {
         order: 7 !important;
+      }
+
+      #home-screen > .standings-card {
+        order: 8 !important;
+      }
+
+      #home-screen > .quiz-profile-card {
+        order: 9 !important;
       }
 
       .today-next-card {
@@ -8454,28 +8470,40 @@
       }
 
       /* Duolingo/Strava habit loop: guide first, metrics second */
-      #home-screen > .profile {
+      #home-screen > .social-preview-card {
         order: 1 !important;
       }
 
-      #today-path-card {
+      #home-screen > .profile {
         order: 2 !important;
       }
 
-      #home-screen > .people-call-card {
+      #today-path-card {
         order: 3 !important;
       }
 
-      #home-screen > .goals-panel {
+      #home-screen > .people-call-card {
         order: 4 !important;
       }
 
-      #home-screen > .vision-workspace {
+      #home-screen > .goals-panel {
         order: 5 !important;
       }
 
-      #home-screen > .today-next-card {
+      #home-screen > .vision-workspace {
         order: 6 !important;
+      }
+
+      #home-screen > .today-next-card {
+        order: 7 !important;
+      }
+
+      #home-screen > .standings-card {
+        order: 8 !important;
+      }
+
+      #home-screen > .quiz-profile-card {
+        order: 9 !important;
       }
 
       .today-path-card {
@@ -13071,6 +13099,18 @@
           </div>
         </section>
 
+        <section class="section card social-preview-card">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Wins & Stories</p>
+              <h2>Team momentum</h2>
+            </div>
+            <button class="text-btn" data-screen="social" type="button">Open</button>
+          </div>
+          <p class="muted" style="line-height: 1.6;">Post a win, shout out a teammate, or tell the story behind a breakthrough.</p>
+          <div id="home-social-preview" class="social-mini-feed"></div>
+        </section>
+
         <section id="today-path-card" class="section card today-path-card">
           <div class="quest-head">
             <span class="quest-badge">Today</span>
@@ -13141,7 +13181,7 @@
           <div id="weekly-goals-list" class="weekly-goals-list"></div>
         </section>
 
-        <section class="section card">
+        <section class="section card quiz-profile-card">
           <div class="section-head">
             <div>
               <p class="eyebrow">Personal profile</p>
@@ -13160,18 +13200,6 @@
             <div class="standing-row me"><strong>You</strong><span style="text-align:right">12</span><span style="text-align:right">1</span></div>
           </div>
           <p class="muted" style="margin-top: 12px; font-size: 13px;">Updates each time a teammate saves their log.</p>
-        </section>
-
-        <section class="section card social-preview-card">
-          <div class="section-head">
-            <div>
-              <p class="eyebrow">Wins & Stories</p>
-              <h2>Team momentum</h2>
-            </div>
-            <button class="text-btn" data-screen="social" type="button">Open</button>
-          </div>
-          <p class="muted" style="line-height: 1.6;">Post a win, shout out a teammate, or tell the story behind a breakthrough.</p>
-          <div id="home-social-preview" class="social-mini-feed"></div>
         </section>
 
         <section class="section card challenge today-next-card">
@@ -16830,7 +16858,7 @@
         updateSocialMediaPreview();
         if (homeSocialPreview) {
           homeSocialPreview.innerHTML = "";
-          socialPosts.slice(0, 2).forEach((post) => homeSocialPreview.appendChild(renderSocialPost(post, true)));
+          socialPosts.slice(0, 4).forEach((post) => homeSocialPreview.appendChild(renderSocialPost(post, true)));
           if (socialPosts.length === 0) homeSocialPreview.innerHTML = '<div class="social-empty">No wins posted yet. Start with one real story from today.</div>';
         }
         if (!socialFeedList) return;
