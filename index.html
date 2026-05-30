@@ -819,6 +819,143 @@
         padding-bottom: 12px;
       }
 
+      .wfg-import-card,
+      .wfg-summary-card,
+      .wfg-team-card {
+        overflow: hidden;
+      }
+
+      .wfg-drop {
+        display: grid;
+        gap: 8px;
+        min-height: 132px;
+        place-items: center;
+        border: 1px dashed color-mix(in srgb, var(--primary) 42%, var(--border));
+        border-radius: 20px;
+        background: color-mix(in srgb, var(--primary) 7%, var(--card));
+        padding: 18px;
+        text-align: center;
+      }
+
+      .wfg-drop span {
+        color: var(--text);
+        font-weight: 950;
+      }
+
+      .wfg-drop small {
+        max-width: 360px;
+        color: var(--sub);
+        line-height: 1.45;
+      }
+
+      .wfg-drop input {
+        display: none;
+      }
+
+      .wfg-paste-panel {
+        display: grid;
+        gap: 10px;
+        margin-top: 12px;
+      }
+
+      #wfg-paste-input {
+        min-height: 128px;
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        background: color-mix(in srgb, var(--surface) 92%, var(--sub));
+        color: var(--text);
+        padding: 12px 14px;
+        resize: vertical;
+        font: inherit;
+        line-height: 1.45;
+      }
+
+      .wfg-metric-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        margin-top: 14px;
+      }
+
+      .wfg-metric {
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        background: color-mix(in srgb, var(--surface) 92%, var(--sub));
+        padding: 13px;
+      }
+
+      .wfg-metric span {
+        display: block;
+        color: var(--sub);
+        font-size: 12px;
+        font-weight: 850;
+      }
+
+      .wfg-metric strong {
+        display: block;
+        margin-top: 5px;
+        color: var(--text);
+        font-size: 24px;
+        line-height: 1;
+      }
+
+      .wfg-team-list,
+      .wfg-unmatched-list {
+        display: grid;
+        gap: 10px;
+        margin-top: 12px;
+      }
+
+      .wfg-team-row {
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        background: var(--card);
+        padding: 14px;
+      }
+
+      .wfg-team-top {
+        display: grid;
+        grid-template-columns: 42px minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .wfg-agent-avatar {
+        display: grid;
+        width: 42px;
+        height: 42px;
+        place-items: center;
+        border-radius: 999px;
+        background: color-mix(in srgb, var(--primary) 13%, transparent);
+        color: var(--primary);
+        font-weight: 950;
+      }
+
+      .wfg-agent-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+        margin-top: 10px;
+      }
+
+      .wfg-action-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 12px;
+      }
+
+      .wfg-action-row button {
+        min-height: 34px;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        background: var(--surface);
+        color: var(--text);
+        padding: 0 12px;
+        font-size: 12px;
+        font-weight: 900;
+      }
+
       .session-item {
         border-radius: 14px;
         background: color-mix(in srgb, var(--sub) 10%, transparent);
@@ -12917,7 +13054,7 @@
           <button class="drawer-link" data-screen="campaigns" type="button">Campaigns</button>
           <button class="drawer-link" data-screen="history" type="button">History</button>
           <button class="drawer-link" data-screen="settings" type="button">Settings</button>
-          <button class="drawer-link" data-screen="manager" type="button">Manager View</button>
+          <button class="drawer-link" data-screen="manager" type="button">WFG Team Import</button>
           <button id="signout-btn" class="drawer-link" type="button">Sign Out</button>
         </aside>
       </div>
@@ -13451,6 +13588,63 @@
         </section>
       </main>
 
+      <main id="manager-screen" class="shell hidden">
+        <section class="card wfg-import-card">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">WFG Data Hub</p>
+              <h2>Connect the team</h2>
+            </div>
+            <span id="wfg-import-mode" class="stage-pill">CSV first</span>
+          </div>
+          <p class="muted" style="line-height:1.6;">Upload or paste exports from MyWFG / WFG 365. PulseNow matches agents by code, email, phone, and name, then builds a reviewable team map.</p>
+          <label class="wfg-drop" for="wfg-file-input">
+            <span>Upload WFG report CSV</span>
+            <small>Works with point, recruit, licensing, production, hierarchy, and commission-style exports when they include names or agent codes.</small>
+            <input id="wfg-file-input" type="file" accept=".csv,.tsv,.txt,text/csv,text/tab-separated-values,text/plain" />
+          </label>
+          <div class="wfg-paste-panel">
+            <textarea id="wfg-paste-input" placeholder="Paste rows from a WFG report here. Example columns: Agent Code, Full Name, Leader Code, Points, Recruits, Licensed, Rank"></textarea>
+            <div class="choice-row">
+              <button id="wfg-process-paste-btn" class="pill-btn" type="button">Process pasted report</button>
+              <button id="wfg-load-sample-btn" class="ghost-btn" type="button">Load sample</button>
+            </div>
+          </div>
+          <div id="wfg-import-status" class="session-item">No WFG report imported yet.</div>
+        </section>
+
+        <section class="section card wfg-summary-card">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Matching</p>
+              <h2>Team connection status</h2>
+            </div>
+            <button id="wfg-clear-btn" class="text-btn" type="button">Clear</button>
+          </div>
+          <div id="wfg-summary-grid" class="wfg-metric-grid"></div>
+        </section>
+
+        <section class="section wfg-team-card">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Team Map</p>
+              <h2>Matched agents</h2>
+            </div>
+          </div>
+          <div id="wfg-team-list" class="wfg-team-list"></div>
+        </section>
+
+        <section class="section wfg-team-card">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Review</p>
+              <h2>Unmatched rows</h2>
+            </div>
+          </div>
+          <div id="wfg-unmatched-list" class="wfg-unmatched-list"></div>
+        </section>
+      </main>
+
       <main id="dream-life-screen" class="shell hidden dream-life-flow">
         <div class="dl-shell">
           <div class="dl-topbar">
@@ -13768,6 +13962,7 @@
       const pipelineScreen = document.getElementById("pipeline-screen");
       const boardScreen = document.getElementById("board-screen");
       const socialScreen = document.getElementById("social-screen");
+      const managerScreen = document.getElementById("manager-screen");
       const dreamLifeScreen = document.getElementById("dream-life-screen");
       const meScreen = document.getElementById("me-screen");
       const coachScreen = document.getElementById("coach-screen");
@@ -13787,6 +13982,12 @@
       const socialStoryRail = document.getElementById("social-story-rail");
       const socialMediaPreview = document.getElementById("social-media-preview");
       const socialComposerAvatar = document.getElementById("social-composer-avatar");
+      const wfgFileInput = document.getElementById("wfg-file-input");
+      const wfgPasteInput = document.getElementById("wfg-paste-input");
+      const wfgImportStatus = document.getElementById("wfg-import-status");
+      const wfgSummaryGrid = document.getElementById("wfg-summary-grid");
+      const wfgTeamList = document.getElementById("wfg-team-list");
+      const wfgUnmatchedList = document.getElementById("wfg-unmatched-list");
       const badgeGrid = document.getElementById("badge-grid");
       const badgeCount = document.getElementById("badge-count");
       const careerTrack = document.getElementById("career-track");
@@ -13865,6 +14066,8 @@
       let boardRange = "week";
       let socialType = "win";
       let socialPosts = [];
+      let wfgTeamRows = [];
+      let wfgUnmatchedRows = [];
       let firedUp = {};
       let coachMessages = [];
       let apiPowerPicks = null;
@@ -13917,6 +14120,8 @@
       const activityHistoryStoragePrefix = "pulsenow_demo_activity_history_";
       const badgeStoragePrefix = "pulsenow_demo_badges_";
       const socialStoragePrefix = "pulsenow_demo_social_posts_";
+      const wfgTeamStorageKey = "pulsenow_demo_wfg_team_rows";
+      const wfgUnmatchedStorageKey = "pulsenow_demo_wfg_unmatched_rows";
       const coachStorageKey = "pulsenow_demo_coach";
       const coachProfileStorageKey = "pulsenow_demo_coach_profile";
       const coachIqDismissedStorageKey = "pulsenow_demo_coach_iq_dismissed";
@@ -16249,6 +16454,205 @@
         });
         writeLocalSocialPosts(socialPosts);
         renderSocial();
+      }
+
+      function normalizeMatchKey(value) {
+        return String(value || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+      }
+
+      function normalizeWfgBool(value) {
+        return parseCsvBool(value) || /licensed|active|yes|approved/i.test(String(value || ""));
+      }
+
+      function getWfgValue(row, keys) {
+        return rowValue(row, keys);
+      }
+
+      function seedWfgRows() {
+        return parseCsvText([
+          "Agent Code,Full Name,Leader Code,Email,Phone,Rank,Points,Recruits,Licensed,Licensing Stage,Commission",
+          "KT,Kelty Test,,kelty@example.com,8015550100,TA,18,2,Yes,Licensed,1240",
+          "JM,Jordan Miles,KT,jordan@example.com,8015550144,Associate,27,4,Yes,Licensed,1840",
+          "TR,Taylor Reed,KT,taylor@example.com,8015550199,TA,9,1,No,Pre-Passing the Test,0",
+          "AC,Alex Carter,JM,alex@example.com,8015550121,TA,14,0,Yes,Company Trainings,920"
+        ].join("\n"));
+      }
+
+      function currentAgentDirectory() {
+        const session = getCurrentSession() || {};
+        const rows = [];
+        rows.push({
+          source: "session",
+          id: session.id || "demo-user",
+          name: session.name || "Demo Agent",
+          agent_code: session.agent_code || "DEMO",
+          leader_code: session.leader_code || "",
+          email: session.email || "",
+          phone: session.phone || "",
+        });
+        contacts.forEach((contact) => {
+          rows.push({
+            source: "crm",
+            id: contact.id,
+            name: contact.name,
+            agent_code: contact.agent_code || contact.code || "",
+            leader_code: contact.leader_code || "",
+            email: contact.email || "",
+            phone: contact.phone || "",
+          });
+        });
+        return rows;
+      }
+
+      function findWfgMatch(row, directory) {
+        const code = normalizeMatchKey(getWfgValue(row, ["agent_code", "agentid", "agent_id", "code", "associate_code"]));
+        const email = normalizeMatchKey(getWfgValue(row, ["email", "email_address"]));
+        const phone = normalizeMatchKey(getWfgValue(row, ["phone", "mobile", "cell"]));
+        const name = normalizeMatchKey(getWfgValue(row, ["full_name", "name", "agent_name", "associate_name", "producer_name"]));
+        return directory.find((item) => code && normalizeMatchKey(item.agent_code) === code)
+          || directory.find((item) => email && normalizeMatchKey(item.email) === email)
+          || directory.find((item) => phone && normalizeMatchKey(item.phone) === phone)
+          || directory.find((item) => name && normalizeMatchKey(item.name) === name)
+          || null;
+      }
+
+      function normalizeWfgRow(row, index, match) {
+        const name = getWfgValue(row, ["full_name", "name", "agent_name", "associate_name", "producer_name"]) || (match && match.name) || "WFG Row " + (index + 1);
+        const agentCode = getWfgValue(row, ["agent_code", "agentid", "agent_id", "code", "associate_code"]) || (match && match.agent_code) || "";
+        const leaderCode = getWfgValue(row, ["leader_code", "upline_code", "sponsor_code", "parent_code"]) || "";
+        const points = Number(getWfgValue(row, ["points", "pts", "net_points", "personal_points", "production_points"]) || 0) || 0;
+        const recruits = Number(getWfgValue(row, ["recruits", "new_recruits", "net_recruits", "licensed_recruits"]) || 0) || 0;
+        const commission = Number(String(getWfgValue(row, ["commission", "paid", "payment", "earnings", "cash_flow"]) || "0").replace(/[^0-9.-]/g, "")) || 0;
+        const licensed = normalizeWfgBool(getWfgValue(row, ["licensed", "license_status", "licensing_status", "active_license"]));
+        return {
+          id: "wfg-" + Date.now() + "-" + index,
+          matched: Boolean(match),
+          match_source: match ? match.source : "",
+          match_id: match ? match.id : "",
+          name,
+          agent_code: agentCode,
+          leader_code: leaderCode,
+          email: getWfgValue(row, ["email", "email_address"]),
+          phone: getWfgValue(row, ["phone", "mobile", "cell"]).replace(/[^0-9+]/g, ""),
+          rank: getWfgValue(row, ["rank", "level", "title"]) || "Unranked",
+          points,
+          recruits,
+          commission,
+          licensed,
+          licensing_stage: getWfgValue(row, ["licensing_stage", "license_status", "status"]) || (licensed ? "Licensed" : "Needs licensing review"),
+          raw: row
+        };
+      }
+
+      function processWfgRows(rows) {
+        hydrateContacts();
+        const directory = currentAgentDirectory();
+        const matched = [];
+        const unmatched = [];
+        rows.forEach((row, index) => {
+          const match = findWfgMatch(row, directory);
+          const normalized = normalizeWfgRow(row, index, match);
+          if (normalized.matched) matched.push(normalized);
+          else unmatched.push(normalized);
+        });
+        wfgTeamRows = matched;
+        wfgUnmatchedRows = unmatched;
+        writeLocalJson(wfgTeamStorageKey, wfgTeamRows);
+        writeLocalJson(wfgUnmatchedStorageKey, wfgUnmatchedRows);
+        renderWfgTeam();
+        wfgImportStatus.textContent = "Processed " + rows.length + " WFG rows · " + matched.length + " matched · " + unmatched.length + " need review.";
+      }
+
+      function hydrateWfgTeam() {
+        wfgTeamRows = readLocalJson(wfgTeamStorageKey, []);
+        wfgUnmatchedRows = readLocalJson(wfgUnmatchedStorageKey, []);
+        if (!Array.isArray(wfgTeamRows)) wfgTeamRows = [];
+        if (!Array.isArray(wfgUnmatchedRows)) wfgUnmatchedRows = [];
+        renderWfgTeam();
+      }
+
+      function renderWfgTeam() {
+        if (!wfgSummaryGrid || !wfgTeamList || !wfgUnmatchedList) return;
+        const total = wfgTeamRows.length + wfgUnmatchedRows.length;
+        const licensed = wfgTeamRows.filter((row) => row.licensed).length;
+        const points = wfgTeamRows.reduce((sum, row) => sum + Number(row.points || 0), 0);
+        const recruits = wfgTeamRows.reduce((sum, row) => sum + Number(row.recruits || 0), 0);
+        wfgSummaryGrid.innerHTML =
+          '<div class="wfg-metric"><span>Report rows</span><strong>' + total + '</strong></div>' +
+          '<div class="wfg-metric"><span>Matched</span><strong>' + wfgTeamRows.length + '</strong></div>' +
+          '<div class="wfg-metric"><span>Licensed</span><strong>' + licensed + '</strong></div>' +
+          '<div class="wfg-metric"><span>Points / recruits</span><strong>' + points + " / " + recruits + '</strong></div>';
+        wfgTeamList.innerHTML = "";
+        wfgUnmatchedList.innerHTML = "";
+        if (!wfgTeamRows.length) wfgTeamList.innerHTML = '<div class="social-empty">No matched agents yet. Upload a WFG export or load the sample.</div>';
+        wfgTeamRows
+          .slice()
+          .sort((a, b) => Number(b.points || 0) - Number(a.points || 0))
+          .forEach((row) => wfgTeamList.appendChild(renderWfgRow(row, true)));
+        if (!wfgUnmatchedRows.length) wfgUnmatchedList.innerHTML = '<div class="social-empty">No unmatched rows.</div>';
+        wfgUnmatchedRows.forEach((row) => wfgUnmatchedList.appendChild(renderWfgRow(row, false)));
+      }
+
+      function renderWfgRow(row, matched) {
+        const item = document.createElement("article");
+        item.className = "wfg-team-row";
+        item.innerHTML =
+          '<div class="wfg-team-top"><span class="wfg-agent-avatar">' +
+          escapeHtml((row.name || "W").slice(0, 1).toUpperCase()) +
+          '</span><div><strong>' +
+          escapeHtml(row.name) +
+          '</strong><p class="muted" style="margin-top:4px;">' +
+          escapeHtml([row.rank, row.agent_code ? "Code " + row.agent_code : "", row.leader_code ? "Leader " + row.leader_code : ""].filter(Boolean).join(" · ")) +
+          '</p></div><span class="' +
+          (matched ? "stage-pill" : "overdue-pill") +
+          '">' +
+          (matched ? "Matched" : "Review") +
+          '</span></div><div class="wfg-agent-meta"><span class="stage-pill">' +
+          Number(row.points || 0) +
+          ' pts</span><span class="stage-pill">' +
+          Number(row.recruits || 0) +
+          ' recruits</span><span class="stage-pill">' +
+          escapeHtml(row.licensing_stage) +
+          '</span></div><div class="wfg-action-row"><button type="button" data-wfg-create-contact="' +
+          escapeHtml(row.id) +
+          '">' +
+          (matched ? "Update CRM later" : "Create CRM match") +
+          '</button><button type="button" data-wfg-copy-code="' +
+          escapeHtml(row.agent_code || "") +
+          '">Copy code</button></div>';
+        return item;
+      }
+
+      function clearWfgTeam() {
+        wfgTeamRows = [];
+        wfgUnmatchedRows = [];
+        localStorage.removeItem(wfgTeamStorageKey);
+        localStorage.removeItem(wfgUnmatchedStorageKey);
+        wfgImportStatus.textContent = "Cleared WFG team import.";
+        renderWfgTeam();
+      }
+
+      function createContactFromWfgRow(rowId) {
+        const row = wfgUnmatchedRows.find((item) => item.id === rowId) || wfgTeamRows.find((item) => item.id === rowId);
+        if (!row) return;
+        contacts.unshift({
+          id: "wfg-contact-" + Date.now(),
+          name: row.name,
+          phone: row.phone,
+          email: row.email,
+          type: row.licensed ? "recruit" : "prospect",
+          stage: row.licensed ? "Company Trainings" : "Pre-Passing the Test",
+          next_followup_date: "",
+          last_contact_date: "",
+          last_contact_outcome: "",
+          agent_code: row.agent_code,
+          leader_code: row.leader_code,
+          licensed: row.licensed,
+          license_status: row.licensing_stage,
+          notes: "Created from WFG report import. Rank: " + row.rank + ". Points: " + row.points + "."
+        });
+        saveContacts();
+        wfgImportStatus.textContent = "Created CRM record for " + row.name + ".";
       }
 
       function getLeaderboardRows() {
@@ -18749,6 +19153,7 @@
           pipelineScreen.classList.add("hidden");
           boardScreen.classList.add("hidden");
           socialScreen.classList.add("hidden");
+          managerScreen.classList.add("hidden");
           if (dreamLifeScreen) dreamLifeScreen.classList.remove("hidden");
           meScreen.classList.add("hidden");
           coachScreen.classList.add("hidden");
@@ -18775,6 +19180,7 @@
           pipelineScreen.classList.add("hidden");
           boardScreen.classList.add("hidden");
           socialScreen.classList.add("hidden");
+          managerScreen.classList.add("hidden");
           meScreen.classList.add("hidden");
           coachScreen.classList.add("hidden");
           quizScreen.classList.add("hidden");
@@ -18790,6 +19196,7 @@
           pipelineScreen.classList.add("hidden");
           boardScreen.classList.add("hidden");
           socialScreen.classList.add("hidden");
+          managerScreen.classList.add("hidden");
           meScreen.classList.add("hidden");
           coachScreen.classList.add("hidden");
           quizScreen.classList.add("hidden");
@@ -18807,6 +19214,7 @@
           pipelineScreen.classList.add("hidden");
           boardScreen.classList.remove("hidden");
           socialScreen.classList.add("hidden");
+          managerScreen.classList.add("hidden");
           meScreen.classList.add("hidden");
           coachScreen.classList.add("hidden");
           quizScreen.classList.add("hidden");
@@ -18822,6 +19230,7 @@
           pipelineScreen.classList.add("hidden");
           boardScreen.classList.add("hidden");
           socialScreen.classList.add("hidden");
+          managerScreen.classList.add("hidden");
           meScreen.classList.add("hidden");
           coachScreen.classList.add("hidden");
           quizScreen.classList.add("hidden");
@@ -18839,6 +19248,7 @@
           pipelineScreen.classList.add("hidden");
           boardScreen.classList.add("hidden");
           socialScreen.classList.add("hidden");
+          managerScreen.classList.add("hidden");
           meScreen.classList.add("hidden");
           coachScreen.classList.add("hidden");
           quizScreen.classList.add("hidden");
@@ -18856,6 +19266,7 @@
           pipelineScreen.classList.remove("hidden");
           boardScreen.classList.add("hidden");
           socialScreen.classList.add("hidden");
+          managerScreen.classList.add("hidden");
           meScreen.classList.add("hidden");
           coachScreen.classList.add("hidden");
           quizScreen.classList.add("hidden");
@@ -18871,6 +19282,7 @@
           pipelineScreen.classList.add("hidden");
           boardScreen.classList.add("hidden");
           socialScreen.classList.add("hidden");
+          managerScreen.classList.add("hidden");
           meScreen.classList.remove("hidden");
           coachScreen.classList.add("hidden");
           quizScreen.classList.add("hidden");
@@ -18888,6 +19300,7 @@
           pipelineScreen.classList.add("hidden");
           boardScreen.classList.add("hidden");
           socialScreen.classList.add("hidden");
+          managerScreen.classList.add("hidden");
           meScreen.classList.add("hidden");
           coachScreen.classList.remove("hidden");
           quizScreen.classList.add("hidden");
@@ -18903,6 +19316,7 @@
           pipelineScreen.classList.add("hidden");
           boardScreen.classList.add("hidden");
           socialScreen.classList.add("hidden");
+          managerScreen.classList.add("hidden");
           meScreen.classList.add("hidden");
           coachScreen.classList.add("hidden");
           quizScreen.classList.remove("hidden");
@@ -18918,6 +19332,24 @@
           pipelineScreen.classList.add("hidden");
           boardScreen.classList.add("hidden");
           socialScreen.classList.remove("hidden");
+          managerScreen.classList.add("hidden");
+          meScreen.classList.add("hidden");
+          coachScreen.classList.add("hidden");
+          quizScreen.classList.add("hidden");
+          placeholderScreen.classList.add("hidden");
+          return;
+        }
+        if (screen === "manager") {
+          hydrateContacts();
+          hydrateWfgTeam();
+          homeScreen.classList.add("hidden");
+          logScreen.classList.add("hidden");
+          contactsScreen.classList.add("hidden");
+          powerlistScreen.classList.add("hidden");
+          pipelineScreen.classList.add("hidden");
+          boardScreen.classList.add("hidden");
+          socialScreen.classList.add("hidden");
+          managerScreen.classList.remove("hidden");
           meScreen.classList.add("hidden");
           coachScreen.classList.add("hidden");
           quizScreen.classList.add("hidden");
@@ -18940,6 +19372,7 @@
         pipelineScreen.classList.add("hidden");
         boardScreen.classList.add("hidden");
         socialScreen.classList.add("hidden");
+        managerScreen.classList.add("hidden");
         meScreen.classList.add("hidden");
         coachScreen.classList.add("hidden");
         quizScreen.classList.add("hidden");
@@ -19085,6 +19518,44 @@
         const button = event.target.closest("[data-social-react]");
         if (!button) return;
         reactToSocialPost(button.dataset.socialReact, button.dataset.socialReaction);
+      });
+      wfgFileInput.addEventListener("change", async (event) => {
+        const file = event.target.files && event.target.files[0];
+        if (!file) return;
+        const text = await file.text();
+        const rows = parseCsvText(text);
+        processWfgRows(rows);
+        event.target.value = "";
+      });
+      document.getElementById("wfg-process-paste-btn").addEventListener("click", () => {
+        const rows = parseCsvText(wfgPasteInput.value);
+        if (!rows.length) {
+          wfgImportStatus.textContent = "Paste a WFG report with a header row first.";
+          return;
+        }
+        processWfgRows(rows);
+      });
+      document.getElementById("wfg-load-sample-btn").addEventListener("click", () => {
+        const rows = seedWfgRows();
+        wfgPasteInput.value = [
+          "Agent Code,Full Name,Leader Code,Email,Phone,Rank,Points,Recruits,Licensed,Licensing Stage,Commission",
+          "KT,Kelty Test,,kelty@example.com,8015550100,TA,18,2,Yes,Licensed,1240",
+          "JM,Jordan Miles,KT,jordan@example.com,8015550144,Associate,27,4,Yes,Licensed,1840",
+          "TR,Taylor Reed,KT,taylor@example.com,8015550199,TA,9,1,No,Pre-Passing the Test,0",
+          "AC,Alex Carter,JM,alex@example.com,8015550121,TA,14,0,Yes,Company Trainings,920"
+        ].join("\n");
+        processWfgRows(rows);
+      });
+      document.getElementById("wfg-clear-btn").addEventListener("click", clearWfgTeam);
+      document.addEventListener("click", (event) => {
+        const createButton = event.target.closest("[data-wfg-create-contact]");
+        if (createButton) {
+          createContactFromWfgRow(createButton.dataset.wfgCreateContact);
+          return;
+        }
+        const copyButton = event.target.closest("[data-wfg-copy-code]");
+        if (!copyButton) return;
+        wfgImportStatus.textContent = copyButton.dataset.wfgCopyCode ? "Agent code " + copyButton.dataset.wfgCopyCode + " selected for matching." : "No agent code on this row.";
       });
       document.querySelectorAll("[data-coach-prompt]").forEach((button) => {
         button.addEventListener("click", () => sendCoachPrompt(button.dataset.coachPrompt));
@@ -19345,6 +19816,7 @@
       hydrateSubsteps();
       hydrateContacts();
       hydrateSocialPosts(false);
+      hydrateWfgTeam();
 
       const urlParams = new URLSearchParams(window.location.search);
       const forceLanding = urlParams.has("landing");
