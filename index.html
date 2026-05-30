@@ -435,6 +435,42 @@
         overflow: hidden;
       }
 
+      .today-greeting-card {
+        display: grid;
+        gap: 12px;
+        overflow: hidden;
+        border: 0;
+        background:
+          linear-gradient(145deg, rgba(22, 70, 109, 0.92), rgba(0, 133, 119, 0.72)),
+          radial-gradient(circle at 90% 8%, rgba(244, 185, 66, 0.48), transparent 32%);
+        color: #fff;
+      }
+
+      .today-greeting-card .eyebrow,
+      .today-greeting-card .muted {
+        color: rgba(255, 255, 255, 0.82);
+      }
+
+      .today-greeting-card h1 {
+        margin: 0;
+        font-size: clamp(28px, 8vw, 44px);
+        line-height: 0.98;
+        letter-spacing: 0;
+      }
+
+      .today-greeting-card strong {
+        display: block;
+        font-size: 15px;
+        line-height: 1.35;
+      }
+
+      .today-greeting-card .ghost-btn {
+        width: fit-content;
+        border-color: rgba(255, 255, 255, 0.3);
+        background: rgba(255, 255, 255, 0.16);
+        color: #fff;
+      }
+
       .social-mini-feed,
       .social-feed-list {
         display: grid;
@@ -8351,11 +8387,15 @@
 
       /* Habit-loop IA pass: Duolingo clarity + Strava progress, without adding noise */
       #home-screen > .profile {
-        order: 2;
+        order: 3;
+      }
+
+      #home-screen > .today-greeting-card {
+        order: 1;
       }
 
       #home-screen > .social-preview-card {
-        order: 1;
+        order: 2;
       }
 
       #home-screen > .challenge {
@@ -8383,39 +8423,43 @@
       }
 
       #home-screen > #today-path-card {
-        order: 3 !important;
-      }
-
-      #home-screen > .social-preview-card {
-        order: 1 !important;
-      }
-
-      #home-screen > .profile {
-        order: 2 !important;
-      }
-
-      #home-screen > .today-next-card {
         order: 4 !important;
       }
 
-      #home-screen > .people-call-card {
+      #home-screen > .today-greeting-card {
+        order: 1 !important;
+      }
+
+      #home-screen > .social-preview-card {
+        order: 2 !important;
+      }
+
+      #home-screen > .profile {
+        order: 3 !important;
+      }
+
+      #home-screen > .today-next-card {
         order: 5 !important;
       }
 
-      #home-screen > .goals-panel {
+      #home-screen > .people-call-card {
         order: 6 !important;
       }
 
-      #home-screen > .vision-workspace {
+      #home-screen > .goals-panel {
         order: 7 !important;
       }
 
-      #home-screen > .standings-card {
+      #home-screen > .vision-workspace {
         order: 8 !important;
       }
 
-      #home-screen > .quiz-profile-card {
+      #home-screen > .standings-card {
         order: 9 !important;
+      }
+
+      #home-screen > .quiz-profile-card {
+        order: 10 !important;
       }
 
       .today-next-card {
@@ -8566,40 +8610,44 @@
       }
 
       /* Duolingo/Strava habit loop: guide first, metrics second */
-      #home-screen > .social-preview-card {
+      #home-screen > .today-greeting-card {
         order: 1 !important;
       }
 
-      #home-screen > .profile {
+      #home-screen > .social-preview-card {
         order: 2 !important;
       }
 
-      #today-path-card {
+      #home-screen > .profile {
         order: 3 !important;
       }
 
-      #home-screen > .people-call-card {
+      #today-path-card {
         order: 4 !important;
       }
 
-      #home-screen > .goals-panel {
+      #home-screen > .people-call-card {
         order: 5 !important;
       }
 
-      #home-screen > .vision-workspace {
+      #home-screen > .goals-panel {
         order: 6 !important;
       }
 
-      #home-screen > .today-next-card {
+      #home-screen > .vision-workspace {
         order: 7 !important;
       }
 
-      #home-screen > .standings-card {
+      #home-screen > .today-next-card {
         order: 8 !important;
       }
 
-      #home-screen > .quiz-profile-card {
+      #home-screen > .standings-card {
         order: 9 !important;
+      }
+
+      #home-screen > .quiz-profile-card {
+        order: 10 !important;
       }
 
       .today-path-card {
@@ -13184,6 +13232,14 @@
       </div>
 
       <main id="home-screen" class="shell">
+        <section class="section card today-greeting-card">
+          <p class="eyebrow">Today</p>
+          <h1 id="today-greeting-title">Good morning, Agent.</h1>
+          <strong id="today-dream-reminder">Remember what you are building. One clear action today keeps the dream moving.</strong>
+          <p id="today-dream-action" class="muted">Open Dream Builder when you want to sharpen the picture.</p>
+          <button class="ghost-btn" data-dream-builder onclick="window.pulseNowOpenDreamBuilderPanel && window.pulseNowOpenDreamBuilderPanel()" type="button">Dream Builder</button>
+        </section>
+
         <section class="profile pulse-main-container">
           <div id="avatar" class="avatar">P</div>
           <div>
@@ -14078,6 +14134,9 @@
       const registerFields = document.getElementById("register-fields");
       const enterBtn = document.getElementById("enter-btn");
       const profileName = document.getElementById("profile-name");
+      const todayGreetingTitle = document.getElementById("today-greeting-title");
+      const todayDreamReminder = document.getElementById("today-dream-reminder");
+      const todayDreamAction = document.getElementById("today-dream-action");
       const drawerName = document.getElementById("drawer-name");
       const avatar = document.getElementById("avatar");
       const drawer = document.getElementById("drawer");
@@ -14968,6 +15027,36 @@
         } catch {
           dreamLifeVision = null;
         }
+      }
+
+      function dreamReminderSource() {
+        if (!dreamLifeVision) loadDreamLifeVision();
+        if (dreamLifeVision) {
+          const actions = Array.isArray(dreamLifeVision.aligned_actions) ? dreamLifeVision.aligned_actions : [];
+          const firstAction = actions[0] || {};
+          return {
+            reminder: dreamLifeVision.center_declaration || dreamLifeVision.future_self_statement || "Remember the life you described. Today is one small proof that you are building it.",
+            action: firstAction.action || firstAction.title || "Take one aligned action from your Dream Life map today."
+          };
+        }
+        const activeIndex = ((activeDreamIndex % visionItems.length) + visionItems.length) % visionItems.length;
+        const active = visionItems[activeIndex] || visionItems[0] || {};
+        return {
+          reminder: "Remember what you are building: " + (active.title || "a life that feels clear, free, and worth the effort") + ".",
+          action: active.next_action || active.milestone || active.description || "Open Dream Builder when you want to sharpen the picture."
+        };
+      }
+
+      function updateTodayGreeting() {
+        if (!todayGreetingTitle || !todayDreamReminder || !todayDreamAction) return;
+        const session = getCurrentSession() || { name: "Agent" };
+        const firstName = String(session.name || "Agent").trim().split(/\s+/)[0] || "Agent";
+        const hour = new Date().getHours();
+        const greeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
+        const dream = dreamReminderSource();
+        todayGreetingTitle.textContent = greeting + ", " + firstName + ".";
+        todayDreamReminder.textContent = dream.reminder;
+        todayDreamAction.textContent = dream.action;
       }
 
       function buildDreamLifeDemoVision() {
@@ -16239,6 +16328,7 @@
         profileName.textContent = session.name;
         drawerName.textContent = session.name;
         setAvatarPhoto(avatar, session);
+        updateTodayGreeting();
         renderVisionWorkspace();
         renderImageRevealGoals();
         updateTodayPath();
@@ -16722,6 +16812,7 @@
       }
 
       function updateTodayPath() {
+        updateTodayGreeting();
         const title = document.getElementById("today-quest-title");
         const copy = document.getElementById("today-quest-copy");
         const effort = document.getElementById("today-quest-effort");
