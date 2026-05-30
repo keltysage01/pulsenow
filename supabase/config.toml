@@ -16,3 +16,6 @@ otp_length = 8
 
 [functions.contacts_worker]
 verify_jwt = false
+
+[functions.pulse_register]
+verify_jwt = false

@@ -13020,14 +13020,14 @@
           <button id="login-tab" class="active" type="button">Login</button>
           <button id="register-tab" type="button">Register</button>
         </div>
-        <label>Name<input id="name-input" placeholder="Your name" autocomplete="name" /></label>
+        <label>Name or agent code<input id="name-input" placeholder="Your name or agent code" autocomplete="username" /></label>
         <div id="register-fields" class="hidden">
           <label>Agent Code<input id="agent-code-input" /></label>
           <label>Leader Code<input id="leader-code-input" /></label>
         </div>
         <label>4-digit PIN<input id="pin-input" type="password" inputmode="numeric" maxlength="4" placeholder="0000" /></label>
         <button id="enter-btn" class="primary-btn" type="button">Log In</button>
-        <p id="auth-note" class="muted" style="margin-top: 12px; font-size: 13px;">Demo mode stores the session in sessionStorage only.</p>
+        <p id="auth-note" class="muted" style="margin-top: 12px; font-size: 13px;">PulseNow saves your profile and CRM to Supabase when backend config is available.</p>
       </section>
     </div>
 
@@ -14131,6 +14131,14 @@
       const contactIntelImportStorageKey = "pulsenow_contact_intelligence_import";
       const profileBioStoragePrefix = "pulsenow_demo_profile_bio_";
       const quizProfileStorageKey = "pulsenow_demo_quiz_profile";
+      const pulseDefaultOrgId = "00000000-0000-0000-0000-000000000001";
+      const pulseAuthDomain = "pulsenow.app";
+      const pulsePasswordSuffix = "-PulseNow-2026";
+      let pulseBackendClientPromise = null;
+      let pulseBackendClient = null;
+      let pulseBackendUrl = "";
+      let pulseBackendOnline = false;
+      let pulseBackendProfile = null;
       let lastContactIntelImportId = sessionStorage.getItem(contactIntelImportStorageKey) || "";
       let dreamMapReady = false;
       let dreamMapGenerating = false;
@@ -15453,6 +15461,236 @@
         return data;
       }
 
+      function authNote(message) {
+        const note = document.getElementById("auth-note");
+        if (note) note.textContent = message;
+      }
+
+      function pulseCredential(value) {
+        return String(value || "")
+          .trim()
+          .toLowerCase()
+          .replace(/@.*$/, "")
+          .replace(/[^a-z0-9]+/g, "")
+          .slice(0, 48);
+      }
+
+      function pulseEmailForCredential(value) {
+        const credential = pulseCredential(value);
+        return credential ? credential + "@" + pulseAuthDomain : "";
+      }
+
+      function pulsePassword(pin) {
+        return String(pin || "") + pulsePasswordSuffix;
+      }
+
+      async function getPulseBackendClient() {
+        if (pulseBackendClientPromise) return pulseBackendClientPromise;
+        pulseBackendClientPromise = (async () => {
+          const response = await fetch("/api/contacts/upload?action=contact-intelligence-config");
+          const config = await response.json().catch(() => ({}));
+          if (!response.ok || !config.configured || !config.supabaseUrl || !config.anonKey) {
+            throw new Error("Supabase backend is not configured.");
+          }
+          pulseBackendUrl = config.supabaseUrl;
+          const module = await import("https://esm.sh/@supabase/supabase-js@2.106.1");
+          const client = module.createClient(config.supabaseUrl, config.anonKey, {
+            auth: {
+              persistSession: true,
+              autoRefreshToken: true,
+              storageKey: "pulsenow_app_auth"
+            }
+          });
+          pulseBackendClient = client;
+          pulseBackendOnline = true;
+          return client;
+        })();
+        return pulseBackendClientPromise;
+      }
+
+      function profileToSession(profile, authUser) {
+        const state = profile && profile.app_state && typeof profile.app_state === "object" ? profile.app_state : {};
+        const role = profile && profile.role === "admin" ? "org_owner" : profile && profile.role === "leader" ? "manager" : "agent";
+        return {
+          id: profile.id,
+          name: profile.full_name || state.name || "PulseNow Agent",
+          org_id: profile.org_id || pulseDefaultOrgId,
+          role,
+          level: profile.level || state.level || "TA",
+          agent_code: profile.agent_code || state.agent_code || "",
+          leader_code: profile.leader_code || state.leader_code || null,
+          email: profile.email || (authUser && authUser.email) || "",
+          phone: profile.phone || state.phone || "",
+          avatar_url: profile.avatar_url || "",
+          is_manager: role === "org_owner" || role === "manager"
+        };
+      }
+
+      async function loadBackendProfile(client, authUser) {
+        const { data, error } = await client
+          .from("profiles")
+          .select("id,org_id,full_name,agent_code,leader_code,role,level,email,phone,avatar_url,bio,mission_statement,app_state")
+          .eq("id", authUser.id)
+          .maybeSingle();
+        if (error) throw error;
+        pulseBackendProfile = data || null;
+        return data ? profileToSession(data, authUser) : null;
+      }
+
+      async function upsertBackendProfile(client, authUser, input) {
+        const name = input.name || "PulseNow Agent";
+        const agentCode = input.agentCode || pulseCredential(name).toUpperCase() || "AGENT";
+        const row = {
+          id: authUser.id,
+          org_id: pulseDefaultOrgId,
+          full_name: name,
+          agent_code: agentCode,
+          leader_code: input.leaderCode || null,
+          role: "agent",
+          level: input.level || "TA",
+          email: authUser.email || "",
+          app_state: {
+            name,
+            agent_code: agentCode,
+            leader_code: input.leaderCode || null,
+            auth_source: "supabase_password"
+          },
+          updated_at: new Date().toISOString()
+        };
+        const { data, error } = await client
+          .from("profiles")
+          .upsert(row, { onConflict: "id" })
+          .select("id,org_id,full_name,agent_code,leader_code,role,level,email,phone,avatar_url,bio,mission_statement,app_state")
+          .single();
+        if (error) throw error;
+        pulseBackendProfile = data;
+        return profileToSession(data, authUser);
+      }
+
+      async function restoreBackendSession() {
+        try {
+          const client = await getPulseBackendClient();
+          const sessionResult = await client.auth.getSession();
+          const authUser = sessionResult.data && sessionResult.data.session && sessionResult.data.session.user;
+          if (!authUser) return null;
+          return await loadBackendProfile(client, authUser);
+        } catch {
+          pulseBackendOnline = false;
+          return null;
+        }
+      }
+
+      async function createBackendSessionFromForm() {
+        const name = nameInput.value.trim();
+        const pin = pinInput.value.trim();
+        const agentCodeInput = document.getElementById("agent-code-input").value.trim();
+        const leaderCode = document.getElementById("leader-code-input").value.trim();
+        const credential = mode === "register" ? agentCodeInput : (agentCodeInput || name);
+        if (pin.length !== 4) throw new Error("Enter a 4-digit PIN to continue.");
+        if (mode === "register" && (!name || !agentCodeInput)) throw new Error("Name and agent code are required to create an account.");
+        if (!credential) throw new Error("Enter your name or agent code.");
+
+        const client = await getPulseBackendClient();
+        const email = pulseEmailForCredential(credential);
+        const password = pulsePassword(pin);
+        let authUser = null;
+
+        if (mode === "register") {
+          const registerResponse = await fetch(pulseBackendUrl.replace(/\/$/, "") + "/functions/v1/pulse_register", {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ name, agent_code: agentCodeInput, leader_code: leaderCode || null, pin })
+          });
+          const registerData = await registerResponse.json().catch(() => ({}));
+          if (!registerResponse.ok || registerData.ok === false) {
+            throw new Error(registerData.message || registerData.error || "Could not create account.");
+          }
+          const signIn = await client.auth.signInWithPassword({ email, password });
+          if (signIn.error) throw signIn.error;
+          authUser = signIn.data.user;
+          const loaded = await loadBackendProfile(client, authUser);
+          return loaded || await upsertBackendProfile(client, authUser, { name, agentCode: agentCodeInput, leaderCode });
+        }
+
+        const signIn = await client.auth.signInWithPassword({ email, password });
+        if (signIn.error) throw signIn.error;
+        authUser = signIn.data.user;
+        const loaded = await loadBackendProfile(client, authUser);
+        if (loaded) return loaded;
+        return await upsertBackendProfile(client, authUser, { name: name || credential, agentCode: credential.toUpperCase(), leaderCode });
+      }
+
+      function splitName(name) {
+        const parts = String(name || "").trim().split(/\s+/).filter(Boolean);
+        return { first_name: parts[0] || "", last_name: parts.slice(1).join(" ") };
+      }
+
+      function contactToDbRow(contact) {
+        const names = splitName(contact.name);
+        return {
+          id: /^[0-9a-f-]{36}$/i.test(String(contact.id || "")) ? contact.id : undefined,
+          profile_id: getCurrentSession().id,
+          org_id: getCurrentSession().org_id || pulseDefaultOrgId,
+          first_name: names.first_name,
+          last_name: names.last_name,
+          phone: contact.phone || null,
+          email: contact.email || null,
+          city: contact.city || null,
+          state: contact.state || null,
+          source: contact.backend_import_id ? "import" : "manual",
+          notes: contact.notes || null,
+          qualifiers: contact.qualifiers || {},
+          contact_type: ["prospect", "recruit", "client", "partner", "top_100"].includes(contact.type) ? contact.type : "prospect",
+          stage: "uncontacted",
+          is_top_100: contact.is_top_100 === true,
+          next_followup_at: contact.next_followup_date ? contact.next_followup_date + "T12:00:00Z" : null,
+          last_contacted_at: contact.last_contact_date ? contact.last_contact_date + "T12:00:00Z" : null,
+          app_state: contact,
+          updated_at: new Date().toISOString()
+        };
+      }
+
+      function dbRowToContact(row) {
+        const state = row.app_state && typeof row.app_state === "object" ? row.app_state : {};
+        const name = state.name || [row.first_name, row.last_name].filter(Boolean).join(" ") || "Unnamed Contact";
+        return Object.assign({}, state, {
+          id: row.id,
+          name,
+          phone: state.phone || row.phone || "",
+          email: state.email || row.email || "",
+          type: state.type || row.contact_type || "prospect",
+          stage: state.stage || row.stage || "Uncontacted Team Prospects",
+          next_followup_date: state.next_followup_date || (row.next_followup_at ? String(row.next_followup_at).slice(0, 10) : ""),
+          last_contact_date: state.last_contact_date || (row.last_contacted_at ? String(row.last_contacted_at).slice(0, 10) : ""),
+          qualifiers: state.qualifiers || row.qualifiers || {},
+          qualifier_score: row.qualifier_score
+        });
+      }
+
+      async function loadBackendContacts() {
+        if (!pulseBackendClient || !getCurrentSession() || getCurrentSession().id === "demo-user") return false;
+        const { data, error } = await pulseBackendClient
+          .from("contacts")
+          .select("id,first_name,last_name,phone,email,contact_type,stage,qualifiers,qualifier_score,is_top_100,next_followup_at,last_contacted_at,app_state")
+          .eq("profile_id", getCurrentSession().id)
+          .order("created_at", { ascending: false });
+        if (error) throw error;
+        contacts = (data || []).map(dbRowToContact);
+        saveContacts(false);
+        renderContacts();
+        renderPowerLists();
+        renderPipeline();
+        return true;
+      }
+
+      async function persistBackendContact(contact) {
+        if (!pulseBackendClient || !getCurrentSession() || getCurrentSession().id === "demo-user") return null;
+        const row = contactToDbRow(contact);
+        const { data, error } = await pulseBackendClient.from("contacts").upsert(row).select("id,app_state").single();
+        if (error) throw error;
+        return data;
+      }
+
       function fieldToApiAction(field) {
         if (field === "calls_warm" || field === "calls_cold" || field === "msg_text") return "contact_block";
         if (field === "appt1_set") return "appt_set";
@@ -16651,7 +16889,14 @@
           license_status: row.licensing_stage,
           notes: "Created from WFG report import. Rank: " + row.rank + ". Points: " + row.points + "."
         });
+        const created = contacts[0];
         saveContacts();
+        persistBackendContact(created).then((saved) => {
+          if (saved && saved.id) {
+            created.id = saved.id;
+            saveContacts();
+          }
+        }).catch(() => {});
         wfgImportStatus.textContent = "Created CRM record for " + row.name + ".";
       }
 
@@ -17362,8 +17607,8 @@
         return contact.next_followup_date <= todayKey();
       }
 
-      function saveContacts() {
-        sessionStorage.setItem(contactsStorageKey, JSON.stringify(contacts));
+      function saveContacts(writeSession = true) {
+        if (writeSession) sessionStorage.setItem(contactsStorageKey, JSON.stringify(contacts));
         renderPowerLists();
         renderPipeline();
       }
@@ -17387,7 +17632,15 @@
         return demoContacts.map((contact) => Object.assign({}, contact, { qualifiers: Object.assign({}, contact.qualifiers) }));
       }
 
-      function hydrateContacts() {
+      async function hydrateContacts() {
+        if (pulseBackendClient && getCurrentSession() && getCurrentSession().id !== "demo-user") {
+          try {
+            await loadBackendContacts();
+            return;
+          } catch {
+            // Keep the local cache usable if Supabase is temporarily unavailable.
+          }
+        }
         const raw = sessionStorage.getItem(contactsStorageKey);
         if (raw) {
           try {
@@ -17396,7 +17649,7 @@
             contacts = [];
           }
         }
-        if (contacts.length === 0) {
+        if (contacts.length === 0 && (!pulseBackendClient || !getCurrentSession() || getCurrentSession().id === "demo-user")) {
           contacts = cloneDemoContacts();
           saveContacts();
         }
@@ -17522,6 +17775,7 @@
         if (!contact) return;
         contact.stage = stageName;
         saveContacts();
+        persistBackendContact(contact).catch(() => {});
         renderContacts();
         if (selectedRecruitId === contactId) openRecruitDetail(contactId);
         if (selectedContactId === contactId) openContactDetail(contactId);
@@ -17898,6 +18152,13 @@
         };
         contacts.unshift(contact);
         saveContacts();
+        persistBackendContact(contact).then((saved) => {
+          if (saved && saved.id) {
+            contact.id = saved.id;
+            saveContacts();
+            renderContacts();
+          }
+        }).catch(() => {});
         resetAddContactForm();
         addContactPanel.classList.add("hidden");
         renderContacts();
@@ -18296,6 +18557,9 @@
         });
         contacts = clean.concat(contacts);
         saveContacts();
+        if (pulseBackendClient && getCurrentSession() && getCurrentSession().id !== "demo-user") {
+          clean.forEach((contact) => persistBackendContact(contact).catch(() => {}));
+        }
         renderContacts();
         return clean.length;
       }
@@ -18957,6 +19221,7 @@
         contact.last_contact_outcome = "Contacted";
         contact.next_followup_date = "";
         saveContacts();
+        persistBackendContact(contact).catch(() => {});
         renderContacts();
         openContactDetail(contact.id);
       }
@@ -19113,22 +19378,36 @@
         renderPowerLists();
       }
 
-      function saveSession() {
+      async function saveSession() {
         const name = nameInput.value.trim() || "Demo Agent";
+        if (pinInput.value.trim().length !== 4) {
+          document.getElementById("auth-note").textContent = "Enter a 4-digit PIN to continue.";
+          return;
+        }
+        enterBtn.disabled = true;
+        authNote("Connecting to PulseNow backend...");
+        try {
+          const backendSession = await createBackendSessionFromForm();
+          sessionStorage.setItem(sessionKey, JSON.stringify(backendSession));
+          authNote("Connected. Your profile and CRM will save to Supabase.");
+          await loadBackendContacts();
+          showApp(backendSession);
+          return;
+        } catch (error) {
+          authNote((error && error.message ? error.message : "Backend login failed.") + " Using local preview only for this browser.");
+        } finally {
+          enterBtn.disabled = false;
+        }
         const session = {
           id: "demo-user",
           name,
-          org_id: "00000000-0000-0000-0000-000000000001",
+          org_id: pulseDefaultOrgId,
           role: "agent",
           level: "TA",
           agent_code: document.getElementById("agent-code-input").value.trim() || "DEMO",
           leader_code: document.getElementById("leader-code-input").value.trim() || null,
           is_manager: false
         };
-        if (pinInput.value.trim().length !== 4) {
-          document.getElementById("auth-note").textContent = "Enter a 4-digit PIN to continue.";
-          return;
-        }
         sessionStorage.setItem(sessionKey, JSON.stringify(session));
         showApp(session);
       }
@@ -19403,7 +19682,14 @@
       });
       document.getElementById("menu-btn").addEventListener("click", () => drawer.classList.add("open"));
       document.getElementById("drawer-bg").addEventListener("click", () => drawer.classList.remove("open"));
-      document.getElementById("signout-btn").addEventListener("click", () => {
+      document.getElementById("signout-btn").addEventListener("click", async () => {
+        if (pulseBackendClient) {
+          try {
+            await pulseBackendClient.auth.signOut();
+          } catch {
+            // Local session cleanup still happens below.
+          }
+        }
         sessionStorage.removeItem(sessionKey);
         showLanding();
       });
@@ -19818,21 +20104,32 @@
       hydrateSocialPosts(false);
       hydrateWfgTeam();
 
-      const urlParams = new URLSearchParams(window.location.search);
-      const forceLanding = urlParams.has("landing");
-      const saved = sessionStorage.getItem(sessionKey);
-      if (forceLanding) {
-        showLanding();
-      } else if (saved) {
-        try {
-          showApp(JSON.parse(saved));
-        } catch {
-          sessionStorage.removeItem(sessionKey);
+      (async () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const forceLanding = urlParams.has("landing");
+        if (forceLanding) {
+          showLanding();
+          return;
+        }
+        const restored = await restoreBackendSession();
+        if (restored) {
+          sessionStorage.setItem(sessionKey, JSON.stringify(restored));
+          await loadBackendContacts();
+          showApp(restored);
+          return;
+        }
+        const saved = sessionStorage.getItem(sessionKey);
+        if (saved) {
+          try {
+            showApp(JSON.parse(saved));
+          } catch {
+            sessionStorage.removeItem(sessionKey);
+            showLanding();
+          }
+        } else {
           showLanding();
         }
-      } else {
-        showLanding();
-      }
+      })();
     </script>
   </body>
 </html>
