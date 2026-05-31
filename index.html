@@ -618,21 +618,86 @@
 
       .social-upload-panel {
         display: grid;
-        gap: 10px;
+        gap: 12px;
       }
 
       .social-upload-btn {
-        display: flex;
-        min-height: 48px;
-        align-items: center;
-        justify-content: center;
+        position: relative;
+        display: grid;
+        min-height: 164px;
+        place-items: center;
+        overflow: hidden;
+        border: 1px dashed color-mix(in srgb, var(--primary) 50%, var(--border));
+        border-radius: 22px;
+        background:
+          linear-gradient(135deg, color-mix(in srgb, var(--primary) 12%, transparent), color-mix(in srgb, var(--aqua) 10%, transparent)),
+          color-mix(in srgb, var(--surface) 92%, var(--sub));
+        color: var(--text);
+        cursor: pointer;
+        text-align: center;
+      }
+
+      .social-upload-btn::before {
+        content: "";
+        position: absolute;
+        inset: 10px;
+        border: 1px solid color-mix(in srgb, #fff 58%, transparent);
+        border-radius: 18px;
+        pointer-events: none;
+      }
+
+      .social-upload-copy {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        justify-items: center;
         gap: 8px;
-        border: 1px dashed color-mix(in srgb, var(--primary) 45%, var(--border));
-        border-radius: 16px;
-        background: color-mix(in srgb, var(--primary) 8%, transparent);
-        color: var(--primary);
+        padding: 20px;
+      }
+
+      .social-upload-plus {
+        display: grid;
+        width: 58px;
+        height: 58px;
+        place-items: center;
+        border-radius: 999px;
+        background: linear-gradient(135deg, var(--primary), var(--aqua));
+        color: #fff;
+        font-size: 34px;
+        font-weight: 850;
+        line-height: 1;
+        box-shadow: 0 12px 24px rgba(22, 70, 109, 0.2);
+      }
+
+      .social-upload-copy strong {
+        font-size: 20px;
+        line-height: 1.1;
+      }
+
+      .social-upload-copy small {
+        max-width: 280px;
+        color: var(--muted);
         font-size: 13px;
-        font-weight: 950;
+        font-weight: 800;
+        line-height: 1.35;
+      }
+
+      .social-media-toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 850;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+
+      .social-media-toolbar strong {
+        color: var(--text);
+        letter-spacing: 0;
+        text-transform: none;
       }
 
       .social-upload-btn input {
@@ -645,8 +710,13 @@
         gap: 8px;
       }
 
+      .social-selected-media:empty {
+        display: none;
+      }
+
       .social-selected-tile {
         position: relative;
+        aspect-ratio: 1 / 1;
         min-height: 132px;
         overflow: hidden;
         border: 1px solid var(--border);
@@ -13439,9 +13509,17 @@
           </div>
           <div class="social-upload-panel">
             <label class="social-upload-btn" for="social-media-input">
-              Add photos or videos
+              <span class="social-upload-copy">
+                <span class="social-upload-plus" aria-hidden="true">+</span>
+                <strong>Camera roll</strong>
+                <small>Add photos or videos from your phone, just like a post picker.</small>
+              </span>
               <input id="social-media-input" type="file" accept="image/*,video/*" multiple />
             </label>
+            <div class="social-media-toolbar">
+              <span>Photos and videos</span>
+              <strong id="social-media-count">0 selected</strong>
+            </div>
             <div id="social-selected-media-list" class="social-selected-media"></div>
           </div>
           <div id="social-media-preview" class="social-media-preview"><strong>Make the win visible.</strong><span>Preview</span></div>
@@ -14341,6 +14419,7 @@
       const socialBodyInput = document.getElementById("social-body-input");
       const socialMediaInput = document.getElementById("social-media-input");
       const socialSelectedMediaList = document.getElementById("social-selected-media-list");
+      const socialMediaCount = document.getElementById("social-media-count");
       const socialStatus = document.getElementById("social-status");
       const socialModePill = document.getElementById("social-mode-pill");
       const socialStoryRail = document.getElementById("social-story-rail");
@@ -17149,6 +17228,9 @@
       function renderSelectedSocialMedia() {
         if (!socialSelectedMediaList) return;
         socialSelectedMediaList.innerHTML = "";
+        if (socialMediaCount) {
+          socialMediaCount.textContent = selectedSocialMedia.length === 1 ? "1 selected" : selectedSocialMedia.length + " selected";
+        }
         selectedSocialMedia.forEach((item, index) => {
           const tile = document.createElement("div");
           tile.className = "social-selected-tile";
