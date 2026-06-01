@@ -657,16 +657,22 @@
 
       .social-upload-plus {
         display: grid;
-        width: 58px;
-        height: 58px;
+        width: 74px;
+        height: 74px;
         place-items: center;
+        overflow: hidden;
         border-radius: 999px;
-        background: linear-gradient(135deg, var(--primary), var(--aqua));
-        color: #fff;
-        font-size: 34px;
-        font-weight: 850;
-        line-height: 1;
+        background: rgba(255, 255, 255, 0.74);
         box-shadow: 0 12px 24px rgba(22, 70, 109, 0.2);
+      }
+
+      .social-upload-plus img,
+      .social-feed-camera-chip img,
+      .story-ring img {
+        width: 152%;
+        height: 152%;
+        object-fit: cover;
+        display: block;
       }
 
       .social-upload-copy strong {
@@ -887,12 +893,10 @@
         height: 42px;
         flex: 0 0 auto;
         place-items: center;
+        overflow: hidden;
         border: 1px solid var(--border);
         border-radius: 999px;
         background: var(--surface);
-        color: var(--primary);
-        font-size: 18px;
-        font-weight: 950;
       }
 
       .social-story-rail {
@@ -940,11 +944,10 @@
         width: 60px;
         height: 60px;
         place-items: center;
+        overflow: hidden;
         border: 4px solid var(--card);
         border-radius: inherit;
-        background: linear-gradient(135deg, var(--primary), var(--aqua));
-        color: #fff;
-        font-weight: 950;
+        background: var(--card);
       }
 
       .social-story small {
@@ -990,6 +993,8 @@
 
       .social-media-preview {
         position: relative;
+        display: grid;
+        align-content: end;
         min-height: 138px;
         overflow: hidden;
         border-radius: 18px;
@@ -1025,6 +1030,18 @@
         padding: 7px 10px;
         font-size: 12px;
         font-weight: 950;
+      }
+
+      .social-preview-asset {
+        position: absolute;
+        right: -18px;
+        top: -18px;
+        width: 128px;
+        height: 128px;
+        border-radius: 999px;
+        object-fit: cover;
+        transform: scale(1.2);
+        opacity: 0.88;
       }
 
       .social-feed-list {
@@ -1135,6 +1152,18 @@
         padding: 7px 10px;
         font-size: 12px;
         font-weight: 950;
+      }
+
+      .social-post-placeholder-asset {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        z-index: 1;
+        width: min(58%, 220px);
+        height: auto;
+        border-radius: 999px;
+        transform: translate(-50%, -50%) scale(1.16);
+        opacity: 0.96;
       }
 
       .social-post-copy {
@@ -13591,7 +13620,7 @@
             <h2>Wins, proof, and field stories</h2>
             <p class="muted" style="margin-top:6px; line-height:1.45;">Share the moment and see what the team is building.</p>
           </div>
-          <span class="social-feed-camera-chip" aria-hidden="true">+</span>
+          <span class="social-feed-camera-chip" aria-hidden="true"><img src="/public/social-assets/add-photo-icon.png" alt="" /></span>
         </section>
 
         <section id="social-story-rail" class="social-story-rail" aria-label="Team stories"></section>
@@ -13616,7 +13645,7 @@
           <div class="social-upload-panel">
             <label class="social-upload-btn" for="social-media-input">
               <span class="social-upload-copy">
-                <span class="social-upload-plus" aria-hidden="true">+</span>
+                <span class="social-upload-plus" aria-hidden="true"><img src="/public/social-assets/add-photo-icon.png" alt="" /></span>
                 <strong>Camera roll</strong>
                 <small>Add photos or videos from your phone, just like a post picker.</small>
               </span>
@@ -17331,6 +17360,13 @@
         return type === "shoutout" ? "Shoutout" : type === "story" ? "Story" : "Win";
       }
 
+      function socialAssetForType(type) {
+        if (type === "story") return "/public/social-assets/gallery-icon.png";
+        if (type === "shoutout") return "/public/social-assets/add-photo-icon.png";
+        if (type === "video") return "/public/social-assets/video-icon.png";
+        return "/public/social-assets/photo-icon.png";
+      }
+
       function renderSelectedSocialMedia() {
         if (!socialSelectedMediaList) return;
         socialSelectedMediaList.innerHTML = "";
@@ -17399,7 +17435,15 @@
         if (!socialMediaPreview) return;
         const title = socialTitleInput.value.trim() || (socialType === "shoutout" ? "Lift someone up." : socialType === "story" ? "Tell the story." : "Make the win visible.");
         socialMediaPreview.style.background = socialGradient(socialThemeForType(socialType));
-        socialMediaPreview.innerHTML = "<strong>" + escapeHtml(title) + '</strong><span>' + escapeHtml(socialTypeLabel(socialType)) + "</span>";
+        socialMediaPreview.innerHTML =
+          '<img class="social-preview-asset" src="' +
+          escapeHtml(socialAssetForType(socialType)) +
+          '" alt="" aria-hidden="true" />' +
+          "<strong>" +
+          escapeHtml(title) +
+          '</strong><span>' +
+          escapeHtml(socialTypeLabel(socialType)) +
+          "</span>";
       }
 
       function renderSocialStories() {
@@ -17414,15 +17458,18 @@
               { id: "story-proof", author_name: "Proof" }
             ];
         socialStoryRail.innerHTML = "";
-        storyPosts.forEach((post) => {
+        storyPosts.forEach((post, index) => {
           const button = document.createElement("button");
           button.type = "button";
           button.className = "social-story";
           button.dataset.socialStoryId = post.id;
+          const asset = post.media_items && post.media_items[0] && post.media_items[0].url
+            ? post.media_items[0].url
+            : ["/public/social-assets/add-photo-icon.png", "/public/social-assets/photo-icon.png", "/public/social-assets/video-icon.png", "/public/social-assets/gallery-icon.png"][index % 4];
           button.innerHTML =
-            '<span class="story-ring"><span>' +
-            escapeHtml((post.author_name || "P").slice(0, 1).toUpperCase()) +
-            "</span></span><small>" +
+            '<span class="story-ring"><span><img src="' +
+            escapeHtml(asset) +
+            '" alt="" aria-hidden="true" /></span></span><small>' +
             escapeHtml(post.author_name) +
             "</small>";
           socialStoryRail.appendChild(button);
@@ -17447,7 +17494,9 @@
             "</div></div>"
           : '<div class="social-post-media" style="background:' +
             socialGradient(post.media_theme) +
-            '"><strong>' +
+            '"><img class="social-post-placeholder-asset" src="' +
+            escapeHtml(socialAssetForType(post.type)) +
+            '" alt="" aria-hidden="true" /><strong>' +
             escapeHtml(post.title) +
             "</strong><span>" +
             escapeHtml(mediaText) +

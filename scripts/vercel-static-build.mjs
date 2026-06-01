@@ -14,7 +14,7 @@ const staticEntries = [
   'pulsenow-logo-transparent.png',
   'pulsenow-logo.jpeg',
 ];
-const publicEntries = ['design-system', 'backgrounds'];
+const publicEntries = ['design-system', 'backgrounds', 'social-assets'];
 const publicFiles = ['dream-mic-button.png'];
 
 await rm(outDir, { recursive: true, force: true });
