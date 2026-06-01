@@ -914,8 +914,12 @@
         display: grid;
         gap: 6px;
         justify-items: center;
-        border: 0;
-        background: transparent;
+        appearance: none;
+        min-height: 0;
+        border: 0 !important;
+        border-radius: 0;
+        background: transparent !important;
+        box-shadow: none !important;
         color: inherit;
         padding: 0;
         text-align: center;
@@ -8953,11 +8957,11 @@
       }
 
       #home-screen > .today-social-feed-card {
-        order: 2 !important;
+        order: 3 !important;
       }
 
       #home-screen > .social-story-rail {
-        order: 3 !important;
+        order: 1 !important;
       }
 
       #home-screen > .social-composer-card {
@@ -8966,6 +8970,10 @@
 
       #home-screen > .today-feed-section {
         order: 5 !important;
+      }
+
+      #home-screen > .today-greeting-card {
+        order: 2 !important;
       }
 
       .today-path-card {
