@@ -669,9 +669,11 @@
       .social-upload-plus img,
       .social-feed-camera-chip img,
       .story-ring img {
-        width: 152%;
-        height: 152%;
+        width: 152% !important;
+        height: 152% !important;
+        max-width: none !important;
         object-fit: cover;
+        object-position: 50% 56%;
         display: block;
       }
 
@@ -915,9 +917,11 @@
       }
 
       .social-story {
-        display: grid;
+        display: grid !important;
         width: 82px;
+        grid-template-rows: 76px 14px;
         gap: 6px;
+        align-items: start !important;
         justify-items: center;
         appearance: none;
         min-height: 0;
@@ -9535,6 +9539,16 @@
         align-items: center !important;
         justify-content: center !important;
         text-align: center !important;
+      }
+
+      #app .social-story {
+        display: grid !important;
+        grid-template-rows: 76px 14px !important;
+        align-items: start !important;
+        justify-items: center !important;
+        justify-content: center !important;
+        width: 82px !important;
+        min-width: 82px !important;
       }
 
       #app .question-chip,
