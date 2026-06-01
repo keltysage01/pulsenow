@@ -904,8 +904,8 @@
       .social-story-rail {
         display: grid;
         grid-auto-flow: column;
-        grid-auto-columns: 78px;
-        gap: 14px;
+        grid-auto-columns: 76px;
+        gap: 12px;
         overflow-x: auto;
         margin: -2px -18px 2px;
         padding: 4px 18px 10px;
@@ -918,8 +918,8 @@
 
       .social-story {
         display: grid !important;
-        width: 82px;
-        grid-template-rows: 76px 14px;
+        width: 76px;
+        grid-template-rows: 68px 14px;
         gap: 6px;
         align-items: start !important;
         justify-items: center;
@@ -936,12 +936,12 @@
 
       .story-ring {
         display: grid;
-        width: 76px;
-        height: 76px;
-        min-width: 76px;
-        min-height: 76px;
-        max-width: 76px;
-        max-height: 76px;
+        width: 68px;
+        height: 68px;
+        min-width: 68px;
+        min-height: 68px;
+        max-width: 68px;
+        max-height: 68px;
         aspect-ratio: 1 / 1;
         place-items: center;
         overflow: hidden;
@@ -952,13 +952,25 @@
 
       .story-ring span {
         display: grid;
-        width: 68px;
-        height: 68px;
+        width: 60px;
+        height: 60px;
         place-items: center;
         overflow: hidden;
         border: 3px solid var(--card);
         border-radius: inherit;
         background: var(--card);
+      }
+
+      .story-profile-avatar {
+        width: 100%;
+        height: 100%;
+        display: grid;
+        place-items: center;
+        color: #fff;
+        font-size: 18px;
+        font-weight: 950;
+        letter-spacing: 0;
+        text-transform: uppercase;
       }
 
       .social-story small {
@@ -9543,12 +9555,12 @@
 
       #app .social-story {
         display: grid !important;
-        grid-template-rows: 76px 14px !important;
+        grid-template-rows: 68px 14px !important;
         align-items: start !important;
         justify-items: center !important;
         justify-content: center !important;
-        width: 82px !important;
-        min-width: 82px !important;
+        width: 76px !important;
+        min-width: 76px !important;
       }
 
       #app .question-chip,
@@ -12573,6 +12585,27 @@
       }
 
       #home-screen.shell { gap: 18px !important; }
+      #home-screen.shell {
+        gap: 14px !important;
+        padding-left: 22px !important;
+        padding-right: 22px !important;
+      }
+
+      #home-screen > .today-greeting-card {
+        gap: 14px !important;
+        padding: 18px !important;
+        border-radius: 24px !important;
+      }
+
+      #home-screen > .today-greeting-card h1 {
+        font-size: clamp(42px, 11vw, 64px) !important;
+        line-height: 0.94 !important;
+      }
+
+      #home-screen > .today-greeting-card strong {
+        font-size: 20px !important;
+        line-height: 1.26 !important;
+      }
       #home-screen .profile.pulse-main-container { margin-bottom: 0 !important; }
       #today-path-card { margin-top: -2px !important; }
 
@@ -17388,6 +17421,22 @@
         return "/public/social-assets/photo-icon.png";
       }
 
+      function storyInitials(name) {
+        const parts = String(name || "Agent").trim().split(/\s+/).filter(Boolean);
+        if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+        return String(parts[0] || "A").slice(0, 2).toUpperCase();
+      }
+
+      function storyAvatarGradient(index) {
+        const gradients = [
+          "linear-gradient(135deg, #16466d 0%, #55b6c5 58%, #86bd4d 100%)",
+          "linear-gradient(135deg, #0f3c5a 0%, #2fd6c6 54%, #5ba7e8 100%)",
+          "linear-gradient(135deg, #1d6f76 0%, #62d2ca 52%, #9adf89 100%)",
+          "linear-gradient(135deg, #123f69 0%, #1aa9e8 54%, #6fe36d 100%)"
+        ];
+        return gradients[index % gradients.length];
+      }
+
       function renderSelectedSocialMedia() {
         if (!socialSelectedMediaList) return;
         socialSelectedMediaList.innerHTML = "";
@@ -17470,22 +17519,40 @@
       function renderSocialStories() {
         if (!socialStoryRail) return;
         const session = getCurrentSession() || { name: "You" };
-        const storyPosts = socialPosts.length
-          ? socialPosts.slice(0, 8)
-          : [
-              { id: "story-you", author_name: session.name || "You" },
-              { id: "story-team", author_name: "Team wins" },
-              { id: "story-field", author_name: "Field notes" },
-              { id: "story-proof", author_name: "Proof" }
-            ];
+        const currentName = String(session.name || "You").trim().toLowerCase();
+        const demoStoryFallbacks = [
+          { id: "story-team", author_name: "Team Pulse" },
+          { id: "story-mia", author_name: "Mia Johnson" },
+          { id: "story-jordan", author_name: "Jordan Blake" },
+          { id: "story-taylor", author_name: "Taylor Reed" },
+          { id: "story-nina", author_name: "Nina Patel" },
+          { id: "story-cameron", author_name: "Cameron Lee" }
+        ];
+        const demoStories = (socialPosts.length
+          ? socialPosts.filter((post) => String(post.author_name || "").trim().toLowerCase() !== currentName)
+          : []
+        ).concat(demoStoryFallbacks).filter((post, index, list) => {
+          const name = String(post.author_name || "").trim().toLowerCase();
+          return name && list.findIndex((item) => String(item.author_name || "").trim().toLowerCase() === name) === index;
+        }).slice(0, 7);
         socialStoryRail.innerHTML = "";
-        storyPosts.forEach((post) => {
+        const addButton = document.createElement("button");
+        addButton.type = "button";
+        addButton.className = "social-story";
+        addButton.dataset.socialStoryId = "story-add";
+        addButton.innerHTML = '<span class="story-ring"><span><img src="/public/social-assets/add-photo-icon.png" alt="" aria-hidden="true" /></span></span><small>Your story</small>';
+        socialStoryRail.appendChild(addButton);
+        demoStories.forEach((post, index) => {
           const button = document.createElement("button");
           button.type = "button";
           button.className = "social-story";
           button.dataset.socialStoryId = post.id;
           button.innerHTML =
-            '<span class="story-ring"><span><img src="/public/social-assets/add-photo-icon.png" alt="" aria-hidden="true" /></span></span><small>' +
+            '<span class="story-ring"><span><span class="story-profile-avatar" style="background:' +
+            escapeHtml(storyAvatarGradient(index)) +
+            ';">' +
+            escapeHtml(storyInitials(post.author_name)) +
+            "</span></span></span><small>" +
             escapeHtml(post.author_name) +
             "</small>";
           socialStoryRail.appendChild(button);
