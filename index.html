@@ -858,36 +858,61 @@
       }
 
       .social-hero-card {
-        border: 0;
-        background:
-          linear-gradient(135deg, rgba(22, 70, 109, 0.92), rgba(85, 182, 197, 0.88)),
-          url("/public/backgrounds/achievements/pulsenow_achievements_02.svg") center/cover;
-        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        background: color-mix(in srgb, var(--card) 96%, #fff);
+        color: var(--text);
+        padding: 14px 16px;
+        box-shadow: none;
       }
 
       .social-hero-card .eyebrow,
       .social-hero-card .muted {
-        color: rgba(255, 255, 255, 0.78);
+        color: var(--muted);
       }
 
       .social-hero-card h2 {
-        font-size: 28px;
-        line-height: 1;
+        margin-top: 2px;
+        font-size: 18px;
+        line-height: 1.1;
+      }
+
+      .social-feed-camera-chip {
+        display: grid;
+        width: 42px;
+        height: 42px;
+        flex: 0 0 auto;
+        place-items: center;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        background: var(--surface);
+        color: var(--primary);
+        font-size: 18px;
+        font-weight: 950;
       }
 
       .social-story-rail {
         display: grid;
         grid-auto-flow: column;
-        grid-auto-columns: 82px;
-        gap: 12px;
+        grid-auto-columns: 78px;
+        gap: 14px;
         overflow-x: auto;
-        margin-top: 16px;
-        padding: 2px 0 4px;
+        margin: -2px -18px 2px;
+        padding: 4px 18px 10px;
+        scrollbar-width: none;
+      }
+
+      .social-story-rail::-webkit-scrollbar {
+        display: none;
       }
 
       .social-story {
         display: grid;
-        gap: 7px;
+        gap: 6px;
         justify-items: center;
         border: 0;
         background: transparent;
@@ -898,23 +923,23 @@
 
       .story-ring {
         display: grid;
-        width: 66px;
-        height: 66px;
+        width: 70px;
+        height: 70px;
         place-items: center;
         border-radius: 999px;
-        background: conic-gradient(from 210deg, #f4b942, #55b6c5, #86bd4d, #f4b942);
-        box-shadow: 0 14px 34px rgba(18, 36, 58, 0.22);
+        background: conic-gradient(from 210deg, #f9ce34, #ee2a7b, #6228d7, #f9ce34);
+        box-shadow: 0 10px 24px rgba(18, 36, 58, 0.12);
       }
 
       .story-ring span {
         display: grid;
-        width: 56px;
-        height: 56px;
+        width: 60px;
+        height: 60px;
         place-items: center;
-        border: 3px solid #fff;
+        border: 4px solid var(--card);
         border-radius: inherit;
-        background: var(--card);
-        color: var(--primary);
+        background: linear-gradient(135deg, var(--primary), var(--aqua));
+        color: #fff;
         font-weight: 950;
       }
 
@@ -931,10 +956,10 @@
       .social-composer-card {
         display: grid;
         gap: 12px;
-        border-radius: 24px;
-        background:
-          linear-gradient(180deg, color-mix(in srgb, var(--card) 96%, #ffffff), var(--card)),
-          var(--card);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        background: var(--card);
+        box-shadow: none;
       }
 
       .social-prompt-row {
@@ -999,13 +1024,14 @@
       }
 
       .social-feed-list {
-        gap: 16px;
+        gap: 20px;
       }
 
       .social-post-card {
-        border-radius: 24px;
+        border: 1px solid var(--border);
+        border-radius: 18px;
         padding: 0;
-        box-shadow: 0 18px 48px rgba(18, 36, 58, 0.1);
+        box-shadow: none;
       }
 
       .social-post-head,
@@ -1017,14 +1043,25 @@
 
       .social-post-head {
         align-items: center;
-        padding-top: 14px;
-        padding-bottom: 12px;
+        padding-top: 12px;
+        padding-bottom: 10px;
+      }
+
+      .social-post-menu {
+        border: 0;
+        background: transparent;
+        color: var(--text);
+        font-size: 22px;
+        font-weight: 950;
+        letter-spacing: 2px;
+        line-height: 1;
       }
 
       .social-post-media {
         position: relative;
         display: grid;
-        min-height: 300px;
+        aspect-ratio: 1 / 1;
+        min-height: 0;
         align-content: end;
         overflow: hidden;
         border-block: 1px solid var(--border);
@@ -1034,10 +1071,10 @@
       }
 
       .social-post-media.uploaded-media {
-        min-height: 360px;
+        min-height: 0;
         align-content: stretch;
         padding: 0;
-        background: #0f172a !important;
+        background: #fff !important;
       }
 
       .social-post-media.uploaded-media::before {
@@ -1046,6 +1083,7 @@
 
       .social-post-media-grid {
         display: grid;
+        aspect-ratio: 1 / 1;
         min-height: inherit;
         grid-template-columns: 1fr;
       }
@@ -1058,7 +1096,7 @@
       .social-post-media-grid video {
         width: 100%;
         height: 100%;
-        min-height: 180px;
+        min-height: 0;
         object-fit: cover;
         display: block;
         background: #0f172a;
@@ -1096,22 +1134,61 @@
       }
 
       .social-post-copy {
-        padding-top: 12px;
+        padding-top: 8px;
       }
 
       .social-post-copy h3 {
         margin: 0;
+        font-size: 14px;
       }
 
       .social-post-actions {
-        justify-content: space-between;
-        padding-top: 12px;
+        justify-content: flex-start;
+        gap: 16px;
+        padding-top: 10px;
       }
 
       .social-post-actions button {
-        min-height: 38px;
-        border-radius: 13px;
-        background: color-mix(in srgb, var(--sub) 8%, transparent);
+        display: inline-flex;
+        min-height: 32px;
+        align-items: center;
+        gap: 6px;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        color: var(--text);
+        padding: 0;
+        font-size: 15px;
+      }
+
+      .social-post-actions button:last-child {
+        margin-left: auto;
+      }
+
+      .social-action-icon {
+        font-size: 28px;
+        font-weight: 500;
+        line-height: 1;
+      }
+
+      .social-post-actions button.active .social-action-icon {
+        color: #ee2a7b;
+      }
+
+      .social-like-line {
+        margin-top: 2px;
+        font-size: 14px;
+        font-weight: 900;
+      }
+
+      .social-caption-line {
+        margin-top: 6px;
+        font-size: 14px;
+        line-height: 1.45;
+      }
+
+      .social-caption-line strong {
+        margin-right: 5px;
       }
 
       .social-comment-row {
@@ -8875,6 +8952,22 @@
         order: 10 !important;
       }
 
+      #home-screen > .today-social-feed-card {
+        order: 2 !important;
+      }
+
+      #home-screen > .social-story-rail {
+        order: 3 !important;
+      }
+
+      #home-screen > .social-composer-card {
+        order: 4 !important;
+      }
+
+      #home-screen > .today-feed-section {
+        order: 5 !important;
+      }
+
       .today-path-card {
         display: grid !important;
         gap: 15px !important;
@@ -13485,10 +13578,15 @@
         </section>
 
         <section class="card social-hero-card today-social-feed-card">
-          <p class="eyebrow">Today Feed</p>
-          <h2>Wins, proof, and field stories</h2>
-          <p class="muted" style="margin-top:10px; line-height:1.55;">Share the moment, see what the team is building, and keep the day moving.</p>
+          <div>
+            <p class="eyebrow">Today Feed</p>
+            <h2>Wins, proof, and field stories</h2>
+            <p class="muted" style="margin-top:6px; line-height:1.45;">Share the moment and see what the team is building.</p>
+          </div>
+          <span class="social-feed-camera-chip" aria-hidden="true">+</span>
         </section>
+
+        <section id="social-story-rail" class="social-story-rail" aria-label="Team stories"></section>
 
         <section class="card social-composer-card">
           <div class="section-head">
@@ -17298,7 +17396,15 @@
 
       function renderSocialStories() {
         if (!socialStoryRail) return;
-        const storyPosts = socialPosts.slice(0, 8);
+        const session = getCurrentSession() || { name: "You" };
+        const storyPosts = socialPosts.length
+          ? socialPosts.slice(0, 8)
+          : [
+              { id: "story-you", author_name: session.name || "You" },
+              { id: "story-team", author_name: "Team wins" },
+              { id: "story-field", author_name: "Field notes" },
+              { id: "story-proof", author_name: "Proof" }
+            ];
         socialStoryRail.innerHTML = "";
         storyPosts.forEach((post) => {
           const button = document.createElement("button");
@@ -17321,6 +17427,10 @@
         item.className = "social-post-card" + (mediaItems.length ? " has-upload-media" : "");
         const typeLabel = socialTypeLabel(post.type);
         const mediaText = post.type === "shoutout" ? "Team proof" : post.type === "story" ? "Field story" : "Win posted";
+        const authorName = post.author_name || "PulseNow";
+        const likes = Number(post.reactions.fire || 0);
+        const comments = Number(post.reactions.congrats || 0);
+        const saves = Number(post.reactions.inspired || 0);
         const mediaMarkup = mediaItems.length
           ? '<div class="social-post-media uploaded-media"><div class="social-post-media-grid ' + (mediaItems.length > 1 ? "multi" : "") + '">' +
             mediaItems.map((media) => media.type === "video"
@@ -17336,40 +17446,42 @@
             "</span></div>";
         item.innerHTML =
           '<div class="social-post-head"><div class="social-post-author"><span class="social-author-avatar">' +
-          escapeHtml((post.author_name || "P").slice(0, 1).toUpperCase()) +
+          escapeHtml(authorName.slice(0, 1).toUpperCase()) +
           '</span><div><strong>' +
-          escapeHtml(post.author_name) +
+          escapeHtml(authorName) +
           '</strong><p class="muted" style="margin-top:3px;">' +
           escapeHtml([post.author_level, formatSocialTime(post.created_at)].filter(Boolean).join(" · ")) +
-          '</p></div></div><span class="stage-pill">' +
-          typeLabel +
-          "</span></div>" +
+          '</p></div></div><button class="social-post-menu" type="button" aria-label="Post options">...</button></div>' +
           mediaMarkup +
-          '<div class="social-post-copy"><h3>' +
-          escapeHtml(post.title) +
-          "</h3>" +
-          (compact ? "" : '<p class="social-post-body muted">' + escapeHtml(post.body) + "</p>") +
-          "</div>" +
           '<div class="social-post-actions">' +
           '<button type="button" data-social-react="' +
           escapeHtml(post.id) +
           '" data-social-reaction="fire" class="' +
           (post.reacted.fire ? "active" : "") +
-          '">Like · ' +
-          post.reactions.fire +
-          '</button><button type="button" data-social-react="' +
+          '"><span class="social-action-icon" aria-hidden="true">&#9825;</span><strong>' +
+          likes +
+          '</strong></button><button type="button" data-social-react="' +
           escapeHtml(post.id) +
           '" data-social-reaction="congrats" class="' +
           (post.reacted.congrats ? "active" : "") +
-          '">Comment · ' +
-          post.reactions.congrats +
-          '</button><button type="button" data-social-react="' +
+          '"><span class="social-action-icon" aria-hidden="true">&#9711;</span><strong>' +
+          comments +
+          '</strong></button><button type="button" data-social-react="' +
           escapeHtml(post.id) +
           '" data-social-reaction="inspired" class="' +
           (post.reacted.inspired ? "active" : "") +
-          '">Save · ' +
-          post.reactions.inspired +
-          '</button></div><div class="social-comment-row"><input readonly value="Add a comment..." aria-label="Comment preview" /><button type="button" data-social-react="' +
+          '"><span class="social-action-icon" aria-hidden="true">&#9633;</span><strong>' +
+          saves +
+          '</strong></button></div><div class="social-post-copy"><p class="social-like-line">' +
+          (likes === 1 ? "1 like" : likes + " likes") +
+          '</p><p class="social-caption-line"><strong>' +
+          escapeHtml(authorName) +
+          "</strong>" +
+          escapeHtml(post.title) +
+          (compact ? "" : " " + escapeHtml(post.body)) +
+          ' <span class="muted">' +
+          escapeHtml(typeLabel) +
+          '</span></p></div><div class="social-comment-row"><input readonly value="Add a comment..." aria-label="Comment preview" /><button type="button" data-social-react="' +
           escapeHtml(post.id) +
           '" data-social-reaction="congrats">Post</button></div>';
         return item;
