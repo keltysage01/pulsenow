@@ -667,8 +667,7 @@
       }
 
       .social-upload-plus img,
-      .social-feed-camera-chip img,
-      .story-ring img {
+      .social-feed-camera-chip img {
         width: 152% !important;
         height: 152% !important;
         max-width: none !important;
@@ -904,7 +903,7 @@
       .social-story-rail {
         display: grid;
         grid-auto-flow: column;
-        grid-auto-columns: 76px;
+        grid-auto-columns: 74px;
         gap: 12px;
         overflow-x: auto;
         margin: -2px -18px 2px;
@@ -918,11 +917,12 @@
 
       .social-story {
         display: grid !important;
-        width: 76px;
+        width: 74px;
         grid-template-rows: 68px 14px;
         gap: 6px;
         align-items: start !important;
         justify-items: center;
+        justify-content: center;
         appearance: none;
         min-height: 0;
         border: 0 !important;
@@ -951,21 +951,69 @@
       }
 
       .story-ring span {
+        position: relative;
         display: grid;
         width: 60px;
         height: 60px;
+        box-sizing: border-box;
         place-items: center;
         overflow: hidden;
-        border: 3px solid var(--card);
+        border: 0;
+        padding: 0;
         border-radius: inherit;
         background: var(--card);
       }
 
-      .story-profile-avatar {
-        width: 100%;
-        height: 100%;
+      .story-add-avatar {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 54px;
+        height: 54px;
+        transform: translate(-50%, -50%);
         display: grid;
         place-items: center;
+        border-radius: inherit;
+        background:
+          radial-gradient(circle at 24% 22%, rgba(255, 255, 255, 0.92) 0 2px, transparent 3px),
+          radial-gradient(circle at 78% 26%, rgba(255, 255, 255, 0.65) 0 1px, transparent 2px),
+          radial-gradient(circle at 86% 82%, rgba(255, 255, 255, 0.55) 0 4px, transparent 5px),
+          linear-gradient(135deg, #2fd6c6 0%, #16466d 76%);
+      }
+
+      .story-add-avatar::before,
+      .story-add-avatar::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        display: block;
+        border-radius: 999px;
+        background: #fff;
+        box-shadow: 0 4px 8px rgba(15, 61, 79, 0.28);
+        transform: translate(-50%, -50%);
+      }
+
+      .story-add-avatar::before {
+        width: 32px;
+        height: 8px;
+      }
+
+      .story-add-avatar::after {
+        width: 8px;
+        height: 32px;
+      }
+
+      .story-profile-avatar {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 54px;
+        height: 54px;
+        transform: translate(-50%, -50%);
+        display: grid;
+        place-items: center;
+        border-radius: inherit;
         color: #fff;
         font-size: 18px;
         font-weight: 950;
@@ -974,7 +1022,8 @@
       }
 
       .social-story small {
-        max-width: 76px;
+        width: 74px;
+        max-width: 74px;
         overflow: hidden;
         color: var(--sub);
         font-size: 11px;
@@ -9559,8 +9608,8 @@
         align-items: start !important;
         justify-items: center !important;
         justify-content: center !important;
-        width: 76px !important;
-        min-width: 76px !important;
+        width: 74px !important;
+        min-width: 74px !important;
       }
 
       #app .question-chip,
@@ -17540,7 +17589,7 @@
         addButton.type = "button";
         addButton.className = "social-story";
         addButton.dataset.socialStoryId = "story-add";
-        addButton.innerHTML = '<span class="story-ring"><span><img src="/public/social-assets/add-photo-icon.png" alt="" aria-hidden="true" /></span></span><small>Your story</small>';
+        addButton.innerHTML = '<span class="story-ring"><span><span class="story-add-avatar" aria-hidden="true"></span></span></span><small>Your story</small>';
         socialStoryRail.appendChild(addButton);
         demoStories.forEach((post, index) => {
           const button = document.createElement("button");
