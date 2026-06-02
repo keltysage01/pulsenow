@@ -9070,7 +9070,7 @@
       }
 
       #home-screen > .today-feed-section {
-        order: 5 !important;
+        display: none !important;
       }
 
       #home-screen > .today-greeting-card {
@@ -13717,40 +13717,40 @@
           </div>
         </section>
 
+        <section id="social-story-rail" class="social-story-rail" aria-label="Team stories"></section>
+
         <section class="card social-hero-card today-social-feed-card">
           <div>
-            <p class="eyebrow">Today Feed</p>
-            <h2>Wins, proof, and field stories</h2>
-            <p class="muted" style="margin-top:6px; line-height:1.45;">Share the moment and see what the team is building.</p>
+            <p class="eyebrow">Team Room</p>
+            <h2>Group updates first</h2>
+            <p class="muted" style="margin-top:6px; line-height:1.45;">Quick stories, shoutouts, and team messages without a running social feed.</p>
           </div>
           <span class="social-feed-camera-chip" aria-hidden="true"><img src="/public/social-assets/add-photo-icon.png" alt="" /></span>
         </section>
 
-        <section id="social-story-rail" class="social-story-rail" aria-label="Team stories"></section>
-
         <section class="card social-composer-card">
           <div class="section-head">
             <div>
-              <p class="eyebrow">Wins & Stories</p>
-              <h2>Share the moment</h2>
+              <p class="eyebrow">Stories & Shoutouts</p>
+              <h2>Message the team</h2>
             </div>
             <span id="social-mode-pill" class="stage-pill">Preview</span>
           </div>
           <div class="social-prompt-row">
             <span id="social-composer-avatar" class="social-author-avatar">P</span>
-            <input id="social-title-input" maxlength="80" placeholder="What win should the team see?" />
+            <input id="social-title-input" maxlength="80" placeholder="Team update headline" />
           </div>
           <div class="social-type-row" aria-label="Post type">
-            <button class="filter-btn active" data-social-type="win" type="button">Win</button>
-            <button class="filter-btn" data-social-type="story" type="button">Story</button>
+            <button class="filter-btn active" data-social-type="story" type="button">Story</button>
             <button class="filter-btn" data-social-type="shoutout" type="button">Shoutout</button>
+            <button class="filter-btn" data-social-type="win" type="button">Win</button>
           </div>
           <div class="social-upload-panel">
             <label class="social-upload-btn" for="social-media-input">
               <span class="social-upload-copy">
                 <span class="social-upload-plus" aria-hidden="true"><img src="/public/social-assets/add-photo-icon.png" alt="" /></span>
-                <strong>Camera roll</strong>
-                <small>Add photos or videos from your phone, just like a post picker.</small>
+                <strong>Story media</strong>
+                <small>Add a quick photo or video for the team story rail.</small>
               </span>
               <input id="social-media-input" type="file" accept="image/*,video/*" multiple />
             </label>
@@ -13760,23 +13760,12 @@
             </div>
             <div id="social-selected-media-list" class="social-selected-media"></div>
           </div>
-          <div id="social-media-preview" class="social-media-preview"><strong>Make the win visible.</strong><span>Preview</span></div>
-          <textarea id="social-body-input" maxlength="700" placeholder="What happened? Share the useful details, not just the scoreboard."></textarea>
+          <div id="social-media-preview" class="social-media-preview"><strong>Tell the team what matters.</strong><span>Preview</span></div>
+          <textarea id="social-body-input" maxlength="700" placeholder="What should the team know, celebrate, or rally around today?"></textarea>
           <div class="social-composer-actions">
-            <p id="social-status" class="muted">Posts save on this device for now. The Supabase table is ready for the server-side team feed pass.</p>
-            <button id="social-post-btn" class="pill-btn" type="button">Post</button>
+            <p id="social-status" class="muted">Stories save on this device for now. Team chat storage is staged in Supabase for the backend pass.</p>
+            <button id="social-post-btn" class="pill-btn" type="button">Share story</button>
           </div>
-        </section>
-
-        <section class="section today-feed-section">
-          <div class="section-head">
-            <div>
-              <p class="eyebrow">Team Feed</p>
-              <h2>Latest wins</h2>
-            </div>
-            <button id="social-refresh-btn" class="text-btn" type="button">Refresh</button>
-          </div>
-          <div id="social-feed-list" class="social-feed-list"></div>
         </section>
       </main>
 
@@ -14746,7 +14735,7 @@
       let pipelineType = "sales";
       let selectedRecruitId = "";
       let boardRange = "week";
-      let socialType = "win";
+      let socialType = "story";
       let socialPosts = [];
       let selectedSocialMedia = [];
       let wfgTeamRows = [];
@@ -17552,7 +17541,7 @@
 
       function updateSocialMediaPreview() {
         if (!socialMediaPreview) return;
-        const title = socialTitleInput.value.trim() || (socialType === "shoutout" ? "Lift someone up." : socialType === "story" ? "Tell the story." : "Make the win visible.");
+        const title = socialTitleInput.value.trim() || (socialType === "shoutout" ? "Lift someone up." : socialType === "story" ? "Tell the team what matters." : "Make the win visible.");
         socialMediaPreview.style.background = socialGradient(socialThemeForType(socialType));
         socialMediaPreview.innerHTML =
           '<img class="social-preview-asset" src="' +
@@ -17688,22 +17677,20 @@
         }
         if (!socialFeedList) return;
         socialFeedList.innerHTML = "";
-        socialPosts.forEach((post) => socialFeedList.appendChild(renderSocialPost(post, false)));
-        if (socialPosts.length === 0) socialFeedList.innerHTML = '<div class="social-empty">No wins posted yet. Post the first story your team can learn from.</div>';
       }
 
       async function hydrateSocialPosts(forceRemote) {
         socialPosts = readLocalSocialPosts();
         renderSocial();
         if (socialModePill) socialModePill.textContent = "Preview";
-        if (forceRemote && socialStatus) socialStatus.textContent = "Preview feed refreshed.";
+        if (forceRemote && socialStatus) socialStatus.textContent = "Team stories refreshed.";
       }
 
       async function createSocialPost() {
         const title = socialTitleInput.value.trim();
         const body = socialBodyInput.value.trim();
         if (!title || !body) {
-          socialStatus.textContent = "Add a headline and the story before posting.";
+          socialStatus.textContent = "Add a headline and message before sharing.";
           return;
         }
         const session = getCurrentSession() || { name: "Demo Agent", level: "TA" };
@@ -17728,7 +17715,7 @@
         selectedSocialMedia = [];
         if (socialMediaInput) socialMediaInput.value = "";
         renderSelectedSocialMedia();
-        socialStatus.textContent = "Posted to preview feed.";
+        socialStatus.textContent = "Shared to team stories.";
       }
 
       function reactToSocialPost(id, reaction) {
@@ -21106,7 +21093,7 @@
       });
       document.querySelectorAll("[data-social-type]").forEach((button) => {
         button.addEventListener("click", () => {
-          socialType = button.dataset.socialType || "win";
+          socialType = button.dataset.socialType || "story";
           document.querySelectorAll("[data-social-type]").forEach((item) => item.classList.toggle("active", item === button));
           updateSocialMediaPreview();
         });
@@ -21126,6 +21113,13 @@
         socialStoryRail.addEventListener("click", (event) => {
           const button = event.target.closest("[data-social-story-id]");
           if (!button) return;
+          if (button.dataset.socialStoryId === "story-add") {
+            socialType = "story";
+            document.querySelectorAll("[data-social-type]").forEach((item) => item.classList.toggle("active", item.dataset.socialType === socialType));
+            updateSocialMediaPreview();
+            socialTitleInput.focus();
+            return;
+          }
           const post = socialPosts.find((item) => item.id === button.dataset.socialStoryId);
           if (!post) return;
           socialTitleInput.value = post.title;
@@ -21137,7 +21131,8 @@
         });
       }
       document.getElementById("social-post-btn").addEventListener("click", createSocialPost);
-      document.getElementById("social-refresh-btn").addEventListener("click", () => hydrateSocialPosts(true));
+      const socialRefreshBtn = document.getElementById("social-refresh-btn");
+      if (socialRefreshBtn) socialRefreshBtn.addEventListener("click", () => hydrateSocialPosts(true));
       document.addEventListener("click", (event) => {
         const button = event.target.closest("[data-social-react]");
         if (!button) return;
