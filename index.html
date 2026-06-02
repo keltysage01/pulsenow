@@ -14954,6 +14954,10 @@
       let backendActivityLoadedFor = "";
       let backendBadgesLoadedFor = "";
       let backendWfgLoadedFor = "";
+      let backendTeamChatLoadedFor = "";
+      let teamChatMessages = null;
+      let teamChatBackendGroupId = "";
+      let teamChatBackendLoading = false;
       let lastImportedContacts = [];
       let contactIntelClientPromise = null;
       let dreamMediaRecorder = null;
@@ -17658,6 +17662,7 @@
       function normalizeTeamChatMessage(message) {
         return {
           id: String(message.id || "team-message-" + Date.now()),
+          user_id: String(message.user_id || ""),
           author_name: String(message.author_name || "Demo Agent"),
           text: String(message.text || "").slice(0, 500),
           created_at: message.created_at || new Date().toISOString(),
@@ -17675,11 +17680,107 @@
         writeLocalJson(getTeamChatStorageKey(), messages.map(normalizeTeamChatMessage).slice(-80));
       }
 
+      function setTeamChatMode(text) {
+        if (teamChatModePill) teamChatModePill.textContent = text;
+      }
+
+      function dbRowToTeamChatMessage(row) {
+        const session = getCurrentSession() || {};
+        const profile = row.profiles || {};
+        const authorName = profile.full_name || (row.user_id === session.id ? session.name : "Team member");
+        return normalizeTeamChatMessage({
+          id: row.id,
+          user_id: row.user_id || "",
+          author_name: authorName,
+          text: row.text || "",
+          created_at: row.created_at,
+          self: row.user_id === session.id
+        });
+      }
+
+      async function ensureBackendTeamChatGroup() {
+        const session = getCurrentSession();
+        if (!pulseBackendClient || !session || session.id === "demo-user") return "";
+        if (teamChatBackendGroupId) return teamChatBackendGroupId;
+
+        try {
+          const { data, error } = await pulseBackendClient.rpc("pulse_ensure_default_team_chat_group", { p_group_name: "Team Room" });
+          if (error) throw error;
+          teamChatBackendGroupId = data || "";
+          return teamChatBackendGroupId;
+        } catch {
+          const { data: memberships, error: membershipError } = await pulseBackendClient
+            .from("pulse_chat_memberships")
+            .select("group_id,pulse_chat_groups(id,name)")
+            .eq("user_id", session.id)
+            .order("joined_at", { ascending: true })
+            .limit(1);
+          if (membershipError) throw membershipError;
+          if (memberships && memberships.length && memberships[0].group_id) {
+            teamChatBackendGroupId = memberships[0].group_id;
+            return teamChatBackendGroupId;
+          }
+
+          const { data: group, error: groupError } = await pulseBackendClient
+            .from("pulse_chat_groups")
+            .insert({ org_id: session.org_id || pulseDefaultOrgId, name: "Team Room", creator_id: session.id })
+            .select("id")
+            .single();
+          if (groupError) throw groupError;
+          teamChatBackendGroupId = group.id;
+
+          const { error: joinError } = await pulseBackendClient
+            .from("pulse_chat_memberships")
+            .upsert({ group_id: teamChatBackendGroupId, user_id: session.id, org_id: session.org_id || pulseDefaultOrgId }, { onConflict: "group_id,user_id" });
+          if (joinError) throw joinError;
+          return teamChatBackendGroupId;
+        }
+      }
+
+      async function loadBackendTeamChat(force) {
+        const session = getCurrentSession();
+        if (!pulseBackendClient || !session || session.id === "demo-user") {
+          setTeamChatMode("Preview");
+          return false;
+        }
+        if (!force && backendTeamChatLoadedFor === session.id && Array.isArray(teamChatMessages)) return true;
+        teamChatBackendLoading = true;
+        setTeamChatMode("Syncing");
+        try {
+          const groupId = await ensureBackendTeamChatGroup();
+          if (!groupId) return false;
+          const { data, error } = await pulseBackendClient
+            .from("pulse_chat_messages")
+            .select("id,user_id,text,created_at,profiles(full_name,avatar_url,level)")
+            .eq("group_id", groupId)
+            .order("created_at", { ascending: false })
+            .limit(50);
+          if (error) throw error;
+          teamChatMessages = (data || []).map(dbRowToTeamChatMessage).reverse();
+          backendTeamChatLoadedFor = session.id;
+          renderTeamChat();
+          setTeamChatMode("Live");
+          return true;
+        } catch {
+          teamChatMessages = readTeamChatMessages();
+          renderTeamChat();
+          setTeamChatMode("Local");
+          return false;
+        } finally {
+          teamChatBackendLoading = false;
+        }
+      }
+
       function renderTeamChat() {
         if (!teamChatList) return;
         const session = getCurrentSession() || { name: "Demo Agent" };
-        const messages = readTeamChatMessages();
+        const messages = Array.isArray(teamChatMessages) ? teamChatMessages : readTeamChatMessages();
         teamChatList.innerHTML = "";
+        if (!messages.length) {
+          teamChatList.innerHTML = '<div class="social-empty">No team messages yet. Start the room with a quick update.</div>';
+          setTeamChatMode(pulseBackendClient && session.id !== "demo-user" ? "Live" : "Preview");
+          return;
+        }
         messages.forEach((message) => {
           const item = document.createElement("article");
           const authorName = message.self ? (session.name || message.author_name) : message.author_name;
@@ -17696,28 +17797,51 @@
             "</p></div>";
           teamChatList.appendChild(item);
         });
-        if (teamChatModePill) teamChatModePill.textContent = "Preview";
+        if (pulseBackendClient && session.id !== "demo-user") setTeamChatMode(teamChatBackendLoading ? "Syncing" : "Live");
+        else setTeamChatMode("Preview");
       }
 
-      function sendTeamChatMessage() {
+      async function sendTeamChatMessage() {
         if (!teamChatInput) return;
         const text = teamChatInput.value.trim();
         if (!text) return;
         const session = getCurrentSession() || { name: "Demo Agent" };
-        const messages = readTeamChatMessages();
-        messages.push(normalizeTeamChatMessage({
+        const messages = Array.isArray(teamChatMessages) ? teamChatMessages.slice() : readTeamChatMessages();
+        const optimisticMessage = normalizeTeamChatMessage({
           id: "local-team-" + Date.now(),
+          user_id: session.id || "",
           author_name: session.name || "Demo Agent",
           text,
           created_at: new Date().toISOString(),
           self: true
-        }));
-        writeTeamChatMessages(messages);
+        });
+        messages.push(optimisticMessage);
+        teamChatMessages = messages;
+        if (!pulseBackendClient || session.id === "demo-user") writeTeamChatMessages(messages);
         teamChatInput.value = "";
         renderTeamChat();
         window.setTimeout(() => {
           if (teamChatList) teamChatList.lastElementChild && teamChatList.lastElementChild.scrollIntoView({ behavior: "smooth", block: "nearest" });
         }, 0);
+
+        if (!pulseBackendClient || session.id === "demo-user") return;
+        try {
+          setTeamChatMode("Syncing");
+          const groupId = await ensureBackendTeamChatGroup();
+          const { data, error } = await pulseBackendClient
+            .from("pulse_chat_messages")
+            .insert({ group_id: groupId, user_id: session.id, text })
+            .select("id,user_id,text,created_at,profiles(full_name,avatar_url,level)")
+            .single();
+          if (error) throw error;
+          teamChatMessages = (teamChatMessages || []).map((message) => message.id === optimisticMessage.id ? dbRowToTeamChatMessage(data) : message);
+          backendTeamChatLoadedFor = session.id;
+          renderTeamChat();
+          setTeamChatMode("Live");
+        } catch {
+          writeTeamChatMessages(teamChatMessages || messages);
+          setTeamChatMode("Local");
+        }
       }
 
       function formatSocialTime(value) {
@@ -21008,6 +21132,7 @@
           await loadBackendActivityForSession();
           await loadBackendBadgesForSession();
           await loadBackendWfgTeamRows();
+          await loadBackendTeamChat(false);
           await refreshBackendLeaderboard();
           showApp(backendSession);
           return;
@@ -21225,6 +21350,7 @@
         }
         if (screen === "social") {
           renderTeamChat();
+          loadBackendTeamChat(false).catch(() => {});
           homeScreen.classList.add("hidden");
           logScreen.classList.add("hidden");
           contactsScreen.classList.add("hidden");
@@ -21311,6 +21437,9 @@
             // Local session cleanup still happens below.
           }
         }
+        backendTeamChatLoadedFor = "";
+        teamChatMessages = null;
+        teamChatBackendGroupId = "";
         sessionStorage.removeItem(sessionKey);
         showLanding();
       });
@@ -21783,6 +21912,7 @@
           await loadBackendActivityForSession();
           await loadBackendBadgesForSession();
           await loadBackendWfgTeamRows();
+          await loadBackendTeamChat(false);
           await refreshBackendLeaderboard();
           showApp(restored);
           return;

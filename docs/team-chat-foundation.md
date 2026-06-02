@@ -9,6 +9,7 @@ from public.profiles;
 ```
 
 The chat migration is `supabase/migrations/202606020001_team_chat_foundation.sql`.
+The default room helper is `supabase/migrations/202606020002_team_chat_default_room.sql`.
 
 ## Tables
 
@@ -40,6 +41,17 @@ The extra `id desc` gives stable pagination when multiple messages share the sam
 Membership lookups use `pulse_chat_memberships_user_idx` for "my rooms" and `pulse_chat_memberships_org_user_idx` for RLS/member checks.
 
 ## Backend Shape
+
+## Static Shell Integration
+
+The root `index.html` shell now uses the Supabase browser client directly for the Team tab:
+
+- Calls `pulse_ensure_default_team_chat_group('Team Room')` for the signed-in profile.
+- Loads the latest 50 `pulse_chat_messages` for that group.
+- Inserts new messages into `pulse_chat_messages` with optimistic UI.
+- Falls back to local preview storage if Supabase is unavailable or the user is in demo mode.
+
+The helper is `security definer` because RLS intentionally prevents non-members from discovering chat groups. It finds or creates the org's default `Team Room`, joins the current authenticated profile, then normal message reads/writes use the table policies.
 
 If PulseNow later splits real-time chat into a dedicated Node service, keep the service modular:
 
