@@ -13871,50 +13871,11 @@
           <div>
             <p class="eyebrow">Team Room</p>
             <h2>Group updates first</h2>
-            <p class="muted" style="margin-top:6px; line-height:1.45;">Quick stories, shoutouts, and team messages without a running social feed.</p>
+            <p class="muted" style="margin-top:6px; line-height:1.45;">Quick team updates now live in the Team chat instead of a running social feed.</p>
           </div>
           <span class="social-feed-camera-chip" aria-hidden="true"><img src="/public/social-assets/add-photo-icon.png" alt="" /></span>
         </section>
 
-        <section class="card social-composer-card">
-          <div class="section-head">
-            <div>
-              <p class="eyebrow">Stories & Shoutouts</p>
-              <h2>Message the team</h2>
-            </div>
-            <span id="social-mode-pill" class="stage-pill">Preview</span>
-          </div>
-          <div class="social-prompt-row">
-            <span id="social-composer-avatar" class="social-author-avatar">P</span>
-            <input id="social-title-input" maxlength="80" placeholder="Team update headline" />
-          </div>
-          <div class="social-type-row" aria-label="Post type">
-            <button class="filter-btn active" data-social-type="story" type="button">Story</button>
-            <button class="filter-btn" data-social-type="shoutout" type="button">Shoutout</button>
-            <button class="filter-btn" data-social-type="win" type="button">Win</button>
-          </div>
-          <div class="social-upload-panel">
-            <label class="social-upload-btn" for="social-media-input">
-              <span class="social-upload-copy">
-                <span class="social-upload-plus" aria-hidden="true"><img src="/public/social-assets/add-photo-icon.png" alt="" /></span>
-                <strong>Story media</strong>
-                <small>Add a quick photo or video for the team story rail.</small>
-              </span>
-              <input id="social-media-input" type="file" accept="image/*,video/*" multiple />
-            </label>
-            <div class="social-media-toolbar">
-              <span>Photos and videos</span>
-              <strong id="social-media-count">0 selected</strong>
-            </div>
-            <div id="social-selected-media-list" class="social-selected-media"></div>
-          </div>
-          <div id="social-media-preview" class="social-media-preview"><strong>Tell the team what matters.</strong><span>Preview</span></div>
-          <textarea id="social-body-input" maxlength="700" placeholder="What should the team know, celebrate, or rally around today?"></textarea>
-          <div class="social-composer-actions">
-            <p id="social-status" class="muted">Stories save on this device for now. Team chat storage is staged in Supabase for the backend pass.</p>
-            <button id="social-post-btn" class="pill-btn" type="button">Share story</button>
-          </div>
-        </section>
       </main>
 
       <main id="log-screen" class="shell hidden">
@@ -21376,30 +21337,35 @@
           updateSocialMediaPreview();
         });
       });
-      socialTitleInput.addEventListener("input", updateSocialMediaPreview);
-      socialMediaInput.addEventListener("change", async (event) => {
-        await handleSocialMediaFiles(event.target.files);
-        event.target.value = "";
-      });
-      socialSelectedMediaList.addEventListener("click", (event) => {
-        const button = event.target.closest("[data-social-remove-media]");
-        if (!button) return;
-        selectedSocialMedia.splice(Number(button.dataset.socialRemoveMedia), 1);
-        renderSelectedSocialMedia();
-      });
+      if (socialTitleInput) socialTitleInput.addEventListener("input", updateSocialMediaPreview);
+      if (socialMediaInput) {
+        socialMediaInput.addEventListener("change", async (event) => {
+          await handleSocialMediaFiles(event.target.files);
+          event.target.value = "";
+        });
+      }
+      if (socialSelectedMediaList) {
+        socialSelectedMediaList.addEventListener("click", (event) => {
+          const button = event.target.closest("[data-social-remove-media]");
+          if (!button) return;
+          selectedSocialMedia.splice(Number(button.dataset.socialRemoveMedia), 1);
+          renderSelectedSocialMedia();
+        });
+      }
       if (socialStoryRail) {
         socialStoryRail.addEventListener("click", (event) => {
           const button = event.target.closest("[data-social-story-id]");
           if (!button) return;
           if (button.dataset.socialStoryId === "story-add") {
-            socialType = "story";
-            document.querySelectorAll("[data-social-type]").forEach((item) => item.classList.toggle("active", item.dataset.socialType === socialType));
-            updateSocialMediaPreview();
-            socialTitleInput.focus();
+            setScreen("social");
             return;
           }
           const post = socialPosts.find((item) => item.id === button.dataset.socialStoryId);
           if (!post) return;
+          if (!socialTitleInput || !socialBodyInput) {
+            setScreen("social");
+            return;
+          }
           socialTitleInput.value = post.title;
           socialBodyInput.value = post.body;
           socialType = post.type;
@@ -21408,7 +21374,8 @@
           socialTitleInput.focus();
         });
       }
-      document.getElementById("social-post-btn").addEventListener("click", createSocialPost);
+      const socialPostBtn = document.getElementById("social-post-btn");
+      if (socialPostBtn) socialPostBtn.addEventListener("click", createSocialPost);
       const socialRefreshBtn = document.getElementById("social-refresh-btn");
       if (socialRefreshBtn) socialRefreshBtn.addEventListener("click", () => hydrateSocialPosts(true));
       if (teamChatSendBtn) teamChatSendBtn.addEventListener("click", sendTeamChatMessage);
