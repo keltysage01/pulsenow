@@ -9768,41 +9768,85 @@
       }
 
       #social-screen {
-        padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 178px) !important;
+        display: grid !important;
+        grid-template-rows: auto minmax(0, 1fr);
+        width: 100% !important;
+        max-width: none !important;
+        min-height: calc(100dvh - 64px) !important;
+        height: calc(100dvh - 64px) !important;
+        margin: 0 !important;
+        padding: calc(env(safe-area-inset-top, 0px) + 64px) 0 calc(150px + env(safe-area-inset-bottom, 0px)) !important;
+        overflow: hidden !important;
+      }
+
+      #social-screen.hidden {
+        display: none !important;
       }
 
       .team-chat-hero {
         display: grid;
-        gap: 8px;
-        padding: 18px 20px !important;
-        border-radius: 26px !important;
-        background: rgba(255, 255, 255, 0.66) !important;
+        gap: 4px;
+        margin: 0 !important;
+        padding: 14px 22px 12px !important;
+        border: 0 !important;
+        border-radius: 0 !important;
+        background: rgba(255, 255, 255, 0.74) !important;
         color: var(--text) !important;
-        box-shadow: 0 14px 34px rgba(31, 65, 85, 0.08) !important;
+        box-shadow: 0 1px 0 rgba(31, 65, 85, 0.08) !important;
+        backdrop-filter: blur(20px) saturate(150%) !important;
+        -webkit-backdrop-filter: blur(20px) saturate(150%) !important;
       }
 
-      .team-chat-hero .eyebrow,
-      .team-chat-hero .muted {
+      .team-chat-hero .eyebrow {
         color: var(--muted) !important;
+        font-size: 10px !important;
+      }
+
+      .team-chat-hero .muted {
+        display: none;
       }
 
       .team-chat-hero h2 {
         color: var(--text) !important;
-        font-size: 28px;
+        font-size: 24px;
         line-height: 1.05;
       }
 
       .team-chat-room-card {
         display: grid;
-        gap: 16px;
-        padding: 18px 16px 16px !important;
+        grid-template-rows: auto minmax(0, 1fr);
+        min-height: 0;
+        margin: 0 !important;
+        padding: 12px 14px 0 !important;
         overflow: hidden;
+        border: 0 !important;
+        border-radius: 0 !important;
+        background: transparent !important;
+        box-shadow: none !important;
+      }
+
+      .team-chat-room-card .section-head {
+        margin: 0 4px 10px !important;
+      }
+
+      .team-chat-room-card .section-head .eyebrow {
+        display: none;
+      }
+
+      .team-chat-room-card .section-head h2 {
+        font-size: 15px !important;
+        font-weight: 800 !important;
+        color: var(--muted) !important;
       }
 
       .team-chat-list {
-        display: grid;
+        display: flex;
+        min-height: 0;
+        overflow-y: auto;
+        flex-direction: column;
         gap: 9px;
-        padding: 2px 0;
+        padding: 0 0 18px;
+        -webkit-overflow-scrolling: touch;
       }
 
       .team-message {
@@ -9897,11 +9941,11 @@
         right: auto !important;
         bottom: calc(82px + env(safe-area-inset-bottom, 0px)) !important;
         z-index: 75 !important;
-        width: min(calc(100% - 32px), var(--pulse-page-max)) !important;
+        width: min(calc(100% - 18px), 720px) !important;
         margin: 0 !important;
-        padding: 7px !important;
+        padding: 8px !important;
         transform: translateX(-50%) !important;
-        border-radius: 999px !important;
+        border-radius: 26px !important;
         background: rgba(255, 255, 255, 0.86) !important;
         border: 1px solid rgba(31, 65, 85, 0.1) !important;
         box-shadow: 0 10px 30px rgba(31, 65, 85, 0.14) !important;
@@ -9971,6 +10015,11 @@
       html[data-theme="dark"] .team-chat-composer {
         background: rgba(9, 20, 33, 0.86) !important;
         border-color: rgba(255, 255, 255, 0.14) !important;
+      }
+
+      html[data-theme="dark"] .team-chat-hero {
+        background: rgba(9, 20, 33, 0.72) !important;
+        box-shadow: 0 1px 0 rgba(255, 255, 255, 0.1) !important;
       }
 
       html[data-theme="dark"] #team-chat-input {
