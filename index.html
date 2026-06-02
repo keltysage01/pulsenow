@@ -9678,21 +9678,21 @@
         }
       }
 
-      /* Coach-first mobile navigation and DM-style composer */
-      .bottom-nav button[data-screen="coach"] .nav-icon::before {
+      /* Team-first mobile navigation and DM-style composer */
+      .bottom-nav button[data-screen="social"] .nav-icon::before {
         -webkit-mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='black' d='M5 5.8C5 4.3 6.3 3 7.8 3h8.4C17.7 3 19 4.3 19 5.8v6.8c0 1.5-1.3 2.8-2.8 2.8h-4.1l-4.8 3.7v-3.7C6 15.2 5 14 5 12.6V5.8Zm2 0v6.8c0 .5.3.8.8.8h1.5v1.6l2.1-1.6h4.8c.5 0 .8-.3.8-.8V5.8c0-.5-.3-.8-.8-.8H7.8c-.5 0-.8.3-.8.8Zm2.2 2.3h5.6v1.7H9.2V8.1Zm0 3h3.8v1.7H9.2v-1.7Z'/%3E%3C/svg%3E");
         mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='black' d='M5 5.8C5 4.3 6.3 3 7.8 3h8.4C17.7 3 19 4.3 19 5.8v6.8c0 1.5-1.3 2.8-2.8 2.8h-4.1l-4.8 3.7v-3.7C6 15.2 5 14 5 12.6V5.8Zm2 0v6.8c0 .5.3.8.8.8h1.5v1.6l2.1-1.6h4.8c.5 0 .8-.3.8-.8V5.8c0-.5-.3-.8-.8-.8H7.8c-.5 0-.8.3-.8.8Zm2.2 2.3h5.6v1.7H9.2V8.1Zm0 3h3.8v1.7H9.2v-1.7Z'/%3E%3C/svg%3E");
       }
 
-      .bottom-nav button[data-screen="coach"] {
+      .bottom-nav button[data-screen="social"] {
         color: #0a8f80 !important;
       }
 
-      .bottom-nav button[data-screen="coach"] .nav-icon {
+      .bottom-nav button[data-screen="social"] .nav-icon {
         background: rgba(10, 143, 128, 0.1);
       }
 
-      .bottom-nav button[data-screen="coach"].active .nav-icon {
+      .bottom-nav button[data-screen="social"].active .nav-icon {
         background: var(--pulse-gradient-main) !important;
         color: #ffffff !important;
         box-shadow: 0 8px 18px rgba(20, 139, 159, 0.18) !important;
@@ -9748,11 +9748,11 @@
         box-shadow: 0 10px 22px rgba(20, 139, 159, 0.18) !important;
       }
 
-      html[data-theme="dark"] .bottom-nav button[data-screen="coach"] {
+      html[data-theme="dark"] .bottom-nav button[data-screen="social"] {
         color: #77dcca !important;
       }
 
-      html[data-theme="dark"] .bottom-nav button[data-screen="coach"] .nav-icon {
+      html[data-theme="dark"] .bottom-nav button[data-screen="social"] .nav-icon {
         background: rgba(119, 220, 202, 0.12) !important;
       }
 
@@ -9765,6 +9765,154 @@
         background: rgba(255, 255, 255, 0.08) !important;
         border-color: rgba(255, 255, 255, 0.12) !important;
         color: #f7fbff !important;
+      }
+
+      #social-screen {
+        padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 178px) !important;
+      }
+
+      .team-chat-hero {
+        display: grid;
+        gap: 12px;
+        border-radius: 28px !important;
+        background:
+          radial-gradient(circle at 92% 12%, rgba(154, 223, 137, 0.32), transparent 32%),
+          linear-gradient(135deg, #083a54 0%, #1c5d68 54%, #3e8064 100%) !important;
+        color: #ffffff !important;
+      }
+
+      .team-chat-hero .eyebrow,
+      .team-chat-hero .muted {
+        color: rgba(255, 255, 255, 0.78) !important;
+      }
+
+      .team-chat-hero h2 {
+        color: #ffffff !important;
+        font-size: 32px;
+        line-height: 1;
+      }
+
+      .team-chat-room-card {
+        display: grid;
+        gap: 14px;
+      }
+
+      .team-chat-list {
+        display: grid;
+        gap: 10px;
+      }
+
+      .team-message {
+        display: grid;
+        grid-template-columns: 40px minmax(0, 1fr);
+        gap: 10px;
+        align-items: start;
+        padding: 12px;
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        background: color-mix(in srgb, var(--surface) 88%, transparent);
+      }
+
+      .team-message.self {
+        border-color: color-mix(in srgb, var(--primary) 28%, var(--border));
+        background: color-mix(in srgb, var(--primary) 10%, var(--surface));
+      }
+
+      .team-message-avatar {
+        display: grid;
+        width: 40px;
+        height: 40px;
+        place-items: center;
+        border-radius: 999px;
+        background: var(--pulse-gradient-main);
+        color: #ffffff;
+        font-weight: 950;
+      }
+
+      .team-message-copy {
+        min-width: 0;
+      }
+
+      .team-message-copy strong {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        color: var(--text);
+        font-size: 14px;
+      }
+
+      .team-message-copy time {
+        flex: 0 0 auto;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 800;
+      }
+
+      .team-message-copy p {
+        margin-top: 4px;
+        color: var(--text);
+        line-height: 1.45;
+        white-space: pre-wrap;
+      }
+
+      .team-chat-composer {
+        position: fixed !important;
+        left: 50% !important;
+        right: auto !important;
+        bottom: calc(82px + env(safe-area-inset-bottom, 0px)) !important;
+        z-index: 75 !important;
+        width: min(calc(100% - 32px), var(--pulse-page-max)) !important;
+        margin: 0 !important;
+        padding: 9px !important;
+        transform: translateX(-50%) !important;
+        border-radius: 28px !important;
+        background: rgba(255, 255, 255, 0.92) !important;
+        border: 1px solid rgba(255, 255, 255, 0.78) !important;
+        box-shadow: 0 14px 40px rgba(31, 65, 85, 0.16) !important;
+        backdrop-filter: blur(24px) saturate(150%) !important;
+        -webkit-backdrop-filter: blur(24px) saturate(150%) !important;
+      }
+
+      .team-chat-input-row {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 8px;
+      }
+
+      #team-chat-input {
+        min-height: 46px;
+        border: 1px solid rgba(31, 65, 85, 0.08);
+        border-radius: 999px;
+        background: rgba(246, 250, 249, 0.96);
+        color: var(--text);
+        padding: 0 16px;
+        font: inherit;
+        font-size: 15px;
+        outline: none;
+      }
+
+      #team-chat-send-btn {
+        min-width: 58px;
+        min-height: 46px;
+        border-radius: 999px;
+        background: var(--pulse-gradient-main) !important;
+        color: #ffffff !important;
+        box-shadow: 0 10px 22px rgba(20, 139, 159, 0.18) !important;
+      }
+
+      html[data-theme="dark"] .team-message {
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      html[data-theme="dark"] .team-chat-composer {
+        background: rgba(9, 20, 33, 0.92) !important;
+        border-color: rgba(255, 255, 255, 0.14) !important;
+      }
+
+      html[data-theme="dark"] #team-chat-input {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.12);
+        color: #f7fbff;
       }
 
       .coach-intel-card {
@@ -14118,7 +14266,31 @@
         </section>
       </main>
 
-      <main id="social-screen" class="shell hidden"></main>
+      <main id="social-screen" class="shell hidden">
+        <section class="card team-chat-hero">
+          <p class="eyebrow">Team Group Chat</p>
+          <h2>Fuel Your Legacy</h2>
+          <p class="muted" style="line-height:1.55;">Use this like the team room: quick updates, encouragement, shoutouts, and what everyone is working on today.</p>
+        </section>
+
+        <section class="card team-chat-room-card">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Today</p>
+              <h2>Team messages</h2>
+            </div>
+            <span id="team-chat-mode-pill" class="stage-pill">Preview</span>
+          </div>
+          <div id="team-chat-list" class="team-chat-list" aria-live="polite"></div>
+        </section>
+
+        <section class="card team-chat-composer">
+          <div class="team-chat-input-row">
+            <input id="team-chat-input" maxlength="500" placeholder="Message the team..." />
+            <button id="team-chat-send-btn" class="pill-btn" type="button">Send</button>
+          </div>
+        </section>
+      </main>
 
       <main id="manager-screen" class="shell hidden">
         <section class="card wfg-import-card">
@@ -14576,7 +14748,7 @@
         <div class="bottom-inner">
           <button class="active" data-screen="home" type="button"><span class="nav-icon" aria-hidden="true"></span><span class="nav-label">Today</span></button>
           <button data-screen="contacts" type="button"><span class="nav-icon" aria-hidden="true"></span><span class="nav-label">People</span></button>
-          <button data-screen="coach" type="button"><span class="nav-icon" aria-hidden="true"></span><span class="nav-label">Coach</span></button>
+          <button data-screen="social" type="button"><span class="nav-icon" aria-hidden="true"></span><span class="nav-label">Team</span></button>
           <button data-screen="board" type="button"><span class="nav-icon" aria-hidden="true"></span><span class="nav-label">Progress</span></button>
           <button data-screen="me" type="button"><span class="nav-icon" aria-hidden="true"></span><span class="nav-label">Me</span></button>
         </div>
@@ -14652,6 +14824,10 @@
       const socialStoryRail = document.getElementById("social-story-rail");
       const socialMediaPreview = document.getElementById("social-media-preview");
       const socialComposerAvatar = document.getElementById("social-composer-avatar");
+      const teamChatList = document.getElementById("team-chat-list");
+      const teamChatInput = document.getElementById("team-chat-input");
+      const teamChatSendBtn = document.getElementById("team-chat-send-btn");
+      const teamChatModePill = document.getElementById("team-chat-mode-pill");
       const wfgFileInput = document.getElementById("wfg-file-input");
       const wfgPasteInput = document.getElementById("wfg-paste-input");
       const wfgImportStatus = document.getElementById("wfg-import-status");
@@ -17422,6 +17598,96 @@
 
       function writeLocalSocialPosts(posts) {
         writeLocalJson(getSocialStorageKey(), posts.map(normalizeSocialPost).slice(0, 50));
+      }
+
+      function getTeamChatStorageKey() {
+        const session = getCurrentSession() || { org_id: "demo-org" };
+        const orgId = session.org_id || "demo-org";
+        return "pulsenow_team_chat_" + String(orgId).toLowerCase().replace(/[^a-z0-9_-]/g, "_");
+      }
+
+      function seedTeamChatMessages() {
+        return [
+          {
+            id: "team-seed-1",
+            author_name: "Team Pulse",
+            text: "Drop what you are working on today. Keep it simple: one focus, one win, one person you are helping.",
+            created_at: new Date(Date.now() - 42 * 60000).toISOString(),
+            self: false
+          },
+          {
+            id: "team-seed-2",
+            author_name: "Mia Johnson",
+            text: "I am working contacts from my Power List and sending one shoutout when I finish the block.",
+            created_at: new Date(Date.now() - 18 * 60000).toISOString(),
+            self: false
+          }
+        ];
+      }
+
+      function normalizeTeamChatMessage(message) {
+        return {
+          id: String(message.id || "team-message-" + Date.now()),
+          author_name: String(message.author_name || "Demo Agent"),
+          text: String(message.text || "").slice(0, 500),
+          created_at: message.created_at || new Date().toISOString(),
+          self: message.self === true
+        };
+      }
+
+      function readTeamChatMessages() {
+        const saved = readLocalJson(getTeamChatStorageKey(), null);
+        const messages = Array.isArray(saved) && saved.length ? saved : seedTeamChatMessages();
+        return messages.map(normalizeTeamChatMessage).sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+      }
+
+      function writeTeamChatMessages(messages) {
+        writeLocalJson(getTeamChatStorageKey(), messages.map(normalizeTeamChatMessage).slice(-80));
+      }
+
+      function renderTeamChat() {
+        if (!teamChatList) return;
+        const session = getCurrentSession() || { name: "Demo Agent" };
+        const messages = readTeamChatMessages();
+        teamChatList.innerHTML = "";
+        messages.forEach((message) => {
+          const item = document.createElement("article");
+          const authorName = message.self ? (session.name || message.author_name) : message.author_name;
+          item.className = "team-message" + (message.self ? " self" : "");
+          item.innerHTML =
+            '<span class="team-message-avatar">' +
+            escapeHtml(storyInitials(authorName)) +
+            '</span><div class="team-message-copy"><strong><span>' +
+            escapeHtml(authorName) +
+            '</span><time>' +
+            escapeHtml(formatSocialTime(message.created_at)) +
+            '</time></strong><p>' +
+            escapeHtml(message.text) +
+            "</p></div>";
+          teamChatList.appendChild(item);
+        });
+        if (teamChatModePill) teamChatModePill.textContent = "Preview";
+      }
+
+      function sendTeamChatMessage() {
+        if (!teamChatInput) return;
+        const text = teamChatInput.value.trim();
+        if (!text) return;
+        const session = getCurrentSession() || { name: "Demo Agent" };
+        const messages = readTeamChatMessages();
+        messages.push(normalizeTeamChatMessage({
+          id: "local-team-" + Date.now(),
+          author_name: session.name || "Demo Agent",
+          text,
+          created_at: new Date().toISOString(),
+          self: true
+        }));
+        writeTeamChatMessages(messages);
+        teamChatInput.value = "";
+        renderTeamChat();
+        window.setTimeout(() => {
+          if (teamChatList) teamChatList.lastElementChild && teamChatList.lastElementChild.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        }, 0);
       }
 
       function formatSocialTime(value) {
@@ -20928,7 +21194,19 @@
           return;
         }
         if (screen === "social") {
-          setScreen("home");
+          renderTeamChat();
+          homeScreen.classList.add("hidden");
+          logScreen.classList.add("hidden");
+          contactsScreen.classList.add("hidden");
+          powerlistScreen.classList.add("hidden");
+          pipelineScreen.classList.add("hidden");
+          boardScreen.classList.add("hidden");
+          socialScreen.classList.remove("hidden");
+          managerScreen.classList.add("hidden");
+          meScreen.classList.add("hidden");
+          coachScreen.classList.add("hidden");
+          quizScreen.classList.add("hidden");
+          placeholderScreen.classList.add("hidden");
           return;
         }
         if (screen === "manager") {
@@ -21133,6 +21411,12 @@
       document.getElementById("social-post-btn").addEventListener("click", createSocialPost);
       const socialRefreshBtn = document.getElementById("social-refresh-btn");
       if (socialRefreshBtn) socialRefreshBtn.addEventListener("click", () => hydrateSocialPosts(true));
+      if (teamChatSendBtn) teamChatSendBtn.addEventListener("click", sendTeamChatMessage);
+      if (teamChatInput) {
+        teamChatInput.addEventListener("keydown", (event) => {
+          if (event.key === "Enter") sendTeamChatMessage();
+        });
+      }
       document.addEventListener("click", (event) => {
         const button = event.target.closest("[data-social-react]");
         if (!button) return;
