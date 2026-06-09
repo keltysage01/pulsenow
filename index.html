@@ -12710,6 +12710,159 @@
         box-shadow: none !important;
       }
 
+      /* Final no-white-backplate pass: visible text should not sit on white squares. */
+      #app .topbar,
+      #app .topbar-inner {
+        background:
+          linear-gradient(90deg, rgba(193, 243, 246, 0.46), rgba(228, 249, 217, 0.44)) !important;
+        box-shadow: none !important;
+      }
+
+      #app .topbar {
+        border-bottom-color: rgba(15, 118, 110, 0.1) !important;
+        backdrop-filter: blur(20px) saturate(138%) !important;
+        -webkit-backdrop-filter: blur(20px) saturate(138%) !important;
+      }
+
+      #app .topbar button,
+      #app .topbar .brand {
+        background: transparent !important;
+        border-color: transparent !important;
+        box-shadow: none !important;
+      }
+
+      #app .card:not(.today-greeting-card):not(.today-path-card),
+      #app .section.card:not(.today-greeting-card):not(.today-path-card),
+      #app .pulse-main-container,
+      #app .goals-panel,
+      #app .vision-workspace,
+      #app .people-call-card,
+      #app .today-next-card,
+      #app .standings-card,
+      #app .quiz-profile-card,
+      #app .coach-intel-card,
+      #app .coach-quiz-action,
+      #app .coach-profile-note,
+      #app .contact-card,
+      #app .power-row,
+      #app .pipeline-column,
+      #app .competition-card,
+      #app .session-item {
+        background:
+          linear-gradient(135deg, rgba(219, 250, 247, 0.5), rgba(231, 249, 220, 0.42)) !important;
+        border-color: rgba(15, 118, 110, 0.12) !important;
+        box-shadow: 0 14px 36px rgba(31, 65, 85, 0.08) !important;
+      }
+
+      #app .ghost-btn:not(.primary-btn),
+      #app .text-btn,
+      #app .filter-btn,
+      #app .stage-pill,
+      #app .score-pill,
+      #app .category-pill,
+      #app .overdue-pill,
+      #app .count-pill,
+      #app .drawer-link,
+      #app .contact-actions a,
+      #app .actions a,
+      #app .actions button,
+      #app .contact-actions button {
+        background:
+          linear-gradient(135deg, rgba(7, 138, 120, 0.1), rgba(77, 199, 215, 0.08)) !important;
+        border-color: rgba(7, 138, 120, 0.14) !important;
+        box-shadow: none !important;
+      }
+
+      #app .filter-btn.active,
+      #app .primary-btn,
+      #app .pill-btn,
+      #app #coach-send-btn,
+      #app .bottom-nav button.active .nav-icon {
+        background: var(--pulse-gradient-main) !important;
+        color: #ffffff !important;
+      }
+
+      #app input,
+      #app textarea,
+      #app select,
+      #app .coach-composer,
+      #app .coach-input,
+      #app .bottom-nav {
+        background:
+          linear-gradient(135deg, rgba(246, 253, 251, 0.86), rgba(229, 250, 244, 0.78)) !important;
+      }
+
+      html[data-theme="dark"] #app .topbar,
+      html[data-theme="dark"] #app .topbar-inner,
+      html[data-theme="dark"] #app .card:not(.today-greeting-card):not(.today-path-card),
+      html[data-theme="dark"] #app .section.card:not(.today-greeting-card):not(.today-path-card),
+      html[data-theme="dark"] #app .pulse-main-container,
+      html[data-theme="dark"] #app .goals-panel,
+      html[data-theme="dark"] #app .vision-workspace,
+      html[data-theme="dark"] #app .people-call-card,
+      html[data-theme="dark"] #app .today-next-card,
+      html[data-theme="dark"] #app .standings-card,
+      html[data-theme="dark"] #app .quiz-profile-card,
+      html[data-theme="dark"] #app .coach-intel-card,
+      html[data-theme="dark"] #app .coach-quiz-action,
+      html[data-theme="dark"] #app .coach-profile-note,
+      html[data-theme="dark"] #app .contact-card,
+      html[data-theme="dark"] #app .power-row,
+      html[data-theme="dark"] #app .pipeline-column,
+      html[data-theme="dark"] #app .competition-card,
+      html[data-theme="dark"] #app .session-item {
+        background:
+          linear-gradient(135deg, rgba(9, 22, 36, 0.88), rgba(13, 45, 51, 0.74)) !important;
+        border-color: rgba(151, 232, 224, 0.18) !important;
+      }
+
+      html[data-theme="dark"] #app .ghost-btn:not(.primary-btn),
+      html[data-theme="dark"] #app .text-btn,
+      html[data-theme="dark"] #app .filter-btn,
+      html[data-theme="dark"] #app .stage-pill,
+      html[data-theme="dark"] #app .score-pill,
+      html[data-theme="dark"] #app .category-pill,
+      html[data-theme="dark"] #app .overdue-pill,
+      html[data-theme="dark"] #app .count-pill,
+      html[data-theme="dark"] #app .drawer-link,
+      html[data-theme="dark"] #app .contact-actions a,
+      html[data-theme="dark"] #app .actions a,
+      html[data-theme="dark"] #app .actions button,
+      html[data-theme="dark"] #app .contact-actions button {
+        background: rgba(119, 220, 202, 0.1) !important;
+        border-color: rgba(119, 220, 202, 0.18) !important;
+      }
+
+      #app #home-screen > .today-greeting-card .ghost-btn {
+        background:
+          linear-gradient(135deg, rgba(10, 132, 142, 0.58), rgba(70, 188, 127, 0.54)) !important;
+        color: #ffffff !important;
+        border-color: rgba(151, 232, 224, 0.28) !important;
+      }
+
+      #app #coach-screen > .card:first-child {
+        background:
+          radial-gradient(circle at 100% 0%, rgba(111, 207, 117, 0.4), transparent 34%),
+          linear-gradient(135deg, #082c45 0%, #0d6475 58%, #3d946c 120%) !important;
+        border-color: rgba(151, 232, 224, 0.22) !important;
+        color: #ffffff !important;
+      }
+
+      #app #coach-screen > .card:first-child .eyebrow,
+      #app #coach-screen > .card:first-child h2,
+      #app #coach-screen > .card:first-child p,
+      #app #coach-screen > .card:first-child .muted {
+        color: #ffffff !important;
+      }
+
+      #app #coach-screen > .card:first-child .filter-btn {
+        background:
+          linear-gradient(135deg, rgba(7, 138, 120, 0.28), rgba(77, 199, 215, 0.2)) !important;
+        border-color: rgba(255, 255, 255, 0.22) !important;
+        color: #ffffff !important;
+        box-shadow: none !important;
+      }
+
       @media (max-width: 720px) {
         .landing-relationship {
           padding: 28px 22px !important;
@@ -12908,6 +13061,25 @@
       html[data-theme="dark"] #coach-screen .coach-quiz-action {
         background: rgba(10, 25, 39, 0.94) !important;
         border-color: rgba(255,255,255,0.16) !important;
+      }
+
+      #app #coach-screen .coach-quiz-action {
+        background:
+          linear-gradient(135deg, rgba(219, 250, 247, 0.58), rgba(224, 248, 218, 0.5)) !important;
+        border-color: rgba(7, 138, 120, 0.14) !important;
+        box-shadow: 0 12px 30px rgba(31, 65, 85, 0.08) !important;
+      }
+
+      #app #coach-screen .coach-quiz-action span {
+        background:
+          linear-gradient(135deg, rgba(7, 138, 120, 0.13), rgba(77, 199, 215, 0.12)) !important;
+        border: 1px solid rgba(7, 138, 120, 0.12) !important;
+      }
+
+      html[data-theme="dark"] #app #coach-screen .coach-quiz-action {
+        background:
+          linear-gradient(135deg, rgba(9, 22, 36, 0.88), rgba(13, 45, 51, 0.74)) !important;
+        border-color: rgba(151, 232, 224, 0.18) !important;
       }
 
       button:focus-visible,
