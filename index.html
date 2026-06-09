@@ -9460,38 +9460,51 @@
         align-items: center;
         width: 100%;
         margin: 0 0 18px;
-        padding: 16px;
-        border: 1px solid rgba(255, 255, 255, 0.82);
-        border-radius: 26px;
-        background:
-          radial-gradient(circle at 88% 12%, rgba(136, 199, 109, 0.24), transparent 34%),
-          linear-gradient(135deg, rgba(255, 255, 255, 0.86), rgba(224, 250, 250, 0.68));
-        box-shadow: 0 18px 44px rgba(31, 65, 85, 0.1);
+        padding: 10px 4px;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        box-shadow: none;
         color: var(--text);
         text-align: left;
       }
 
       .dream-life-entry-card:hover,
       .dream-life-entry-card:focus-visible {
-        transform: translateY(-1px);
-        box-shadow: 0 22px 50px rgba(31, 65, 85, 0.14);
+        transform: none;
+        box-shadow: none;
       }
 
       .dl-entry-icon {
         display: grid;
-        width: 54px;
-        height: 54px;
+        width: 58px;
+        height: 58px;
         place-items: center;
-        border-radius: 18px;
-        background: linear-gradient(135deg, #155676, #4dc7d7 52%, #8bd66d);
-        box-shadow: 0 12px 28px rgba(72, 199, 217, 0.22);
+        background: transparent;
+        border: 0;
+        box-shadow: none;
+      }
+
+      .dl-entry-icon::before {
+        content: "";
+        display: block;
+        width: 42px;
+        height: 42px;
+        border-radius: 999px;
+        background: linear-gradient(135deg, #0d6f91, #4dc7d7 52%, #8bd66d);
+        box-shadow: 0 10px 18px rgba(72, 199, 217, 0.2);
+        -webkit-mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='black' d='M12 3.5a3.2 3.2 0 0 0-3.2 3.2v5.2a3.2 3.2 0 1 0 6.4 0V6.7A3.2 3.2 0 0 0 12 3.5Zm0 1.8c.8 0 1.4.6 1.4 1.4v5.2a1.4 1.4 0 1 1-2.8 0V6.7c0-.8.6-1.4 1.4-1.4Zm-6 6.2h1.8a4.2 4.2 0 0 0 8.4 0H18a6 6 0 0 1-5.1 5.9V20h3.2v1.8H7.9V20h3.2v-2.6A6 6 0 0 1 6 11.5Z'/%3E%3C/svg%3E");
+        mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='black' d='M12 3.5a3.2 3.2 0 0 0-3.2 3.2v5.2a3.2 3.2 0 1 0 6.4 0V6.7A3.2 3.2 0 0 0 12 3.5Zm0 1.8c.8 0 1.4.6 1.4 1.4v5.2a1.4 1.4 0 1 1-2.8 0V6.7c0-.8.6-1.4 1.4-1.4Zm-6 6.2h1.8a4.2 4.2 0 0 0 8.4 0H18a6 6 0 0 1-5.1 5.9V20h3.2v1.8H7.9V20h3.2v-2.6A6 6 0 0 1 6 11.5Z'/%3E%3C/svg%3E");
+        -webkit-mask-position: center;
+        mask-position: center;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-size: contain;
+        mask-size: contain;
       }
 
       .dl-entry-icon img {
-        width: 52px;
-        height: 52px;
-        border-radius: 999px;
-        object-fit: cover;
+        display: none;
       }
 
       .dl-entry-title {
@@ -13068,6 +13081,12 @@
           linear-gradient(135deg, rgba(219, 250, 247, 0.58), rgba(224, 248, 218, 0.5)) !important;
         border-color: rgba(7, 138, 120, 0.14) !important;
         box-shadow: 0 12px 30px rgba(31, 65, 85, 0.08) !important;
+      }
+
+      #app .dream-life-entry-card {
+        background: transparent !important;
+        border: 0 !important;
+        box-shadow: none !important;
       }
 
       #app #coach-screen .coach-quiz-action span {
