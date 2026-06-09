@@ -8910,21 +8910,21 @@
         }
       }
 
-      /* Team-first mobile navigation and DM-style composer */
-      .bottom-nav button[data-screen="social"] .nav-icon::before {
-        -webkit-mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='black' d='M5 5.8C5 4.3 6.3 3 7.8 3h8.4C17.7 3 19 4.3 19 5.8v6.8c0 1.5-1.3 2.8-2.8 2.8h-4.1l-4.8 3.7v-3.7C6 15.2 5 14 5 12.6V5.8Zm2 0v6.8c0 .5.3.8.8.8h1.5v1.6l2.1-1.6h4.8c.5 0 .8-.3.8-.8V5.8c0-.5-.3-.8-.8-.8H7.8c-.5 0-.8.3-.8.8Zm2.2 2.3h5.6v1.7H9.2V8.1Zm0 3h3.8v1.7H9.2v-1.7Z'/%3E%3C/svg%3E");
-        mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='black' d='M5 5.8C5 4.3 6.3 3 7.8 3h8.4C17.7 3 19 4.3 19 5.8v6.8c0 1.5-1.3 2.8-2.8 2.8h-4.1l-4.8 3.7v-3.7C6 15.2 5 14 5 12.6V5.8Zm2 0v6.8c0 .5.3.8.8.8h1.5v1.6l2.1-1.6h4.8c.5 0 .8-.3.8-.8V5.8c0-.5-.3-.8-.8-.8H7.8c-.5 0-.8.3-.8.8Zm2.2 2.3h5.6v1.7H9.2V8.1Zm0 3h3.8v1.7H9.2v-1.7Z'/%3E%3C/svg%3E");
+      /* Coach-first mobile navigation */
+      .bottom-nav button[data-screen="coach"] .nav-icon::before {
+        -webkit-mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='black' d='M12 3.5 13.5 8l4.5 1.5-4.5 1.5L12 15.5 10.5 11 6 9.5 10.5 8 12 3.5Zm5.4 8.7.9 2.6 2.7.9-2.7.9-.9 2.7-.9-2.7-2.7-.9 2.7-.9.9-2.6ZM6.4 13l1.1 3.2 3.2 1.1-3.2 1.1-1.1 3.1-1.1-3.1-3.2-1.1 3.2-1.1L6.4 13Z'/%3E%3C/svg%3E");
+        mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='black' d='M12 3.5 13.5 8l4.5 1.5-4.5 1.5L12 15.5 10.5 11 6 9.5 10.5 8 12 3.5Zm5.4 8.7.9 2.6 2.7.9-2.7.9-.9 2.7-.9-2.7-2.7-.9 2.7-.9.9-2.6ZM6.4 13l1.1 3.2 3.2 1.1-3.2 1.1-1.1 3.1-1.1-3.1-3.2-1.1 3.2-1.1L6.4 13Z'/%3E%3C/svg%3E");
       }
 
-      .bottom-nav button[data-screen="social"] {
+      .bottom-nav button[data-screen="coach"] {
         color: #0a8f80 !important;
       }
 
-      .bottom-nav button[data-screen="social"] .nav-icon {
+      .bottom-nav button[data-screen="coach"] .nav-icon {
         background: rgba(10, 143, 128, 0.1);
       }
 
-      .bottom-nav button[data-screen="social"].active .nav-icon {
+      .bottom-nav button[data-screen="coach"].active .nav-icon {
         background: var(--pulse-gradient-main) !important;
         color: #ffffff !important;
         box-shadow: 0 8px 18px rgba(20, 139, 159, 0.18) !important;
@@ -8980,11 +8980,11 @@
         box-shadow: 0 10px 22px rgba(20, 139, 159, 0.18) !important;
       }
 
-      html[data-theme="dark"] .bottom-nav button[data-screen="social"] {
+      html[data-theme="dark"] .bottom-nav button[data-screen="coach"] {
         color: #77dcca !important;
       }
 
-      html[data-theme="dark"] .bottom-nav button[data-screen="social"] .nav-icon {
+      html[data-theme="dark"] .bottom-nav button[data-screen="coach"] .nav-icon {
         background: rgba(119, 220, 202, 0.12) !important;
       }
 
@@ -8997,267 +8997,6 @@
         background: rgba(255, 255, 255, 0.08) !important;
         border-color: rgba(255, 255, 255, 0.12) !important;
         color: #f7fbff !important;
-      }
-
-      #social-screen {
-        display: grid !important;
-        grid-template-rows: auto minmax(0, 1fr);
-        width: 100% !important;
-        max-width: none !important;
-        min-height: calc(100dvh - 64px) !important;
-        height: calc(100dvh - 64px) !important;
-        margin: 0 !important;
-        padding: calc(env(safe-area-inset-top, 0px) + 64px) 0 calc(150px + env(safe-area-inset-bottom, 0px)) !important;
-        overflow: hidden !important;
-      }
-
-      #social-screen.hidden {
-        display: none !important;
-      }
-
-      .team-chat-hero {
-        display: grid;
-        gap: 4px;
-        margin: 0 !important;
-        padding: 14px 22px 12px !important;
-        border: 0 !important;
-        border-radius: 0 !important;
-        background: rgba(255, 255, 255, 0.74) !important;
-        color: var(--text) !important;
-        box-shadow: 0 1px 0 rgba(31, 65, 85, 0.08) !important;
-        backdrop-filter: blur(20px) saturate(150%) !important;
-        -webkit-backdrop-filter: blur(20px) saturate(150%) !important;
-      }
-
-      .team-chat-hero .eyebrow {
-        color: var(--muted) !important;
-        font-size: 10px !important;
-      }
-
-      .team-chat-hero .muted {
-        display: none;
-      }
-
-      .team-chat-hero h2 {
-        color: var(--text) !important;
-        font-size: 24px;
-        line-height: 1.05;
-      }
-
-      .team-chat-room-card {
-        display: grid;
-        grid-template-rows: auto minmax(0, 1fr);
-        min-height: 0;
-        margin: 0 !important;
-        padding: 12px 14px 0 !important;
-        overflow: hidden;
-        border: 0 !important;
-        border-radius: 0 !important;
-        background: transparent !important;
-        box-shadow: none !important;
-      }
-
-      .team-chat-room-card .section-head {
-        margin: 0 4px 10px !important;
-      }
-
-      .team-chat-room-card .section-head .eyebrow {
-        display: none;
-      }
-
-      .team-chat-room-card .section-head h2 {
-        font-size: 15px !important;
-        font-weight: 800 !important;
-        color: var(--muted) !important;
-      }
-
-      .team-chat-list {
-        display: flex;
-        min-height: 0;
-        overflow-y: auto;
-        flex-direction: column;
-        gap: 9px;
-        padding: 0 0 18px;
-        -webkit-overflow-scrolling: touch;
-      }
-
-      .team-message {
-        display: grid;
-        grid-template-columns: 28px minmax(0, max-content);
-        max-width: min(100%, 82%);
-        gap: 7px;
-        align-items: end;
-        justify-self: start;
-      }
-
-      .team-message.self {
-        grid-template-columns: minmax(0, max-content);
-        justify-self: end;
-      }
-
-      .team-message-avatar {
-        display: grid;
-        width: 28px;
-        height: 28px;
-        place-items: center;
-        border-radius: 999px;
-        background: var(--pulse-gradient-main);
-        color: #ffffff;
-        font-size: 11px;
-        font-weight: 950;
-      }
-
-      .team-message.self .team-message-avatar {
-        display: none;
-      }
-
-      .team-message-copy {
-        min-width: 0;
-        display: grid;
-        gap: 3px;
-      }
-
-      .team-message-meta {
-        display: inline-flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 8px;
-        max-width: 100%;
-        padding: 0 5px;
-        color: var(--muted);
-        font-size: 11px;
-        font-weight: 850;
-        line-height: 1.1;
-      }
-
-      .team-message.self .team-message-meta {
-        justify-content: flex-end;
-      }
-
-      .team-message-meta span {
-        min-width: 0;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
-
-      .team-message-meta time {
-        flex: 0 0 auto;
-        color: var(--muted);
-      }
-
-      .team-bubble {
-        position: relative;
-        max-width: 100%;
-        margin: 0;
-        border-radius: 20px 20px 20px 5px;
-        background: #f2f2f7;
-        color: #091827;
-        padding: 10px 13px 11px;
-        font-size: 16px;
-        line-height: 1.45;
-        white-space: pre-wrap;
-        overflow-wrap: anywhere;
-        box-shadow: 0 1px 0 rgba(31, 65, 85, 0.04);
-      }
-
-      .team-message.self .team-bubble {
-        border-radius: 20px 20px 5px 20px;
-        background: #0a84ff;
-        color: #ffffff;
-      }
-
-      .team-chat-composer {
-        position: fixed !important;
-        left: 50% !important;
-        right: auto !important;
-        bottom: calc(82px + env(safe-area-inset-bottom, 0px)) !important;
-        z-index: 75 !important;
-        width: min(calc(100% - 18px), 720px) !important;
-        margin: 0 !important;
-        padding: 8px !important;
-        transform: translateX(-50%) !important;
-        border-radius: 26px !important;
-        background: rgba(255, 255, 255, 0.86) !important;
-        border: 1px solid rgba(31, 65, 85, 0.1) !important;
-        box-shadow: 0 10px 30px rgba(31, 65, 85, 0.14) !important;
-        backdrop-filter: blur(22px) saturate(160%) !important;
-        -webkit-backdrop-filter: blur(22px) saturate(160%) !important;
-      }
-
-      .team-chat-input-row {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) auto;
-        gap: 7px;
-      }
-
-      #team-chat-input {
-        min-height: 42px;
-        border: 1px solid rgba(31, 65, 85, 0.14);
-        border-radius: 999px;
-        background: rgba(255, 255, 255, 0.98);
-        color: var(--text);
-        padding: 0 15px;
-        font: inherit;
-        font-size: 16px;
-        outline: none;
-      }
-
-      #team-chat-send-btn {
-        display: grid !important;
-        place-items: center !important;
-        min-width: 42px;
-        width: 42px;
-        min-height: 42px;
-        padding: 0 !important;
-        overflow: hidden;
-        border-radius: 999px;
-        background: #0a84ff !important;
-        color: #ffffff !important;
-        font-size: 0 !important;
-        line-height: 0 !important;
-        box-shadow: 0 6px 14px rgba(10, 132, 255, 0.22) !important;
-      }
-
-      #team-chat-send-btn::before {
-        content: "";
-        display: block;
-        width: 18px;
-        height: 18px;
-        margin: auto;
-        background: currentColor;
-        -webkit-mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='black' d='M12 4 4.7 11.3l1.4 1.4L11 7.83V20h2V7.83l4.9 4.87 1.4-1.4L12 4Z'/%3E%3C/svg%3E");
-        mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='black' d='M12 4 4.7 11.3l1.4 1.4L11 7.83V20h2V7.83l4.9 4.87 1.4-1.4L12 4Z'/%3E%3C/svg%3E");
-      }
-
-      html[data-theme="dark"] .team-message {
-        background: transparent;
-      }
-
-      html[data-theme="dark"] .team-bubble {
-        background: rgba(255, 255, 255, 0.12);
-        color: #f7fbff;
-      }
-
-      html[data-theme="dark"] .team-message.self .team-bubble {
-        background: #0a84ff;
-        color: #ffffff;
-      }
-
-      html[data-theme="dark"] .team-chat-composer {
-        background: rgba(9, 20, 33, 0.86) !important;
-        border-color: rgba(255, 255, 255, 0.14) !important;
-      }
-
-      html[data-theme="dark"] .team-chat-hero {
-        background: rgba(9, 20, 33, 0.72) !important;
-        box-shadow: 0 1px 0 rgba(255, 255, 255, 0.1) !important;
-      }
-
-      html[data-theme="dark"] #team-chat-input {
-        background: rgba(255, 255, 255, 0.08);
-        border-color: rgba(255, 255, 255, 0.12);
-        color: #f7fbff;
       }
 
       .coach-intel-card {
@@ -13356,7 +13095,6 @@
           <button class="drawer-link" data-screen="contacts" type="button">People</button>
           <button class="drawer-link" data-screen="log" type="button">Log Activity</button>
           <button class="drawer-link" data-screen="pipeline" type="button">Pipeline</button>
-          <button class="drawer-link" data-screen="social" type="button">Team Chat</button>
           <button class="drawer-link" data-screen="coach" type="button">AI Coach</button>
           <button class="drawer-link" data-screen="quiz" type="button">Profile Quiz</button>
           <button class="drawer-link" data-screen="campaigns" type="button">Campaigns</button>
@@ -13743,32 +13481,6 @@
             </div>
           </div>
           <div id="competition-list" class="competition-list"></div>
-        </section>
-      </main>
-
-      <main id="social-screen" class="shell hidden">
-        <section class="card team-chat-hero">
-          <p class="eyebrow">Team Group Chat</p>
-          <h2>Fuel Your Legacy</h2>
-          <p class="muted" style="line-height:1.55;">Use this like the team room: quick updates, encouragement, and what everyone is working on today.</p>
-        </section>
-
-        <section class="card team-chat-room-card">
-          <div class="section-head">
-            <div>
-              <p class="eyebrow">Today</p>
-              <h2>Team messages</h2>
-            </div>
-            <span id="team-chat-mode-pill" class="stage-pill">Preview</span>
-          </div>
-          <div id="team-chat-list" class="team-chat-list" aria-live="polite"></div>
-        </section>
-
-        <section class="card team-chat-composer">
-          <div class="team-chat-input-row">
-            <input id="team-chat-input" maxlength="500" placeholder="Message the team..." />
-            <button id="team-chat-send-btn" class="pill-btn" type="button" aria-label="Send message"></button>
-          </div>
         </section>
       </main>
 
@@ -14228,7 +13940,7 @@
         <div class="bottom-inner">
           <button class="active" data-screen="home" type="button"><span class="nav-icon" aria-hidden="true"></span><span class="nav-label">Today</span></button>
           <button data-screen="contacts" type="button"><span class="nav-icon" aria-hidden="true"></span><span class="nav-label">People</span></button>
-          <button data-screen="social" type="button"><span class="nav-icon" aria-hidden="true"></span><span class="nav-label">Team</span></button>
+          <button data-screen="coach" type="button"><span class="nav-icon" aria-hidden="true"></span><span class="nav-label">Coach</span></button>
           <button data-screen="board" type="button"><span class="nav-icon" aria-hidden="true"></span><span class="nav-label">Progress</span></button>
           <button data-screen="me" type="button"><span class="nav-icon" aria-hidden="true"></span><span class="nav-label">Me</span></button>
         </div>
@@ -14280,7 +13992,6 @@
       const powerlistScreen = document.getElementById("powerlist-screen");
       const pipelineScreen = document.getElementById("pipeline-screen");
       const boardScreen = document.getElementById("board-screen");
-      const socialScreen = document.getElementById("social-screen");
       const managerScreen = document.getElementById("manager-screen");
       const dreamLifeScreen = document.getElementById("dream-life-screen");
       const meScreen = document.getElementById("me-screen");
@@ -14292,10 +14003,6 @@
       const leaderboardList = document.getElementById("leaderboard-list");
       const neighborhoodList = document.getElementById("neighborhood-list");
       const competitionList = document.getElementById("competition-list");
-      const teamChatList = document.getElementById("team-chat-list");
-      const teamChatInput = document.getElementById("team-chat-input");
-      const teamChatSendBtn = document.getElementById("team-chat-send-btn");
-      const teamChatModePill = document.getElementById("team-chat-mode-pill");
       const wfgFileInput = document.getElementById("wfg-file-input");
       const wfgPasteInput = document.getElementById("wfg-paste-input");
       const wfgImportStatus = document.getElementById("wfg-import-status");
@@ -14389,10 +14096,6 @@
       let backendActivityLoadedFor = "";
       let backendBadgesLoadedFor = "";
       let backendWfgLoadedFor = "";
-      let backendTeamChatLoadedFor = "";
-      let teamChatMessages = null;
-      let teamChatBackendGroupId = "";
-      let teamChatBackendLoading = false;
       let lastImportedContacts = [];
       let contactIntelClientPromise = null;
       let dreamMediaRecorder = null;
@@ -16526,6 +16229,16 @@
         }
       }
 
+      function purgeRetiredTeamChatStorage() {
+        try {
+          Object.keys(localStorage)
+            .filter((key) => key.indexOf("pulsenow_team_chat_") === 0)
+            .forEach((key) => localStorage.removeItem(key));
+        } catch {
+          // Local storage cleanup is best-effort only.
+        }
+      }
+
       function dateKeyFromDate(date) {
         return date.getFullYear() + "-" + String(date.getMonth() + 1).padStart(2, "0") + "-" + String(date.getDate()).padStart(2, "0");
       }
@@ -16974,233 +16687,6 @@
 
       function saveFireUps() {
         sessionStorage.setItem(getFireUpKey(), JSON.stringify(firedUp));
-      }
-
-      function storyInitials(name) {
-        const parts = String(name || "Agent").trim().split(/\s+/).filter(Boolean);
-        if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
-        return String(parts[0] || "A").slice(0, 2).toUpperCase();
-      }
-
-      function getTeamChatStorageKey() {
-        const session = getCurrentSession() || { org_id: "demo-org" };
-        const orgId = session.org_id || "demo-org";
-        return "pulsenow_team_chat_" + String(orgId).toLowerCase().replace(/[^a-z0-9_-]/g, "_");
-      }
-
-      function seedTeamChatMessages() {
-        return [
-          {
-            id: "team-seed-1",
-            author_name: "Team Pulse",
-            text: "Drop what you are working on today. Keep it simple: one focus, one win, one person you are helping.",
-            created_at: new Date(Date.now() - 42 * 60000).toISOString(),
-            self: false
-          },
-          {
-            id: "team-seed-2",
-            author_name: "Mia Johnson",
-            text: "I am working contacts from my Power List and posting one team update when I finish the block.",
-            created_at: new Date(Date.now() - 18 * 60000).toISOString(),
-            self: false
-          }
-        ];
-      }
-
-      function normalizeTeamChatMessage(message) {
-        return {
-          id: String(message.id || "team-message-" + Date.now()),
-          user_id: String(message.user_id || ""),
-          author_name: String(message.author_name || "Demo Agent"),
-          text: String(message.text || "").slice(0, 500),
-          created_at: message.created_at || new Date().toISOString(),
-          self: message.self === true
-        };
-      }
-
-      function readTeamChatMessages() {
-        const saved = readLocalJson(getTeamChatStorageKey(), null);
-        const messages = Array.isArray(saved) && saved.length ? saved : seedTeamChatMessages();
-        return messages.map(normalizeTeamChatMessage).sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
-      }
-
-      function writeTeamChatMessages(messages) {
-        writeLocalJson(getTeamChatStorageKey(), messages.map(normalizeTeamChatMessage).slice(-80));
-      }
-
-      function setTeamChatMode(text) {
-        if (teamChatModePill) teamChatModePill.textContent = text;
-      }
-
-      function dbRowToTeamChatMessage(row) {
-        const session = getCurrentSession() || {};
-        const profile = row.profiles || {};
-        const authorName = profile.full_name || (row.user_id === session.id ? session.name : "Team member");
-        return normalizeTeamChatMessage({
-          id: row.id,
-          user_id: row.user_id || "",
-          author_name: authorName,
-          text: row.text || "",
-          created_at: row.created_at,
-          self: row.user_id === session.id
-        });
-      }
-
-      async function ensureBackendTeamChatGroup() {
-        const session = getCurrentSession();
-        if (!pulseBackendClient || !session || session.id === "demo-user") return "";
-        if (teamChatBackendGroupId) return teamChatBackendGroupId;
-
-        try {
-          const { data, error } = await pulseBackendClient.rpc("pulse_ensure_default_team_chat_group", { p_group_name: "Team Room" });
-          if (error) throw error;
-          teamChatBackendGroupId = data || "";
-          return teamChatBackendGroupId;
-        } catch {
-          const { data: memberships, error: membershipError } = await pulseBackendClient
-            .from("pulse_chat_memberships")
-            .select("group_id,pulse_chat_groups(id,name)")
-            .eq("user_id", session.id)
-            .order("joined_at", { ascending: true })
-            .limit(1);
-          if (membershipError) throw membershipError;
-          if (memberships && memberships.length && memberships[0].group_id) {
-            teamChatBackendGroupId = memberships[0].group_id;
-            return teamChatBackendGroupId;
-          }
-
-          const { data: group, error: groupError } = await pulseBackendClient
-            .from("pulse_chat_groups")
-            .insert({ org_id: session.org_id || pulseDefaultOrgId, name: "Team Room", creator_id: session.id })
-            .select("id")
-            .single();
-          if (groupError) throw groupError;
-          teamChatBackendGroupId = group.id;
-
-          const { error: joinError } = await pulseBackendClient
-            .from("pulse_chat_memberships")
-            .upsert({ group_id: teamChatBackendGroupId, user_id: session.id, org_id: session.org_id || pulseDefaultOrgId }, { onConflict: "group_id,user_id" });
-          if (joinError) throw joinError;
-          return teamChatBackendGroupId;
-        }
-      }
-
-      async function loadBackendTeamChat(force) {
-        const session = getCurrentSession();
-        if (!pulseBackendClient || !session || session.id === "demo-user") {
-          setTeamChatMode("Preview");
-          return false;
-        }
-        if (!force && backendTeamChatLoadedFor === session.id && Array.isArray(teamChatMessages)) return true;
-        teamChatBackendLoading = true;
-        setTeamChatMode("Syncing");
-        try {
-          const groupId = await ensureBackendTeamChatGroup();
-          if (!groupId) return false;
-          const { data, error } = await pulseBackendClient
-            .from("pulse_chat_messages")
-            .select("id,user_id,text,created_at,profiles(full_name,avatar_url,level)")
-            .eq("group_id", groupId)
-            .order("created_at", { ascending: false })
-            .limit(50);
-          if (error) throw error;
-          teamChatMessages = (data || []).map(dbRowToTeamChatMessage).reverse();
-          backendTeamChatLoadedFor = session.id;
-          renderTeamChat();
-          setTeamChatMode("Live");
-          return true;
-        } catch {
-          teamChatMessages = readTeamChatMessages();
-          renderTeamChat();
-          setTeamChatMode("Local");
-          return false;
-        } finally {
-          teamChatBackendLoading = false;
-        }
-      }
-
-      function renderTeamChat() {
-        if (!teamChatList) return;
-        const session = getCurrentSession() || { name: "Demo Agent" };
-        const messages = Array.isArray(teamChatMessages) ? teamChatMessages : readTeamChatMessages();
-        teamChatList.innerHTML = "";
-        if (!messages.length) {
-          teamChatList.innerHTML = '<div class="empty-state">No team messages yet. Start the room with a quick update.</div>';
-          setTeamChatMode(pulseBackendClient && session.id !== "demo-user" ? "Live" : "Preview");
-          return;
-        }
-        messages.forEach((message) => {
-          const item = document.createElement("article");
-          const authorName = message.self ? (session.name || message.author_name) : message.author_name;
-          item.className = "team-message" + (message.self ? " self" : "");
-          item.innerHTML =
-            '<span class="team-message-avatar">' +
-            escapeHtml(storyInitials(authorName)) +
-            '</span><div class="team-message-copy"><div class="team-message-meta"><span>' +
-            escapeHtml(authorName) +
-            '</span><time>' +
-            escapeHtml(formatSocialTime(message.created_at)) +
-            '</time></div><p class="team-bubble">' +
-            escapeHtml(message.text) +
-            "</p></div>";
-          teamChatList.appendChild(item);
-        });
-        if (pulseBackendClient && session.id !== "demo-user") setTeamChatMode(teamChatBackendLoading ? "Syncing" : "Live");
-        else setTeamChatMode("Preview");
-      }
-
-      async function sendTeamChatMessage() {
-        if (!teamChatInput) return;
-        const text = teamChatInput.value.trim();
-        if (!text) return;
-        const session = getCurrentSession() || { name: "Demo Agent" };
-        const messages = Array.isArray(teamChatMessages) ? teamChatMessages.slice() : readTeamChatMessages();
-        const optimisticMessage = normalizeTeamChatMessage({
-          id: "local-team-" + Date.now(),
-          user_id: session.id || "",
-          author_name: session.name || "Demo Agent",
-          text,
-          created_at: new Date().toISOString(),
-          self: true
-        });
-        messages.push(optimisticMessage);
-        teamChatMessages = messages;
-        if (!pulseBackendClient || session.id === "demo-user") writeTeamChatMessages(messages);
-        teamChatInput.value = "";
-        renderTeamChat();
-        window.setTimeout(() => {
-          if (teamChatList) teamChatList.lastElementChild && teamChatList.lastElementChild.scrollIntoView({ behavior: "smooth", block: "nearest" });
-        }, 0);
-
-        if (!pulseBackendClient || session.id === "demo-user") return;
-        try {
-          setTeamChatMode("Syncing");
-          const groupId = await ensureBackendTeamChatGroup();
-          const { data, error } = await pulseBackendClient
-            .from("pulse_chat_messages")
-            .insert({ group_id: groupId, user_id: session.id, text })
-            .select("id,user_id,text,created_at,profiles(full_name,avatar_url,level)")
-            .single();
-          if (error) throw error;
-          teamChatMessages = (teamChatMessages || []).map((message) => message.id === optimisticMessage.id ? dbRowToTeamChatMessage(data) : message);
-          backendTeamChatLoadedFor = session.id;
-          renderTeamChat();
-          setTeamChatMode("Live");
-        } catch {
-          writeTeamChatMessages(teamChatMessages || messages);
-          setTeamChatMode("Local");
-        }
-      }
-
-      function formatSocialTime(value) {
-        const date = new Date(value);
-        if (Number.isNaN(date.getTime())) return "Just now";
-        const minutes = Math.max(0, Math.round((Date.now() - date.getTime()) / 60000));
-        if (minutes < 2) return "Just now";
-        if (minutes < 60) return minutes + "m ago";
-        const hours = Math.round(minutes / 60);
-        if (hours < 24) return hours + "h ago";
-        return date.toLocaleDateString([], { month: "short", day: "numeric" });
       }
 
       function normalizeMatchKey(value) {
@@ -20184,7 +19670,6 @@
           await loadBackendActivityForSession();
           await loadBackendBadgesForSession();
           await loadBackendWfgTeamRows();
-          await loadBackendTeamChat(false);
           await refreshBackendLeaderboard();
           showApp(backendSession);
           return;
@@ -20226,7 +19711,6 @@
           powerlistScreen.classList.add("hidden");
           pipelineScreen.classList.add("hidden");
           boardScreen.classList.add("hidden");
-          socialScreen.classList.add("hidden");
           managerScreen.classList.add("hidden");
           if (dreamLifeScreen) dreamLifeScreen.classList.remove("hidden");
           meScreen.classList.add("hidden");
@@ -20253,7 +19737,6 @@
           powerlistScreen.classList.add("hidden");
           pipelineScreen.classList.add("hidden");
           boardScreen.classList.add("hidden");
-          socialScreen.classList.add("hidden");
           managerScreen.classList.add("hidden");
           meScreen.classList.add("hidden");
           coachScreen.classList.add("hidden");
@@ -20269,7 +19752,6 @@
           powerlistScreen.classList.add("hidden");
           pipelineScreen.classList.add("hidden");
           boardScreen.classList.add("hidden");
-          socialScreen.classList.add("hidden");
           managerScreen.classList.add("hidden");
           meScreen.classList.add("hidden");
           coachScreen.classList.add("hidden");
@@ -20288,7 +19770,6 @@
           powerlistScreen.classList.add("hidden");
           pipelineScreen.classList.add("hidden");
           boardScreen.classList.remove("hidden");
-          socialScreen.classList.add("hidden");
           managerScreen.classList.add("hidden");
           meScreen.classList.add("hidden");
           coachScreen.classList.add("hidden");
@@ -20304,7 +19785,6 @@
           powerlistScreen.classList.add("hidden");
           pipelineScreen.classList.add("hidden");
           boardScreen.classList.add("hidden");
-          socialScreen.classList.add("hidden");
           managerScreen.classList.add("hidden");
           meScreen.classList.add("hidden");
           coachScreen.classList.add("hidden");
@@ -20322,7 +19802,6 @@
           powerlistScreen.classList.remove("hidden");
           pipelineScreen.classList.add("hidden");
           boardScreen.classList.add("hidden");
-          socialScreen.classList.add("hidden");
           managerScreen.classList.add("hidden");
           meScreen.classList.add("hidden");
           coachScreen.classList.add("hidden");
@@ -20340,7 +19819,6 @@
           powerlistScreen.classList.add("hidden");
           pipelineScreen.classList.remove("hidden");
           boardScreen.classList.add("hidden");
-          socialScreen.classList.add("hidden");
           managerScreen.classList.add("hidden");
           meScreen.classList.add("hidden");
           coachScreen.classList.add("hidden");
@@ -20357,7 +19835,6 @@
           powerlistScreen.classList.add("hidden");
           pipelineScreen.classList.add("hidden");
           boardScreen.classList.add("hidden");
-          socialScreen.classList.add("hidden");
           managerScreen.classList.add("hidden");
           meScreen.classList.remove("hidden");
           coachScreen.classList.add("hidden");
@@ -20375,7 +19852,6 @@
           powerlistScreen.classList.add("hidden");
           pipelineScreen.classList.add("hidden");
           boardScreen.classList.add("hidden");
-          socialScreen.classList.add("hidden");
           managerScreen.classList.add("hidden");
           meScreen.classList.add("hidden");
           coachScreen.classList.remove("hidden");
@@ -20391,28 +19867,10 @@
           powerlistScreen.classList.add("hidden");
           pipelineScreen.classList.add("hidden");
           boardScreen.classList.add("hidden");
-          socialScreen.classList.add("hidden");
           managerScreen.classList.add("hidden");
           meScreen.classList.add("hidden");
           coachScreen.classList.add("hidden");
           quizScreen.classList.remove("hidden");
-          placeholderScreen.classList.add("hidden");
-          return;
-        }
-        if (screen === "social") {
-          renderTeamChat();
-          loadBackendTeamChat(false).catch(() => {});
-          homeScreen.classList.add("hidden");
-          logScreen.classList.add("hidden");
-          contactsScreen.classList.add("hidden");
-          powerlistScreen.classList.add("hidden");
-          pipelineScreen.classList.add("hidden");
-          boardScreen.classList.add("hidden");
-          socialScreen.classList.remove("hidden");
-          managerScreen.classList.add("hidden");
-          meScreen.classList.add("hidden");
-          coachScreen.classList.add("hidden");
-          quizScreen.classList.add("hidden");
           placeholderScreen.classList.add("hidden");
           return;
         }
@@ -20425,7 +19883,6 @@
           powerlistScreen.classList.add("hidden");
           pipelineScreen.classList.add("hidden");
           boardScreen.classList.add("hidden");
-          socialScreen.classList.add("hidden");
           managerScreen.classList.remove("hidden");
           meScreen.classList.add("hidden");
           coachScreen.classList.add("hidden");
@@ -20448,7 +19905,6 @@
         powerlistScreen.classList.add("hidden");
         pipelineScreen.classList.add("hidden");
         boardScreen.classList.add("hidden");
-        socialScreen.classList.add("hidden");
         managerScreen.classList.add("hidden");
         meScreen.classList.add("hidden");
         coachScreen.classList.add("hidden");
@@ -20488,9 +19944,6 @@
             // Local session cleanup still happens below.
           }
         }
-        backendTeamChatLoadedFor = "";
-        teamChatMessages = null;
-        teamChatBackendGroupId = "";
         sessionStorage.removeItem(sessionKey);
         showLanding();
       });
@@ -20579,12 +20032,6 @@
         saveFireUps();
         renderBoard();
       });
-      if (teamChatSendBtn) teamChatSendBtn.addEventListener("click", sendTeamChatMessage);
-      if (teamChatInput) {
-        teamChatInput.addEventListener("keydown", (event) => {
-          if (event.key === "Enter") sendTeamChatMessage();
-        });
-      }
       wfgFileInput.addEventListener("change", async (event) => {
         const file = event.target.files && event.target.files[0];
         if (!file) return;
@@ -20896,6 +20343,7 @@
       hydrateWfgTeam();
 
       (async () => {
+        purgeRetiredTeamChatStorage();
         const urlParams = new URLSearchParams(window.location.search);
         const forceLanding = urlParams.has("landing");
         if (forceLanding) {
@@ -20909,7 +20357,6 @@
           await loadBackendActivityForSession();
           await loadBackendBadgesForSession();
           await loadBackendWfgTeamRows();
-          await loadBackendTeamChat(false);
           await refreshBackendLeaderboard();
           showApp(restored);
           return;

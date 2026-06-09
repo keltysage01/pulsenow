@@ -191,7 +191,6 @@ Hamburger menu:
 - Use generic code terminology for white-label flexibility.
 - Build as SaaS for multiple industries.
 - React Native conversion comes after PWA validation.
-- Do not rebuild team chat; keep GroupMe.
+- Do not build in-app team chat; use AI Coach as the center mobile tab.
 - Use Resend for email.
 - Keep SMS compliance-first and opt-in only.
-

@@ -18,17 +18,16 @@ Removed:
 
 Kept:
 
-- Team tab and Team chat.
-- Supabase `pulse_chat_*` chat foundation.
+- AI Coach as the center mobile tab.
 - Contact Intelligence LinkedIn/social research, because that is CRM enrichment and not the in-app social feed.
 
 ## Product State
 
-Team communication is now the single team-facing surface:
+The in-app social and team-chat surfaces are now removed:
 
-- Bottom nav `Team` still opens the chat screen.
-- Drawer now labels that route as `Team Chat`.
-- Team chat supports local preview fallback and Supabase-backed persistence when configured.
+- Bottom nav `Coach` opens AI Coach.
+- The drawer keeps `AI Coach` and no longer exposes Team Chat.
+- There is no Team messages composer, seed feed, or local chat fallback.
 
 The Today page should no longer show story circles, social composer affordances, or social-feed cards.
 
@@ -42,8 +41,9 @@ The repo removed the historical social feed migrations:
 For already-provisioned Supabase projects, apply:
 
 - `supabase/migrations/202606090001_drop_social_feed.sql`
+- `supabase/migrations/202606090002_drop_team_chat.sql`
 
-That migration drops `public.social_posts` if present. Contact Intelligence tables such as `contact_social_profiles` are intentionally untouched.
+Those migrations drop `public.social_posts` and any `pulse_chat_*` chat foundation objects if present. Contact Intelligence tables such as `contact_social_profiles` are intentionally untouched.
 
 ## Verification Checklist
 

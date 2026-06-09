@@ -146,7 +146,7 @@ The pasted guide listed `VITE_ANTHROPIC_API_KEY` and `VITE_RESEND_API_KEY`, but 
 - Do not use nested template literals.
 - Do not expose Anthropic API key client-side.
 - Do not request push permission on page load.
-- Do not build team chat.
+- Do not build in-app team chat; keep the center mobile tab on AI Coach.
 - Do not use GoHighLevel for this product.
 
 ## Supabase Setup Checklist
@@ -178,4 +178,3 @@ No phase is complete until it is tested on:
 - Android Chrome
 
 Critical flows include auth, home, log, pipeline, contacts, gamification, vision board, sharing, and notifications.
-
