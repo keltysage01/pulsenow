@@ -13350,6 +13350,28 @@
           </div>
         </section>
 
+        <section class="card" id="crm-call-list-card">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">AI Call List</p>
+              <h2>Who to call next</h2>
+            </div>
+            <button id="crm-call-list-refresh" class="pill-btn" style="margin-top: 0;" type="button">Refresh</button>
+          </div>
+          <p class="muted" style="line-height: 1.5;">Ranked by Contact Intelligence: priority tier, category, and the suggested opening angle.</p>
+          <div id="crm-call-list" class="session-feed"><div class="session-item">Import contacts on the People tab and Contact Intelligence will build this list.</div></div>
+        </section>
+
+        <section class="card" id="crm-alerts-card">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Alerts</p>
+              <h2>Notifications</h2>
+            </div>
+          </div>
+          <div id="crm-alerts-list" class="session-feed"><div class="session-item">No unread notifications.</div></div>
+        </section>
+
       </main>
 
       <main id="log-screen" class="shell hidden">
@@ -15910,6 +15932,79 @@
         });
       }
 
+      async function loadCrmCallList() {
+        const wrap = document.getElementById("crm-call-list");
+        if (!wrap || !pulseBackendClient || !getCurrentSession()) return false;
+        const { data, error } = await pulseBackendClient
+          .from("crm_next_actions")
+          .select("full_name,city,state,priority_tier,candidate_type,next_best_action,suggested_message_angle,sort_order,confidence")
+          .order("sort_order", { ascending: true })
+          .order("confidence", { ascending: false })
+          .limit(8);
+        if (error) {
+          wrap.innerHTML = '<div class="session-item">Call list unavailable right now.</div>';
+          return false;
+        }
+        if (!data || data.length === 0) {
+          wrap.innerHTML = '<div class="session-item">No researched prospects yet. Import a contact list on the People tab and Contact Intelligence will build this list.</div>';
+          return true;
+        }
+        wrap.innerHTML = data.map(function (row) {
+          const loc = [row.city, row.state].filter(Boolean).join(", ");
+          const category = String(row.candidate_type || "").split("_").join(" ");
+          return '<div class="session-item"><strong>' + escapeHtml(row.full_name || "Unnamed") + "</strong>" +
+            ' <span class="scan-pill">Tier ' + escapeHtml(row.priority_tier || "-") + "</span>" +
+            '<p class="muted" style="margin:4px 0 0;">' + escapeHtml(category) + (loc ? " · " + escapeHtml(loc) : "") + "</p>" +
+            (row.next_best_action ? '<p style="margin:6px 0 0;">' + escapeHtml(row.next_best_action) + "</p>" : "") +
+            (row.suggested_message_angle ? '<p class="muted" style="margin:4px 0 0;">Angle: ' + escapeHtml(row.suggested_message_angle) + "</p>" : "") +
+            "</div>";
+        }).join("");
+        return true;
+      }
+
+      async function loadCrmAlerts() {
+        const wrap = document.getElementById("crm-alerts-list");
+        if (!wrap || !pulseBackendClient || !getCurrentSession()) return false;
+        const { data, error } = await pulseBackendClient
+          .from("notifications")
+          .select("id,type,title,body,created_at")
+          .eq("is_read", false)
+          .order("created_at", { ascending: false })
+          .limit(5);
+        if (error) {
+          wrap.innerHTML = '<div class="session-item">Notifications unavailable right now.</div>';
+          return false;
+        }
+        if (!data || data.length === 0) {
+          wrap.innerHTML = '<div class="session-item">No unread notifications.</div>';
+          return true;
+        }
+        wrap.innerHTML = data.map(function (n) {
+          return '<div class="session-item"><strong>' + escapeHtml(n.title || "Notification") + "</strong>" +
+            (n.body ? '<p class="muted" style="margin:4px 0 0;">' + escapeHtml(n.body) + "</p>" : "") +
+            '<div class="move-row" style="margin-top:6px;"><button class="ghost-btn" type="button" data-alert-read-id="' + escapeHtml(n.id) + '">Mark read</button></div></div>';
+        }).join("");
+        return true;
+      }
+
+      document.addEventListener("click", function (event) {
+        const readBtn = event.target.closest("[data-alert-read-id]");
+        if (readBtn && pulseBackendClient) {
+          readBtn.disabled = true;
+          pulseBackendClient.from("notifications").update({ is_read: true }).eq("id", readBtn.dataset.alertReadId)
+            .then(function () { loadCrmAlerts(); });
+          return;
+        }
+        if (event.target.closest("#crm-call-list-refresh")) {
+          loadCrmCallList();
+        }
+      });
+
+      function loadCrmIntelligenceCards() {
+        loadCrmCallList().catch(function () {});
+        loadCrmAlerts().catch(function () {});
+      }
+
       async function loadBackendContacts() {
         if (!pulseBackendClient || !getCurrentSession() || getCurrentSession().id === "demo-user") return false;
         const { data, error } = await pulseBackendClient
@@ -18113,10 +18208,7 @@
             contacts = [];
           }
         }
-        if (contacts.length === 0 && (!pulseBackendClient || !getCurrentSession() || getCurrentSession().id === "demo-user")) {
-          contacts = cloneDemoContacts();
-          saveContacts();
-        }
+        // Demo contact seeding retired: the CRM shows real backend data only.
         contacts = contacts.map((contact) => {
           if (contact.id === "c1" && contact.name === "Jordan Miles") return Object.assign({}, contact, { name: "Jordan Blake" });
           return contact;
@@ -19860,24 +19952,13 @@
           await loadBackendWfgTeamRows();
           await refreshBackendLeaderboard();
           showApp(backendSession);
+          loadCrmIntelligenceCards();
           return;
         } catch (error) {
-          authNote((error && error.message ? error.message : "Backend login failed.") + " Using local preview only for this browser.");
+          authNote((error && error.message ? error.message : "Backend login failed.") + " Check your name or agent code and PIN, then try again.");
         } finally {
           enterBtn.disabled = false;
         }
-        const session = {
-          id: "demo-user",
-          name,
-          org_id: pulseDefaultOrgId,
-          role: "agent",
-          level: "TA",
-          agent_code: document.getElementById("agent-code-input").value.trim() || "DEMO",
-          leader_code: document.getElementById("leader-code-input").value.trim() || null,
-          is_manager: false
-        };
-        sessionStorage.setItem(sessionKey, JSON.stringify(session));
-        showApp(session);
       }
 
       function setScreen(screen) {
@@ -20548,12 +20629,21 @@
           await loadBackendWfgTeamRows();
           await refreshBackendLeaderboard();
           showApp(restored);
+          loadCrmIntelligenceCards();
           return;
         }
         const saved = sessionStorage.getItem(sessionKey);
         if (saved) {
           try {
-            showApp(JSON.parse(saved));
+            const parsed = JSON.parse(saved);
+            // Demo sessions are retired: real backend sessions only.
+            if (!parsed || parsed.id === "demo-user") {
+              sessionStorage.removeItem(sessionKey);
+              showLanding();
+            } else {
+              showApp(parsed);
+              loadCrmIntelligenceCards();
+            }
           } catch {
             sessionStorage.removeItem(sessionKey);
             showLanding();
