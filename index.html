@@ -13636,7 +13636,6 @@
               <p class="eyebrow">People Pipeline</p>
               <h2>Move one person forward</h2>
             </div>
-            <button id="pipeline-seed-btn" class="text-btn" type="button">Load sample pipeline</button>
           </div>
           <p class="muted" style="line-height: 1.6;">Cards come from CRM contacts. Move stages here; Supabase journey history plugs in later.</p>
           <div class="pipeline-tabs">
@@ -20651,14 +20650,6 @@
         apiPowerPicks = null;
         renderPowerLists();
         refreshPowerListsFromApi(true);
-      });
-      document.getElementById("pipeline-seed-btn").addEventListener("click", () => {
-        contacts = cloneDemoContacts();
-        substepState = {};
-        saveSubsteps();
-        saveContacts();
-        renderContacts();
-        recruitDetailPanel.classList.add("hidden");
       });
       document.querySelectorAll("[data-pipeline-type]").forEach((button) => {
         button.addEventListener("click", () => {
