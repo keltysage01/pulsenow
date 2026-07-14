@@ -13110,6 +13110,55 @@
       textarea {
         font-size: 16px !important;
       }
+
+      /* === CRM polish: legible stat tiles in light and dark, calmer desktop type === */
+      .clarity-grid div {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        box-shadow: none;
+      }
+
+      .clarity-grid strong {
+        color: var(--text);
+      }
+
+      .clarity-grid span {
+        color: var(--sub);
+        font-size: 12px;
+        line-height: 1.3;
+      }
+
+      html[data-theme="dark"] .clarity-grid div {
+        background: rgba(255, 255, 255, 0.06);
+      }
+
+      @media (min-width: 900px) {
+        h1 {
+          font-size: clamp(28px, 3vw, 36px);
+        }
+
+        h2 {
+          font-size: clamp(19px, 2vw, 24px);
+        }
+
+        .today-greeting-card h1 {
+          font-size: clamp(32px, 3.6vw, 42px);
+        }
+
+        .section > .section-head h2,
+        .card > .section-head h2 {
+          font-size: 22px;
+        }
+
+        #me-screen h2,
+        #me-screen .section-head h2 {
+          font-size: 24px;
+        }
+
+        .clarity-grid strong {
+          font-size: 20px;
+        }
+      }
     </style>
   </head>
   <body>
