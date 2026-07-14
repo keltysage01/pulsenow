@@ -2,6 +2,11 @@
   "installCommand": "npm install --omit=dev --ignore-scripts",
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
+  "functions": {
+    "api/cron/social-research-daily.js": {
+      "maxDuration": 300
+    }
+  },
   "crons": [
     {
       "path": "/api/cron/power-list-daily",

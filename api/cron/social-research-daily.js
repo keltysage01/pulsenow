@@ -10,18 +10,7 @@ function getContactWorkerUrl() {
   return `${base.replace(/\/$/, '')}/functions/v1/contacts_worker`;
 }
 
-async function invokeContactWorker() {
-  const workerSecret = process.env.CONTACT_WORKER_SECRET;
-  const functionUrl = getContactWorkerUrl();
-
-  if (!functionUrl || !workerSecret) {
-    return {
-      ok: false,
-      mode: 'not-configured',
-      message: 'Add SUPABASE_URL and CONTACT_WORKER_SECRET to process Contact Intelligence jobs.',
-    };
-  }
-
+async function invokeContactWorkerOnce(functionUrl, workerSecret) {
   const response = await fetch(functionUrl, {
     method: 'POST',
     headers: {
@@ -43,6 +32,57 @@ async function invokeContactWorker() {
     ok: response.ok,
     status: response.status,
     payload,
+  };
+}
+
+// Drain the Contact Intelligence queue instead of processing a single
+// 5-contact batch. Each worker call claims one job; keep claiming a few in
+// parallel until nothing is left to claim or the cron time budget is spent.
+async function invokeContactWorker() {
+  const workerSecret = process.env.CONTACT_WORKER_SECRET;
+  const functionUrl = getContactWorkerUrl();
+
+  if (!functionUrl || !workerSecret) {
+    return {
+      ok: false,
+      mode: 'not-configured',
+      message: 'Add SUPABASE_URL and CONTACT_WORKER_SECRET to process Contact Intelligence jobs.',
+    };
+  }
+
+  const TIME_BUDGET_MS = 240000;
+  const CONCURRENCY = 4;
+  const started = Date.now();
+  let jobsCompleted = 0;
+  let jobsFailed = 0;
+  let drained = false;
+
+  while (Date.now() - started < TIME_BUDGET_MS) {
+    const results = await Promise.all(
+      Array.from({ length: CONCURRENCY }, () => invokeContactWorkerOnce(functionUrl, workerSecret))
+    );
+    let claimed = 0;
+    for (const r of results) {
+      if (r.payload && r.payload.claimed) {
+        claimed++;
+        if (r.payload.status === 'complete') jobsCompleted++;
+        else jobsFailed++;
+      } else if (!r.ok) {
+        jobsFailed++;
+      }
+    }
+    if (claimed === 0) {
+      drained = true;
+      break;
+    }
+  }
+
+  return {
+    ok: true,
+    drained,
+    jobs_completed: jobsCompleted,
+    jobs_failed: jobsFailed,
+    elapsed_ms: Date.now() - started,
   };
 }
 
