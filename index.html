@@ -13135,6 +13135,85 @@
         background: rgba(255, 255, 255, 0.06) !important;
       }
 
+      /* === iOS sweep: word integrity ===
+         A global rule gives every #app button overflow-wrap:anywhere, which lets
+         labels shatter mid-word ("Add Contac / t"). UI copy never breaks inside a
+         word; only data fields (emails, URLs) keep their own wrapping rules. */
+      #app button,
+      #app .primary-btn,
+      #app .pill-btn,
+      #app .ghost-btn,
+      #app .text-btn,
+      #app .filter-btn,
+      #app .qualifier-btn,
+      #app .drawer-link,
+      #app .contact-actions a,
+      #app .actions a,
+      #app .actions button,
+      #app .contact-actions button {
+        overflow-wrap: normal !important;
+        word-break: keep-all !important;
+        hyphens: none !important;
+      }
+
+      #app h1,
+      #app h2,
+      #app h3,
+      #app h4,
+      #app .eyebrow,
+      #app .section-head h2,
+      #app .scan-pill,
+      #app .count-pill,
+      #app .score-pill,
+      #app .bottom-nav span,
+      #app .tabs button {
+        word-break: keep-all !important;
+        hyphens: none !important;
+      }
+
+      /* === iOS sweep: native feel === */
+      #app {
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      #app input,
+      #app select,
+      #app textarea {
+        font-size: 16px !important; /* under 16px iOS Safari zooms the page on focus */
+      }
+
+      #add-contact-panel .form-grid input,
+      .login-card input {
+        min-height: 44px !important;
+        border-radius: 12px !important;
+      }
+
+      .card {
+        border-radius: 16px;
+        box-shadow: 0 8px 24px rgba(18, 36, 58, 0.08);
+      }
+
+      #app .pill-btn,
+      #app .primary-btn {
+        font-weight: 600 !important;
+        letter-spacing: -0.01em;
+      }
+
+      .pipeline-board {
+        -webkit-overflow-scrolling: touch;
+      }
+
+      /* Quest-track labels: wrap between words instead of clipping mid-word. */
+      #app .quest-step strong,
+      #app .quest-step small,
+      #app .quest-badge,
+      #app .quest-effort {
+        white-space: normal !important;
+        overflow-wrap: normal !important;
+        word-break: keep-all !important;
+        line-height: 1.2 !important;
+      }
+
       @media (min-width: 900px) {
         h1 {
           font-size: clamp(28px, 3vw, 36px);
