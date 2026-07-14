@@ -13350,6 +13350,16 @@
           </div>
         </section>
 
+        <section class="card" id="crm-snapshot-card">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Pipeline</p>
+              <h2>Snapshot</h2>
+            </div>
+          </div>
+          <div id="crm-pipeline-snapshot"><div class="session-item">Your open deals, pipeline value, and clients appear here.</div></div>
+        </section>
+
         <section class="card" id="crm-call-list-card">
           <div class="section-head">
             <div>
@@ -13370,6 +13380,17 @@
             </div>
           </div>
           <div id="crm-alerts-list" class="session-feed"><div class="session-item">No unread notifications.</div></div>
+        </section>
+
+        <section class="card" id="crm-clients-card">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Clients</p>
+              <h2>Relationship health</h2>
+            </div>
+          </div>
+          <p class="muted" style="line-height: 1.5;">Lowest health first. Scores decay automatically when a client goes quiet.</p>
+          <div id="crm-clients-list" class="session-feed"><div class="session-item">No clients yet.</div></div>
         </section>
 
       </main>
@@ -13465,6 +13486,7 @@
               <h2>Import to CRM</h2>
               <p class="muted section-subcopy">Choose a spreadsheet or phone contacts export. PulseNow will clean, categorize, and place each contact into a CRM area.</p>
             </div>
+            <button id="people-add-contact-btn" class="pill-btn" style="margin-top: 0;" type="button">Add Contact</button>
           </div>
           <label class="csv-drop" for="csv-file-input">
             <span>Import CSV or phone contacts</span>
@@ -13540,6 +13562,11 @@
             <input id="contact-phone-input" placeholder="Phone" inputmode="tel" />
             <input id="contact-email-input" placeholder="Email" inputmode="email" />
             <input id="contact-followup-input" placeholder="Next follow-up date (YYYY-MM-DD)" />
+            <input id="contact-company-input" placeholder="Company" />
+            <input id="contact-city-input" placeholder="City" />
+            <input id="contact-state-input" placeholder="State" />
+            <input id="contact-dealvalue-input" placeholder="Deal value ($)" inputmode="decimal" />
+            <input id="contact-notes-input" placeholder="Notes" />
           </div>
           <div class="qualifier-grid" id="qualifier-buttons">
             <button class="qualifier-btn" data-qualifier="married" type="button">Married</button>
@@ -13556,7 +13583,6 @@
         <section class="section">
           <div class="section-head">
             <h2 id="contact-count-label">0 contacts</h2>
-            <button id="seed-contacts-btn" class="text-btn" type="button">Load sample contacts</button>
           </div>
           <div id="contact-org-summary" class="contact-org-summary"></div>
           <div id="contact-list" class="contact-list"></div>
@@ -15906,10 +15932,12 @@
           notes: contact.notes || null,
           qualifiers: contact.qualifiers || {},
           contact_type: ["prospect", "recruit", "client", "partner", "top_100"].includes(contact.type) ? contact.type : "prospect",
-          stage: "uncontacted",
+          stage: contact.stage || "uncontacted",
           is_top_100: contact.is_top_100 === true,
           next_followup_at: contact.next_followup_date ? contact.next_followup_date + "T12:00:00Z" : null,
           last_contacted_at: contact.last_contact_date ? contact.last_contact_date + "T12:00:00Z" : null,
+          deal_value_cents: Math.round((Number(contact.deal_value) || 0) * 100),
+          last_activity_at: new Date().toISOString(),
           app_state: contact,
           updated_at: new Date().toISOString()
         };
@@ -15928,7 +15956,9 @@
           next_followup_date: state.next_followup_date || (row.next_followup_at ? String(row.next_followup_at).slice(0, 10) : ""),
           last_contact_date: state.last_contact_date || (row.last_contacted_at ? String(row.last_contacted_at).slice(0, 10) : ""),
           qualifiers: state.qualifiers || row.qualifiers || {},
-          qualifier_score: row.qualifier_score
+          qualifier_score: row.qualifier_score,
+          health_score: typeof row.health_score === "number" ? row.health_score : (state.health_score || 70),
+          deal_value: typeof row.deal_value_cents === "number" ? row.deal_value_cents / 100 : (state.deal_value || 0)
         });
       }
 
@@ -16000,16 +16030,93 @@
         }
       });
 
+      // Drag-and-drop pipeline: drag a card onto a column to move its stage.
+      document.addEventListener("dragstart", function (event) {
+        const card = event.target.closest && event.target.closest("[data-drag-contact-id]");
+        if (card) {
+          event.dataTransfer.setData("text/plain", card.dataset.dragContactId);
+          event.dataTransfer.effectAllowed = "move";
+        }
+      });
+      document.addEventListener("dragover", function (event) {
+        if (event.target.closest && event.target.closest("[data-drop-stage]")) event.preventDefault();
+      });
+      document.addEventListener("drop", function (event) {
+        const column = event.target.closest && event.target.closest("[data-drop-stage]");
+        if (!column) return;
+        event.preventDefault();
+        const contactId = event.dataTransfer.getData("text/plain");
+        if (!contactId) return;
+        moveContactStage(contactId, column.dataset.dropStage);
+        renderPipeline();
+        loadPipelineSnapshot().catch(function () {});
+      });
+
+      async function loadPipelineSnapshot() {
+        const wrap = document.getElementById("crm-pipeline-snapshot");
+        if (!wrap || !pulseBackendClient || !getCurrentSession()) return false;
+        const uid = getCurrentSession().id;
+        const results = await Promise.all([
+          pulseBackendClient.from("contacts").select("deal_value_cents,stage").eq("profile_id", uid),
+          pulseBackendClient.from("clients").select("health_score,mrr_cents"),
+          pulseBackendClient.from("crm_next_actions").select("contact_record_id", { count: "exact", head: true }).in("priority_tier", ["A", "B"])
+        ]);
+        const rows = results[0].data || [];
+        const closed = ["won", "client", "commission paid/complete", "lost"];
+        const open = rows.filter(function (r) { return closed.indexOf(String(r.stage || "").toLowerCase()) === -1; });
+        const pipelineValue = open.reduce(function (sum, r) { return sum + (Number(r.deal_value_cents) || 0); }, 0) / 100;
+        const clientRows = results[1].data || [];
+        const mrr = clientRows.reduce(function (sum, r) { return sum + (Number(r.mrr_cents) || 0); }, 0) / 100;
+        const hot = results[2].count || 0;
+        wrap.innerHTML =
+          '<div class="clarity-grid">' +
+          "<div><strong>" + open.length + "</strong><span>open deals</span></div>" +
+          "<div><strong>$" + pipelineValue.toLocaleString() + "</strong><span>pipeline value</span></div>" +
+          "<div><strong>" + hot + "</strong><span>hot prospects (A/B)</span></div>" +
+          "<div><strong>" + clientRows.length + "</strong><span>clients" + (mrr > 0 ? " · $" + mrr.toLocaleString() + " MRR" : "") + "</span></div>" +
+          "</div>";
+        return true;
+      }
+
+      async function loadClientsCard() {
+        const wrap = document.getElementById("crm-clients-list");
+        if (!wrap || !pulseBackendClient || !getCurrentSession()) return false;
+        const { data, error } = await pulseBackendClient
+          .from("clients")
+          .select("name,health_score,mrr_cents,started_at")
+          .order("health_score", { ascending: true })
+          .limit(6);
+        if (error) {
+          wrap.innerHTML = '<div class="session-item">Clients unavailable right now.</div>';
+          return false;
+        }
+        if (!data || data.length === 0) {
+          wrap.innerHTML = '<div class="session-item">No clients yet. Move a prospect to the final pipeline stage and they graduate here automatically.</div>';
+          return true;
+        }
+        wrap.innerHTML = data.map(function (c) {
+          const health = typeof c.health_score === "number" ? c.health_score : 80;
+          const tone = health >= 60 ? "#38B249" : health >= 40 ? "#F4B942" : "#e5484d";
+          const mrr = Number(c.mrr_cents) > 0 ? " · $" + (c.mrr_cents / 100).toLocaleString() + "/mo" : "";
+          return '<div class="session-item"><strong>' + escapeHtml(c.name || "Client") + "</strong>" +
+            ' <span class="score-pill" style="border-color:' + tone + ";color:" + tone + ';" title="Health score">' + health + "</span>" +
+            '<p class="muted" style="margin:4px 0 0;">Client since ' + escapeHtml(String(c.started_at || "").slice(0, 10)) + mrr + "</p></div>";
+        }).join("");
+        return true;
+      }
+
       function loadCrmIntelligenceCards() {
         loadCrmCallList().catch(function () {});
         loadCrmAlerts().catch(function () {});
+        loadPipelineSnapshot().catch(function () {});
+        loadClientsCard().catch(function () {});
       }
 
       async function loadBackendContacts() {
         if (!pulseBackendClient || !getCurrentSession() || getCurrentSession().id === "demo-user") return false;
         const { data, error } = await pulseBackendClient
           .from("contacts")
-          .select("id,first_name,last_name,phone,email,contact_type,stage,qualifiers,qualifier_score,is_top_100,next_followup_at,last_contacted_at,app_state")
+          .select("id,first_name,last_name,phone,email,contact_type,stage,qualifiers,qualifier_score,is_top_100,next_followup_at,last_contacted_at,health_score,deal_value_cents,app_state")
           .eq("profile_id", getCurrentSession().id)
           .order("created_at", { ascending: false });
         if (error) throw error;
@@ -18278,6 +18385,7 @@
           const stageContacts = pipelineContacts.filter((contact) => normalizeContactStage(contact, pipelineType) === stageName);
           const column = document.createElement("article");
           column.className = "pipeline-column";
+          column.dataset.dropStage = stageName;
           const cardsHtml = stageContacts
             .map((contact) => {
               const score = scoreContact(contact);
@@ -18294,14 +18402,19 @@
                 pipelineType === "recruit"
                   ? '<button class="ghost-btn" type="button" data-recruit-detail-id="' + contactId + '">Detail</button>'
                   : '<button class="ghost-btn" type="button" data-pipeline-contact-detail-id="' + contactId + '">Detail</button>';
+              const health = typeof contact.health_score === "number" ? contact.health_score : 70;
+              const healthTone = health >= 60 ? "#38B249" : health >= 40 ? "#F4B942" : "#e5484d";
+              const dealChip = Number(contact.deal_value) > 0
+                ? ' <span class="score-pill">$' + Number(contact.deal_value).toLocaleString() + "</span>"
+                : "";
               return (
-                '<div class="pipeline-card"><div class="contact-main"><div><h4>' +
+                '<div class="pipeline-card" draggable="true" data-drag-contact-id="' + contactId + '"><div class="contact-main"><div><h4>' +
                 contactName +
                 '</h4><p class="muted pipeline-meta">' +
                 escapeHtml(compactMeta) +
-                '</p></div><span class="score-pill">' +
-                score +
-                "/7</span></div>" +
+                '</p></div><span class="score-pill" style="border-color:' + healthTone + ';color:' + healthTone + ';" title="Health score">' +
+                health +
+                "</span>" + dealChip + "</div>" +
                 '<div class="move-row"><select data-stage-select="' +
                 contactId +
                 '">' +
@@ -18679,10 +18792,12 @@
       }
 
       function resetAddContactForm() {
-        document.getElementById("contact-name-input").value = "";
-        document.getElementById("contact-phone-input").value = "";
-        document.getElementById("contact-email-input").value = "";
-        document.getElementById("contact-followup-input").value = "";
+        ["contact-name-input", "contact-phone-input", "contact-email-input", "contact-followup-input",
+         "contact-company-input", "contact-city-input", "contact-state-input", "contact-dealvalue-input",
+         "contact-notes-input"].forEach((id) => {
+          const field = document.getElementById(id);
+          if (field) field.value = "";
+        });
         selectedQualifiers = {};
         document.querySelectorAll("[data-qualifier]").forEach((button) => button.classList.remove("active"));
       }
@@ -18693,11 +18808,21 @@
         const phone = document.getElementById("contact-phone-input").value.replace(/[^0-9+]/g, "");
         const email = document.getElementById("contact-email-input").value.trim();
         const followup = document.getElementById("contact-followup-input").value.trim();
+        const company = document.getElementById("contact-company-input").value.trim();
+        const city = document.getElementById("contact-city-input").value.trim();
+        const stateVal = document.getElementById("contact-state-input").value.trim();
+        const dealValue = parseFloat(String(document.getElementById("contact-dealvalue-input").value).replace(/[^0-9.]/g, "")) || 0;
+        const notes = document.getElementById("contact-notes-input").value.trim();
         const contact = {
           id: "c" + Date.now(),
           name,
           phone,
           email,
+          company,
+          city,
+          state: stateVal,
+          notes,
+          deal_value: dealValue,
           type: "prospect",
           stage: "Uncontacted Team Prospects",
           next_followup_date: followup,
@@ -20514,10 +20639,9 @@
           setBioEditMode(false);
         }
       });
-      document.getElementById("seed-contacts-btn").addEventListener("click", () => {
-        contacts = cloneDemoContacts();
-        saveContacts();
-        renderContacts();
+      document.getElementById("people-add-contact-btn").addEventListener("click", () => {
+        addContactPanel.classList.remove("hidden");
+        addContactPanel.scrollIntoView({ behavior: "smooth", block: "start" });
       });
       document.getElementById("close-contact-detail-btn").addEventListener("click", () => {
         contactDetailPanel.classList.add("hidden");
