@@ -13214,6 +13214,56 @@
         line-height: 1.2 !important;
       }
 
+      /* Contact cards: micro-labels (PHONE, EMAIL) never split; values break
+         only when a token truly exceeds the line (long emails), so phone
+         numbers stay whole. */
+      #app .contact-method {
+        overflow-wrap: break-word;
+        flex-wrap: wrap;
+      }
+
+      #app .contact-method span,
+      #app .contact-info-item > span,
+      #app .detail-line > span {
+        white-space: nowrap !important;
+        overflow-wrap: normal !important;
+        word-break: keep-all !important;
+      }
+
+      #app .contact-method strong,
+      #app .contact-info-item strong {
+        overflow-wrap: break-word !important;
+        word-break: normal !important;
+      }
+
+      /* Bottom nav: icon and label can never overlap, at any zoom level. */
+      #app .bottom-inner button {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 3px !important;
+      }
+
+      #app .bottom-inner .nav-icon {
+        flex: 0 0 auto !important;
+      }
+
+      #app .bottom-inner .nav-label {
+        line-height: 1.2 !important;
+        white-space: nowrap !important;
+      }
+
+      /* Header action pills stay on one line and size to their label. */
+      #people-add-contact-btn,
+      #toggle-add-contact-btn,
+      #crm-call-list-refresh {
+        white-space: nowrap !important;
+        width: auto !important;
+        flex: 0 0 auto !important;
+        padding: 10px 16px !important;
+      }
+
       @media (min-width: 900px) {
         h1 {
           font-size: clamp(28px, 3vw, 36px);
