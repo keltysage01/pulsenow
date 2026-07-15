@@ -13667,7 +13667,10 @@
               <h2>Import to CRM</h2>
               <p class="muted section-subcopy">Choose a spreadsheet or phone contacts export. PulseNow will clean, categorize, and place each contact into a CRM area.</p>
             </div>
-            <button id="people-add-contact-btn" class="pill-btn" style="margin-top: 0;" type="button">Add Contact</button>
+            <div style="display: flex; flex-direction: column; gap: 8px; align-items: flex-end;">
+              <button id="people-add-contact-btn" class="pill-btn" style="margin-top: 0;" type="button">Add Contact</button>
+              <button id="export-contacts-btn" class="ghost-btn" type="button">Export CSV</button>
+            </div>
           </div>
           <label class="csv-drop" for="csv-file-input">
             <span>Import CSV or phone contacts</span>
@@ -20822,6 +20825,19 @@
       document.getElementById("people-add-contact-btn").addEventListener("click", () => {
         addContactPanel.classList.remove("hidden");
         addContactPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+      document.getElementById("export-contacts-btn").addEventListener("click", () => {
+        const cols = ["name", "phone", "email", "company", "city", "state", "type", "stage", "deal_value", "health_score", "last_contact_date", "next_followup_date", "notes"];
+        const esc = (v) => '"' + String(v == null ? "" : v).split('"').join('""') + '"';
+        const lines = [cols.join(",")].concat(contacts.map((c) => cols.map((k) => esc(c[k])).join(",")));
+        const blob = new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "pulsenow-contacts-" + todayKey() + ".csv";
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(link.href);
       });
       document.getElementById("close-contact-detail-btn").addEventListener("click", () => {
         contactDetailPanel.classList.add("hidden");
