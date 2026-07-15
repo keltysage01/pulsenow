@@ -58,7 +58,7 @@ prospects surfaced from lists that were previously sitting untouched.
 ## What was fixed and built today
 
 The system was built but the engine had stalled, and the pipeline lacked the CRM
-object model around it. Five changes, all live in production:
+object model around it. Eleven changes, all live in production:
 
 1. Assessment pipeline unstuck. The background worker was processing 5 contacts per
    day because the daily job only invoked it once. Two jobs had also been frozen
@@ -89,6 +89,40 @@ object model around it. Five changes, all live in production:
    manually with an $1,800 deal value, moved through the pipeline to Commission
    Paid/Complete, automatically graduated to Clients (health 80), and produced the
    "New client won" notification, all visible on the Today dashboard.
+9. Export finished. The People screen now has an Export CSV button that downloads
+   the agent's full contact book: name, contact info, company, location, stage,
+   deal value, health score, follow-up dates, and notes.
+10. Mobile and typography quality pass. The app is mobile-first (agents work from
+    their phones), so every screen was swept at iPhone dimensions in both light and
+    dark mode: an automated check now confirms zero clipped labels and zero
+    mid-word line breaks across all seven screens. The root cause (a global style
+    that allowed any button label to break inside a word) was removed, form fields
+    were sized so iOS Safari no longer zooms on focus, touch targets meet the 44px
+    standard, and desktop shows a calmer type scale instead of oversized headings.
+11. Full production smoke test passed (detail in the next section).
+
+## Smoke test scorecard (July 14, late evening, against production)
+
+Every core flow was exercised on the live app with results confirmed in the
+database, not just on screen:
+
+- Login and session restore: pass. Bad credentials are rejected with no fallback.
+- Manual add contact with full fields and deal value: pass, persisted to backend.
+- Contact detail panel and "Mark contacted": pass, last-contact date stamped and
+  verified in the database.
+- CSV import through research and AI assessment: pass (verified with a live test
+  import earlier the same day).
+- Pipeline drag-and-drop between stages: pass, stage change persisted.
+- Won-stage graduation: pass, client record and notification created automatically.
+- Notifications and mark-as-read: pass, read state verified in the database.
+- AI Coach chat: pass, and it answers with real CRM context (it recommended calling
+  the actual test contact by name and logging the outcome).
+- AI call list, pipeline snapshot, and clients cards: pass.
+- Landing page "Book a Demo": wired, opens account creation.
+- Export CSV: pass, downloads the contact book.
+
+Not yet covered by the smoke test: the Dream Life recorder, WFG report upload, and
+quiz features (peripheral to the CRM).
 
 ## The pipeline CRM backend
 
@@ -200,6 +234,6 @@ log, so a stalled job is visible rather than silent.
 - CRM layer: `contacts`, `clients`, `notifications`, `pulse_leaderboard`,
   `crm_next_actions`, `pulse_decay_health_scores()`
 - AI: OpenAI for research (web search) and assessment (structured JSON scoring)
-- Code: github.com/keltysage01/pulsenow (today's fixes on branch crm-pipeline-fix,
-  deployed to production; database changes mirrored in
-  supabase/migrations/202607140001_crm_pipeline_econ_parity.sql)
+- Code: github.com/keltysage01/pulsenow, all of today's work merged to main and
+  identical to what is deployed in production; database changes mirrored in
+  supabase/migrations/202607140001_crm_pipeline_econ_parity.sql
